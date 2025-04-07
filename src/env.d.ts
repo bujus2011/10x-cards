@@ -7,6 +7,7 @@ declare global {
   namespace App {
     interface Locals {
       supabase: SupabaseClient<Database>;
+      user?: User;
     }
   }
 }
@@ -18,4 +19,9 @@ interface ImportMetaEnv {
 
 interface ImportMeta {
   readonly env: ImportMetaEnv;
+}
+
+interface User {
+  id: string;
+  email: string;
 }

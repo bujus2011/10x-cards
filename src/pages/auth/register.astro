@@ -1,0 +1,22 @@
+---
+import AuthLayout from "@/components/auth/AuthLayout";
+import { RegisterForm } from "@/components/auth/RegisterForm";
+import Layout from "@/layouts/Layout.astro";
+
+// Redirect if user is already logged in
+const user = Astro.locals.user;
+if (user) {
+  return Astro.redirect("/");
+}
+---
+
+<Layout title="Create account - 10xCards">
+  <AuthLayout title="Create an account" subtitle="Sign up to start creating flashcards">
+    <RegisterForm
+      client:load
+      onSubmit={async (email, password) => {
+        // This will be handled by the backend implementation
+      }}
+    />
+  </AuthLayout>
+</Layout>
