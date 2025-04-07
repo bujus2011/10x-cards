@@ -80,8 +80,8 @@ export const createSupabaseServerInstance = (context: {
   cookies: AstroCookies;
 }) => {
   const supabase = createServerClient<Database>(
-    import.meta.env.SUPABASE_URL!,
-    import.meta.env.SUPABASE_KEY!,
+    import.meta.env.SUPABASE_URL,
+    import.meta.env.SUPABASE_KEY,
     {
       cookieOptions,
       cookies: {
@@ -109,8 +109,17 @@ Update existing auth middleware or create one in `src/middleware/index.ts`:
 import { createSupabaseServerInstance } from '../db/supabase.client.ts';
 import { defineMiddleware } from 'astro:middleware';
 
-// If there are public paths (per user's description)
-const PUBLIC_PATHS = ['/auth/login', '/auth/register', '/auth/reset-password'];
+// Public paths - Auth API endpoints & Server-Rendered Astro Pages
+const PUBLIC_PATHS = [
+  // Server-Rendered Astro Pages
+  "/auth/login",
+  "/auth/register",
+  "/auth/reset-password",
+  // Auth API endpoints
+  "/api/auth/login",
+  "/api/auth/register",
+  "/api/auth/reset-password",
+];
 
 export const onRequest = defineMiddleware(
   async ({ locals, cookies, url, request, redirect }, next) => {
@@ -229,6 +238,10 @@ if (!user) {
 <h1>Protected Page</h1>
 <p>Welcome {user.email}!</p>
 ```
+
+### 5. Verify SSR Configuration
+
+Verify whether auth pages are rendered server-side, either by `export const prerender = false;` or by `output: "server"` in `astro.config.mjs`.
 
 ## Security Best Practices
 
