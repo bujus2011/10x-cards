@@ -8,15 +8,12 @@ const user = Astro.locals.user;
 if (user) {
   return Astro.redirect("/");
 }
+
+export const prerender = false;
 ---
 
 <Layout title="Sign in - 10xCards">
   <AuthLayout title="Welcome back" subtitle="Sign in to your account to continue">
-    <LoginForm
-      client:load
-      onSubmit={async (email, password) => {
-        // This will be handled by the backend implementation
-      }}
-    />
+    <LoginForm client:load />
   </AuthLayout>
 </Layout>

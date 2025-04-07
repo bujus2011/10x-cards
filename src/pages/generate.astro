@@ -1,6 +1,12 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { FlashcardGenerationView } from "@/components/FlashcardGenerationView";
+
+// Protect this route
+const user = Astro.locals.user;
+if (!user) {
+  return Astro.redirect("/auth/login");
+}
 ---
 
 <Layout title="Generate Flashcards - 10xCards">

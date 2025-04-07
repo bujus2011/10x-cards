@@ -5,21 +5,50 @@ import { Label } from "@/components/ui/label";
 import { Mail, Lock } from "lucide-react";
 
 interface LoginFormProps {
-  onSubmit: (email: string, password: string) => void;
+  onSubmit?: (email: string, password: string) => void;
   isLoading?: boolean;
 }
 
-export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
+export function LoginForm({ isLoading = false }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(email, password);
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === "error") {
+        setError(data.error);
+        return;
+      }
+
+      // Reload the page to update server-side session
+      window.location.href = "/";
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {error && <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">{error}</div>}
+
       <div className="space-y-2">
         <Label htmlFor="email">Email address</Label>
         <div className="relative">
@@ -68,12 +97,12 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
         </div>
       </div>
 
-      <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Signing in..." : "Sign in"}
+      <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
+        {isSubmitting ? "Signing in..." : "Sign in"}
       </Button>
 
       <div className="text-center text-sm">
-        <span className="text-muted-foreground">Don't have an account? </span>
+        <span className="text-muted-foreground">Don&apos;t have an account? </span>
         <a href="/auth/register" className="text-primary hover:text-primary/90">
           Sign up
         </a>
