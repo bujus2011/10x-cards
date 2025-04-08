@@ -15,6 +15,12 @@ const generateFlashcardsSchema = z.object({
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
+    if (!locals.user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
     // Parse and validate request body
     const body = (await request.json()) as GenerateFlashcardsCommand;
     const validationResult = generateFlashcardsSchema.safeParse(body);
@@ -36,7 +42,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const generationService = new GenerationService(locals.supabase, {
       apiKey: import.meta.env.OPENROUTER_API_KEY,
     });
-    const result = await generationService.generateFlashcards(body.source_text);
+    const result = await generationService.generateFlashcards(locals.user.id, body.source_text);
 
     return new Response(JSON.stringify(result), {
       status: 201,
