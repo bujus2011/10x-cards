@@ -2,9 +2,8 @@ import type { APIRoute } from "astro";
 import { createSupabaseServerInstance } from "@/db/supabase.client";
 import { z } from "zod";
 
-const registerSchema = z.object({
+const resetPasswordSchema = z.object({
     email: z.string().email("Invalid email format"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 export const prerender = false;
@@ -12,13 +11,14 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request, cookies }) => {
     try {
         const body = await request.json();
-        const { email, password } = registerSchema.parse(body);
+        const { email } = resetPasswordSchema.parse(body);
 
         const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
 
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
+        // Send password reset link to user's email
+        // Supabase will handle sending the email with reset link
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: `${new URL(request.url).origin}/auth/reset-password-confirm`,
         });
 
         if (error) {
@@ -33,8 +33,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
         return new Response(
             JSON.stringify({
-                user: data.user,
                 status: "success",
+                message: "Password reset link has been sent to your email",
             }),
             { status: 200 }
         );

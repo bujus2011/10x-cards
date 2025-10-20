@@ -66,10 +66,12 @@ const ROUTE_CONFIG = {
     "/auth/login",
     "/auth/register",
     "/auth/reset-password",
+    "/auth/reset-password-confirm",
     // Auth API endpoints
     "/api/auth/login",
     "/api/auth/register",
     "/api/auth/reset-password",
+    "/api/auth/reset-password-confirm",
     // Landing page
     "/",
   ] as const,

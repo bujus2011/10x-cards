@@ -2,9 +2,9 @@ import type { APIRoute } from "astro";
 import { createSupabaseServerInstance } from "@/db/supabase.client";
 import { z } from "zod";
 
-const registerSchema = z.object({
-    email: z.string().email("Invalid email format"),
+const resetPasswordConfirmSchema = z.object({
     password: z.string().min(8, "Password must be at least 8 characters"),
+    token: z.string().min(1, "Reset token is required"),
 });
 
 export const prerender = false;
@@ -12,19 +12,36 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request, cookies }) => {
     try {
         const body = await request.json();
-        const { email, password } = registerSchema.parse(body);
+        const { password, token } = resetPasswordConfirmSchema.parse(body);
 
         const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
 
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
+        // First, verify the token and get the user session
+        // In Supabase, the token from email is used to create a session via verifyOtp
+        const { error: verifyError } = await supabase.auth.verifyOtp({
+            token_hash: token,
+            type: "recovery",
         });
 
-        if (error) {
+        if (verifyError) {
             return new Response(
                 JSON.stringify({
-                    error: error.message,
+                    error: "Invalid or expired reset token. Please request a new password reset.",
+                    status: "error",
+                }),
+                { status: 400 }
+            );
+        }
+
+        // Now update the user password
+        const { error: updateError } = await supabase.auth.updateUser({
+            password: password,
+        });
+
+        if (updateError) {
+            return new Response(
+                JSON.stringify({
+                    error: updateError.message,
                     status: "error",
                 }),
                 { status: 400 }
@@ -33,8 +50,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
         return new Response(
             JSON.stringify({
-                user: data.user,
                 status: "success",
+                message: "Password has been reset successfully",
             }),
             { status: 200 }
         );
