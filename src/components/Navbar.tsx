@@ -36,6 +36,9 @@ export function Navbar({ user }: NavbarProps) {
             <a href="/generate" className="text-sm text-muted-foreground hover:text-foreground">
               Generate
             </a>
+            <a href="/my-flashcards" className="text-sm text-muted-foreground hover:text-foreground">
+              My Flashcards
+            </a>
           </div>
         </div>
 

@@ -83,6 +83,7 @@ const ROUTE_CONFIG = {
    */
   protected: [
     "/generate",
+    "/my-flashcards",
     "/api/flashcards",
     "/api/generations",
   ] as const,
