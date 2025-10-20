@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +5,7 @@ import { SkeletonLoader } from '@/components/SkeletonLoader';
 import { FlashcardCard } from './FlashcardCard';
 import { CreateFlashcardForm } from './CreateFlashcardForm';
 import { AlertCircle, Search } from 'lucide-react';
-import type { FlashcardDto } from '@/types';
+import type { FlashcardDto, FlashcardUpdateDto } from '@/types';
 import { toast } from 'sonner';
 
 export function MyFlashcardsView() {
@@ -91,7 +89,7 @@ export function MyFlashcardsView() {
   );
 
   const handleUpdateFlashcard = useCallback(
-    async (id: number, updates: any) => {
+    async (id: number, updates: FlashcardUpdateDto) => {
       try {
         const response = await fetch('/api/flashcards', {
           method: 'PUT',
@@ -136,6 +134,11 @@ export function MyFlashcardsView() {
     }
   }, []);
 
+  const handleRetry = useCallback(() => {
+    setError(null);
+    fetchFlashcards();
+  }, [fetchFlashcards]);
+
   if (isLoading) {
     return <SkeletonLoader count={6} />;
   }
@@ -143,19 +146,17 @@ export function MyFlashcardsView() {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="bg-destructive/10 border border-destructive/50 rounded-lg p-4 flex gap-3">
-          <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+        <div className="bg-destructive/10 border border-destructive/50 rounded-lg p-4 flex gap-3" role="alert">
+          <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" aria-hidden="true" />
           <div>
             <h3 className="font-medium text-destructive">Error</h3>
             <p className="text-sm text-destructive/80">{error}</p>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => {
-                setError(null);
-                fetchFlashcards();
-              }}
+              onClick={handleRetry}
               className="mt-2"
+              aria-label="Retry loading flashcards"
             >
               Retry
             </Button>
@@ -168,16 +169,17 @@ export function MyFlashcardsView() {
       {flashcards.length > 0 && (
         <div className="space-y-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <Input
               placeholder="Search flashcards..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
+              aria-label="Search flashcards by front or back text"
             />
           </div>
 
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-muted-foreground" aria-live="polite">
             {filteredFlashcards.length} of {flashcards.length} flashcard
             {flashcards.length !== 1 ? 's' : ''}
             {searchQuery && ` (filtered)`}

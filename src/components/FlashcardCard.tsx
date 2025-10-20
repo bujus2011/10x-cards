@@ -1,21 +1,24 @@
-'use client';
-
-import { useState } from 'react';
+import { useState, useCallback, useId, memo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Edit2, Trash2, Save, X, Copy } from 'lucide-react';
 import { toast } from 'sonner';
-import type { FlashcardDto } from '@/types';
+import type { FlashcardDto, FlashcardUpdateDto } from '@/types';
 
 interface FlashcardCardProps {
   flashcard: FlashcardDto;
-  onUpdate: (id: number, data: any) => Promise<void>;
+  onUpdate: (id: number, data: FlashcardUpdateDto) => Promise<void>;
   onDelete: (id: number) => Promise<void>;
   isLoading?: boolean;
 }
 
-export function FlashcardCard({ flashcard, onUpdate, onDelete, isLoading = false }: FlashcardCardProps) {
+const FlashcardCardComponent = memo(function FlashcardCard({ 
+  flashcard, 
+  onUpdate, 
+  onDelete, 
+  isLoading = false 
+}: FlashcardCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedFront, setEditedFront] = useState(flashcard.front);
   const [editedBack, setEditedBack] = useState(flashcard.back);
@@ -23,7 +26,11 @@ export function FlashcardCard({ flashcard, onUpdate, onDelete, isLoading = false
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = async () => {
+  // Generate unique IDs for accessibility
+  const frontInputId = useId();
+  const backInputId = useId();
+
+  const handleSave = useCallback(async () => {
     if (!editedFront.trim() || !editedBack.trim()) {
       toast.error('Front and back content cannot be empty');
       return;
@@ -50,9 +57,9 @@ export function FlashcardCard({ flashcard, onUpdate, onDelete, isLoading = false
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [editedFront, editedBack, flashcard, onUpdate]);
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     setIsDeleting(true);
     try {
       await onDelete(flashcard.id);
@@ -63,13 +70,23 @@ export function FlashcardCard({ flashcard, onUpdate, onDelete, isLoading = false
     } finally {
       setIsDeleting(false);
     }
-  };
+  }, [flashcard.id, onDelete]);
 
-  const handleCopy = () => {
+  const handleCopy = useCallback(() => {
     const text = `Front: ${flashcard.front}\n\nBack: ${flashcard.back}`;
     navigator.clipboard.writeText(text);
     toast.success('Flashcard copied to clipboard');
-  };
+  }, [flashcard.front, flashcard.back]);
+
+  const handleCancel = useCallback(() => {
+    setIsEditing(false);
+    setEditedFront(flashcard.front);
+    setEditedBack(flashcard.back);
+  }, [flashcard.front, flashcard.back]);
+
+  const handleToggleFlip = useCallback(() => {
+    setIsFlipped((prev) => !prev);
+  }, []);
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('en-US', {
@@ -87,41 +104,50 @@ export function FlashcardCard({ flashcard, onUpdate, onDelete, isLoading = false
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Front</label>
+            <label htmlFor={frontInputId} className="text-sm font-medium">
+              Front
+            </label>
             <Textarea
+              id={frontInputId}
               value={editedFront}
               onChange={(e) => setEditedFront(e.target.value)}
               placeholder="Front side of the flashcard"
               maxLength={200}
               className="resize-none"
               rows={3}
+              aria-describedby="front-char-count"
             />
-            <div className="text-xs text-muted-foreground">{editedFront.length}/200</div>
+            <div id="front-char-count" className="text-xs text-muted-foreground">
+              {editedFront.length}/200 characters
+            </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Back</label>
+            <label htmlFor={backInputId} className="text-sm font-medium">
+              Back
+            </label>
             <Textarea
+              id={backInputId}
               value={editedBack}
               onChange={(e) => setEditedBack(e.target.value)}
               placeholder="Back side of the flashcard"
               maxLength={500}
               className="resize-none"
               rows={4}
+              aria-describedby="back-char-count"
             />
-            <div className="text-xs text-muted-foreground">{editedBack.length}/500</div>
+            <div id="back-char-count" className="text-xs text-muted-foreground">
+              {editedBack.length}/500 characters
+            </div>
           </div>
 
           <div className="flex gap-2 justify-end">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => {
-                setIsEditing(false);
-                setEditedFront(flashcard.front);
-                setEditedBack(flashcard.back);
-              }}
+              onClick={handleCancel}
               disabled={isSaving}
+              aria-label="Cancel editing flashcard"
             >
               <X className="h-4 w-4 mr-1" />
               Cancel
@@ -130,6 +156,7 @@ export function FlashcardCard({ flashcard, onUpdate, onDelete, isLoading = false
               size="sm"
               onClick={handleSave}
               disabled={isSaving || !editedFront.trim() || !editedBack.trim()}
+              aria-label="Save flashcard changes"
             >
               <Save className="h-4 w-4 mr-1" />
               {isSaving ? 'Saving...' : 'Save'}
@@ -143,7 +170,16 @@ export function FlashcardCard({ flashcard, onUpdate, onDelete, isLoading = false
   return (
     <Card
       className="h-full cursor-pointer transition-all hover:shadow-lg"
-      onClick={() => setIsFlipped(!isFlipped)}
+      onClick={handleToggleFlip}
+      role="button"
+      tabIndex={0}
+      aria-label={`Flashcard: ${flashcard.front}. Click to flip`}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleToggleFlip();
+        }
+      }}
     >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
@@ -158,6 +194,8 @@ export function FlashcardCard({ flashcard, onUpdate, onDelete, isLoading = false
                 handleCopy();
               }}
               disabled={isLoading}
+              aria-label="Copy flashcard to clipboard"
+              title="Copy flashcard content"
             >
               <Copy className="h-3.5 w-3.5" />
             </Button>
@@ -170,6 +208,8 @@ export function FlashcardCard({ flashcard, onUpdate, onDelete, isLoading = false
                 setIsEditing(true);
               }}
               disabled={isLoading}
+              aria-label="Edit flashcard"
+              title="Edit this flashcard"
             >
               <Edit2 className="h-3.5 w-3.5" />
             </Button>
@@ -182,6 +222,8 @@ export function FlashcardCard({ flashcard, onUpdate, onDelete, isLoading = false
                 handleDelete();
               }}
               disabled={isLoading || isDeleting}
+              aria-label="Delete flashcard"
+              title="Delete this flashcard permanently"
             >
               <Trash2 className="h-3.5 w-3.5" />
             </Button>
@@ -201,4 +243,8 @@ export function FlashcardCard({ flashcard, onUpdate, onDelete, isLoading = false
       </CardContent>
     </Card>
   );
-}
+});
+
+FlashcardCardComponent.displayName = 'FlashcardCard';
+
+export const FlashcardCard = FlashcardCardComponent;
