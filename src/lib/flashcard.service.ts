@@ -14,7 +14,7 @@ export class DatabaseError extends Error {
 }
 
 export class FlashcardService {
-  constructor(private readonly supabase: SupabaseClient) { }
+  constructor(private readonly supabase: SupabaseClient) {}
 
   /**
    * Creates multiple flashcards in a single batch operation
@@ -117,11 +117,7 @@ export class FlashcardService {
    * @throws {DatabaseError} When database operation fails
    */
   async delete(id: number, userId: string): Promise<void> {
-    const { error } = await this.supabase
-      .from("flashcards")
-      .delete()
-      .eq("id", id)
-      .eq("user_id", userId);
+    const { error } = await this.supabase.from("flashcards").delete().eq("id", id).eq("user_id", userId);
 
     if (error) {
       this.handleDatabaseError(error);

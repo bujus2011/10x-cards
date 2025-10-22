@@ -89,6 +89,7 @@ export function RegisterForm({ isLoading = false }: RegisterFormProps) {
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            data-testid="register-email-input"
           />
         </div>
       </div>
@@ -112,6 +113,7 @@ export function RegisterForm({ isLoading = false }: RegisterFormProps) {
               setPassword(e.target.value);
               validatePassword(e.target.value);
             }}
+            data-testid="register-password-input"
           />
         </div>
       </div>
@@ -132,6 +134,7 @@ export function RegisterForm({ isLoading = false }: RegisterFormProps) {
             placeholder="Confirm your password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            data-testid="register-confirm-password-input"
           />
         </div>
       </div>
@@ -143,7 +146,12 @@ export function RegisterForm({ isLoading = false }: RegisterFormProps) {
         </div>
       )}
 
-      <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={isSubmitting || isLoading}
+        data-testid="register-submit-button"
+      >
         {isSubmitting ? "Creating account..." : "Create account"}
       </Button>
 

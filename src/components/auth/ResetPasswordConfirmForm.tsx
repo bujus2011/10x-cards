@@ -86,13 +86,11 @@ export function ResetPasswordConfirmForm({ isLoading = false }: ResetPasswordCon
       <div className="space-y-6">
         <div className="bg-destructive/15 text-destructive text-sm p-4 rounded-md border border-destructive/30">
           <p className="font-semibold mb-2">Invalid Reset Link</p>
-          <p className="text-sm">
-            This password reset link is invalid or has expired. Please request a new one.
-          </p>
+          <p className="text-sm">This password reset link is invalid or has expired. Please request a new one.</p>
         </div>
 
         <a href="/auth/reset-password" className="block">
-          <Button className="w-full">Request New Reset Link</Button>
+          <Button className="w-full" data-testid="reset-password-confirm-request-new-link-button">Request New Reset Link</Button>
         </a>
 
         <div className="text-center text-sm">
@@ -119,7 +117,7 @@ export function ResetPasswordConfirmForm({ isLoading = false }: ResetPasswordCon
         </div>
 
         <a href="/auth/login" className="block">
-          <Button className="w-full">Go to Login</Button>
+          <Button className="w-full" data-testid="reset-password-confirm-go-to-login-button">Go to Login</Button>
         </a>
       </div>
     );
@@ -146,6 +144,7 @@ export function ResetPasswordConfirmForm({ isLoading = false }: ResetPasswordCon
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             minLength={8}
+            data-testid="reset-password-confirm-password-input"
           />
         </div>
         <p className="text-xs text-muted-foreground">Must be at least 8 characters</p>
@@ -168,6 +167,7 @@ export function ResetPasswordConfirmForm({ isLoading = false }: ResetPasswordCon
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             minLength={8}
+            data-testid="reset-password-confirm-confirm-password-input"
           />
         </div>
       </div>
@@ -178,7 +178,11 @@ export function ResetPasswordConfirmForm({ isLoading = false }: ResetPasswordCon
 
       <div className="text-center text-sm">
         <span className="text-muted-foreground">Remember your password? </span>
-        <a href="/auth/login" className="text-primary hover:text-primary/90">
+        <a
+          href="/auth/login"
+          className="text-primary hover:text-primary/90"
+          data-testid="reset-password-confirm-sign-in-link"
+        >
           Sign in
         </a>
       </div>

@@ -4,19 +4,19 @@ import { FlashcardGenerationView } from "@/components/FlashcardGenerationView";
 
 /**
  * Protected Route: Generate Flashcards
- * 
+ *
  * This page is protected by TWO layers of authentication:
- * 
+ *
  * 1. MIDDLEWARE LEVEL (src/middleware/index.ts)
  *    - Validates user session via Supabase JWT token
  *    - Redirects unauthenticated users to /auth/login
  *    - Runs on every request before reaching this page
- * 
+ *
  * 2. PAGE LEVEL (this file)
  *    - Defensive check to ensure user data exists in locals
  *    - Provides graceful fallback and error handling
  *    - Serves as a safety net in case middleware is bypassed
- * 
+ *
  * Architecture: Fail-secure design pattern
  * If either layer fails, the user cannot access this page
  */

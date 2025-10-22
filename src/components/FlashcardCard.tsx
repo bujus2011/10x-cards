@@ -1,10 +1,10 @@
-import { useState, useCallback, useId, memo } from 'react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Edit2, Trash2, Save, X, Copy } from 'lucide-react';
-import { toast } from 'sonner';
-import type { FlashcardDto, FlashcardUpdateDto } from '@/types';
+import { useState, useCallback, useId, memo } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Edit2, Trash2, Save, X, Copy } from "lucide-react";
+import { toast } from "sonner";
+import type { FlashcardDto, FlashcardUpdateDto } from "@/types";
 
 interface FlashcardCardProps {
   flashcard: FlashcardDto;
@@ -13,11 +13,11 @@ interface FlashcardCardProps {
   isLoading?: boolean;
 }
 
-const FlashcardCardComponent = memo(function FlashcardCard({ 
-  flashcard, 
-  onUpdate, 
-  onDelete, 
-  isLoading = false 
+const FlashcardCardComponent = memo(function FlashcardCard({
+  flashcard,
+  onUpdate,
+  onDelete,
+  isLoading = false,
 }: FlashcardCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedFront, setEditedFront] = useState(flashcard.front);
@@ -32,12 +32,12 @@ const FlashcardCardComponent = memo(function FlashcardCard({
 
   const handleSave = useCallback(async () => {
     if (!editedFront.trim() || !editedBack.trim()) {
-      toast.error('Front and back content cannot be empty');
+      toast.error("Front and back content cannot be empty");
       return;
     }
 
     if (editedFront.length > 200 || editedBack.length > 500) {
-      toast.error('Text exceeds maximum length');
+      toast.error("Text exceeds maximum length");
       return;
     }
 
@@ -50,9 +50,9 @@ const FlashcardCardComponent = memo(function FlashcardCard({
         generation_id: flashcard.generation_id,
       });
       setIsEditing(false);
-      toast.success('Flashcard updated successfully');
+      toast.success("Flashcard updated successfully");
     } catch (error) {
-      toast.error('Failed to update flashcard');
+      toast.error("Failed to update flashcard");
       console.error(error);
     } finally {
       setIsSaving(false);
@@ -63,9 +63,9 @@ const FlashcardCardComponent = memo(function FlashcardCard({
     setIsDeleting(true);
     try {
       await onDelete(flashcard.id);
-      toast.success('Flashcard deleted successfully');
+      toast.success("Flashcard deleted successfully");
     } catch (error) {
-      toast.error('Failed to delete flashcard');
+      toast.error("Failed to delete flashcard");
       console.error(error);
     } finally {
       setIsDeleting(false);
@@ -75,7 +75,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
   const handleCopy = useCallback(() => {
     const text = `Front: ${flashcard.front}\n\nBack: ${flashcard.back}`;
     navigator.clipboard.writeText(text);
-    toast.success('Flashcard copied to clipboard');
+    toast.success("Flashcard copied to clipboard");
   }, [flashcard.front, flashcard.back]);
 
   const handleCancel = useCallback(() => {
@@ -89,10 +89,10 @@ const FlashcardCardComponent = memo(function FlashcardCard({
   }, []);
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -159,7 +159,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
               aria-label="Save flashcard changes"
             >
               <Save className="h-4 w-4 mr-1" />
-              {isSaving ? 'Saving...' : 'Save'}
+              {isSaving ? "Saving..." : "Save"}
             </Button>
           </div>
         </CardContent>
@@ -175,7 +175,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
       tabIndex={0}
       aria-label={`Flashcard: ${flashcard.front}. Click to flip`}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           handleToggleFlip();
         }
@@ -233,18 +233,16 @@ const FlashcardCardComponent = memo(function FlashcardCard({
       </CardHeader>
       <CardContent>
         <div className="min-h-[100px] flex items-center">
-          <p className="text-sm text-muted-foreground line-clamp-4">
-            {isFlipped ? flashcard.back : flashcard.front}
-          </p>
+          <p className="text-sm text-muted-foreground line-clamp-4">{isFlipped ? flashcard.back : flashcard.front}</p>
         </div>
         <div className="text-xs text-center text-muted-foreground mt-2">
-          {isFlipped ? 'Click to see front' : 'Click to see back'}
+          {isFlipped ? "Click to see front" : "Click to see back"}
         </div>
       </CardContent>
     </Card>
   );
 });
 
-FlashcardCardComponent.displayName = 'FlashcardCard';
+FlashcardCardComponent.displayName = "FlashcardCard";
 
 export const FlashcardCard = FlashcardCardComponent;

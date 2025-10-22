@@ -29,14 +29,22 @@ export function Navbar({ user }: NavbarProps) {
     <nav className="border-b">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-8">
-          <a href="/" className="font-semibold text-xl">
+          <a href="/" className="font-semibold text-xl" data-testid="navbar-logo">
             10xCards
           </a>
           <div className="flex items-center gap-4">
-            <a href="/generate" className="text-sm text-muted-foreground hover:text-foreground">
+            <a
+              href="/generate"
+              className="text-sm text-muted-foreground hover:text-foreground"
+              data-testid="navbar-generate-link"
+            >
               Generate
             </a>
-            <a href="/my-flashcards" className="text-sm text-muted-foreground hover:text-foreground">
+            <a
+              href="/my-flashcards"
+              className="text-sm text-muted-foreground hover:text-foreground"
+              data-testid="navbar-my-flashcards-link"
+            >
               My Flashcards
             </a>
           </div>

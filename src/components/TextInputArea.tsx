@@ -24,6 +24,7 @@ export function TextInputArea({ value, onChange, disabled }: TextInputAreaProps)
         disabled={disabled}
         placeholder="Paste your text here (1000-10000 characters)"
         className={cn("min-h-[200px] max-h-[200px] resize-y", showError && "border-red-500 focus-visible:ring-red-500")}
+        data-testid="source-text-textarea"
       />
 
       <div className={cn("text-sm", showError ? "text-red-500" : "text-muted-foreground")}>

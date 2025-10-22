@@ -38,7 +38,7 @@ export function LoginForm({ isLoading = false }: LoginFormProps) {
 
       // Reload the page to update server-side session
       window.location.href = "/";
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -46,8 +46,12 @@ export function LoginForm({ isLoading = false }: LoginFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {error && <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">{error}</div>}
+    <form onSubmit={handleSubmit} className="space-y-6" data-testid="login-form">
+      {error && (
+        <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md" data-testid="login-error-message">
+          {error}
+        </div>
+      )}
 
       <div className="space-y-2">
         <Label htmlFor="email">Email address</Label>
@@ -65,6 +69,7 @@ export function LoginForm({ isLoading = false }: LoginFormProps) {
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            data-testid="login-email-input"
           />
         </div>
       </div>
@@ -85,25 +90,30 @@ export function LoginForm({ isLoading = false }: LoginFormProps) {
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            data-testid="login-password-input"
           />
         </div>
       </div>
 
       <div className="flex items-center justify-between">
         <div className="text-sm">
-          <a href="/auth/reset-password" className="text-primary hover:text-primary/90">
+          <a
+            href="/auth/reset-password"
+            className="text-primary hover:text-primary/90"
+            data-testid="login-forgot-password-link"
+          >
             Forgot your password?
           </a>
         </div>
       </div>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
+      <Button type="submit" className="w-full" disabled={isSubmitting || isLoading} data-testid="login-submit-button">
         {isSubmitting ? "Signing in..." : "Sign in"}
       </Button>
 
       <div className="text-center text-sm">
         <span className="text-muted-foreground">Don&apos;t have an account? </span>
-        <a href="/auth/register" className="text-primary hover:text-primary/90">
+        <a href="/auth/register" className="text-primary hover:text-primary/90" data-testid="login-register-link">
           Sign up
         </a>
       </div>

@@ -18,6 +18,7 @@ export function FlashcardList({ flashcards, onAccept, onReject, onEdit }: Flashc
           onAccept={() => onAccept(index)}
           onReject={() => onReject(index)}
           onEdit={(front, back) => onEdit(index, front, back)}
+          data-testid={`flashcard-list-item-${index}`}
         />
       ))}
     </div>

@@ -1,22 +1,22 @@
-import { useState, useCallback, useId, memo } from 'react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, X } from 'lucide-react';
-import { toast } from 'sonner';
+import { useState, useCallback, useId, memo } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Plus, X } from "lucide-react";
+import { toast } from "sonner";
 
 interface CreateFlashcardFormProps {
   onSubmit: (front: string, back: string) => Promise<void>;
   isLoading?: boolean;
 }
 
-const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({ 
-  onSubmit, 
-  isLoading = false 
+const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
+  onSubmit,
+  isLoading = false,
 }: CreateFlashcardFormProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [front, setFront] = useState('');
-  const [back, setBack] = useState('');
+  const [front, setFront] = useState("");
+  const [back, setBack] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Generate unique IDs for accessibility
@@ -25,24 +25,24 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
 
   const handleSubmit = useCallback(async () => {
     if (!front.trim() || !back.trim()) {
-      toast.error('Front and back content cannot be empty');
+      toast.error("Front and back content cannot be empty");
       return;
     }
 
     if (front.length > 200 || back.length > 500) {
-      toast.error('Text exceeds maximum length');
+      toast.error("Text exceeds maximum length");
       return;
     }
 
     setIsSubmitting(true);
     try {
       await onSubmit(front, back);
-      setFront('');
-      setBack('');
+      setFront("");
+      setBack("");
       setIsOpen(false);
-      toast.success('Flashcard created successfully');
+      toast.success("Flashcard created successfully");
     } catch (error) {
-      toast.error('Failed to create flashcard');
+      toast.error("Failed to create flashcard");
       console.error(error);
     } finally {
       setIsSubmitting(false);
@@ -51,8 +51,8 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
 
   const handleReset = useCallback(() => {
     setIsOpen(false);
-    setFront('');
-    setBack('');
+    setFront("");
+    setBack("");
   }, []);
 
   if (isOpen) {
@@ -118,7 +118,7 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
               aria-label="Create new flashcard"
             >
               <Plus className="h-4 w-4 mr-2" />
-              {isSubmitting ? 'Creating...' : 'Create Flashcard'}
+              {isSubmitting ? "Creating..." : "Create Flashcard"}
             </Button>
           </div>
         </CardContent>
@@ -127,11 +127,12 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
   }
 
   return (
-    <Button 
-      onClick={() => setIsOpen(true)} 
+    <Button
+      onClick={() => setIsOpen(true)}
       disabled={isLoading}
       className="mb-6"
       aria-label="Open create flashcard form"
+      data-testid="create-flashcard-button"
     >
       <Plus className="h-4 w-4 mr-2" />
       Create New Flashcard
@@ -139,6 +140,6 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
   );
 });
 
-CreateFlashcardFormComponent.displayName = 'CreateFlashcardForm';
+CreateFlashcardFormComponent.displayName = "CreateFlashcardForm";
 
 export const CreateFlashcardForm = CreateFlashcardFormComponent;
