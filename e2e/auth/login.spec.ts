@@ -7,6 +7,8 @@
 import { test, expect } from "@playwright/test";
 import { LoginPage } from "../pages/LoginPage";
 
+test.describe.configure({ mode: 'serial' });
+
 test.describe("Login Page", () => {
   let loginPage: LoginPage;
 

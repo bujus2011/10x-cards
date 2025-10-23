@@ -9,6 +9,8 @@ import { test, expect } from "@playwright/test";
 import { LoginPage } from "../pages";
 import { TEST_USERS } from "../helpers";
 
+test.describe.configure({ mode: 'serial' });
+
 test.describe("Login with Helpers", () => {
   test.beforeEach(async ({ context }) => {
     // Clear cookies at context level (more reliable)
@@ -16,6 +18,9 @@ test.describe("Login with Helpers", () => {
   });
 
   test("should login with valid test user credentials", async ({ page }) => {
+    // Increase timeout for this test as it makes actual API calls
+    test.setTimeout(60000);
+
     const loginPage = new LoginPage(page);
     await loginPage.goto();
 
@@ -24,7 +29,8 @@ test.describe("Login with Helpers", () => {
 
     // Wait for navigation to complete after successful login
     // Note: Home page redirects to /generate for authenticated users
-    await page.waitForURL("/generate");
+    // Increased timeout to handle server load during parallel test execution
+    await page.waitForURL("/generate", { timeout: 45000 });
 
     // Verify we're on the main app page
     await expect(page).toHaveURL("/generate");

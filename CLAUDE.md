@@ -141,6 +141,7 @@ src/
 - `Flashcard` - User flashcards (front, back, source, generation_id)
 - `Generation` - AI generation requests
 - `GenerationErrorLog` - Error tracking for failed generations
+- `ReviewLog` - Spaced repetition tracking (FSRS algorithm state, due dates, review history)
 
 ### Frontend Patterns
 

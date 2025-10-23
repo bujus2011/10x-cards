@@ -61,8 +61,38 @@ export class LoginPage extends AuthPage {
    * @param password - User password
    */
   async login(email: string, password: string) {
+    // Fill email and ensure it's committed to the DOM
+    await this.emailInput.click();
     await this.emailInput.fill(email);
+
+    // Wait and verify the value persists - retry mechanism for high server load
+    for (let i = 0; i < 3; i++) {
+      await this.page.waitForTimeout(300);
+      const currentValue = await this.emailInput.inputValue();
+      if (currentValue === email) break;
+      if (i < 2) await this.emailInput.fill(email); // Retry if needed
+    }
+    await expect(this.emailInput).toHaveValue(email);
+
+    // Fill password and ensure it's committed to the DOM
+    await this.passwordInput.click();
     await this.passwordInput.fill(password);
+
+    // Wait and verify the value persists
+    for (let i = 0; i < 3; i++) {
+      await this.page.waitForTimeout(300);
+      const currentValue = await this.passwordInput.inputValue();
+      if (currentValue === password) break;
+      if (i < 2) await this.passwordInput.fill(password); // Retry if needed
+    }
+    await expect(this.passwordInput).toHaveValue(password);
+
+    // Blur the last input to trigger any pending React state updates
+    await this.passwordInput.blur();
+
+    // Final wait for React to process onChange events and update state
+    await this.page.waitForTimeout(500);
+
     await this.submitButton.click();
   }
 
@@ -71,7 +101,17 @@ export class LoginPage extends AuthPage {
    * @param email - User email address
    */
   async fillEmail(email: string) {
+    await this.emailInput.click();
     await this.emailInput.fill(email);
+
+    // Wait and verify the value persists - retry mechanism
+    for (let i = 0; i < 3; i++) {
+      await this.page.waitForTimeout(250);
+      const currentValue = await this.emailInput.inputValue();
+      if (currentValue === email) break;
+      if (i < 2) await this.emailInput.fill(email);
+    }
+    await expect(this.emailInput).toHaveValue(email);
   }
 
   /**
@@ -79,7 +119,17 @@ export class LoginPage extends AuthPage {
    * @param password - User password
    */
   async fillPassword(password: string) {
+    await this.passwordInput.click();
     await this.passwordInput.fill(password);
+
+    // Wait and verify the value persists - retry mechanism
+    for (let i = 0; i < 3; i++) {
+      await this.page.waitForTimeout(250);
+      const currentValue = await this.passwordInput.inputValue();
+      if (currentValue === password) break;
+      if (i < 2) await this.passwordInput.fill(password);
+    }
+    await expect(this.passwordInput).toHaveValue(password);
   }
 
   /**

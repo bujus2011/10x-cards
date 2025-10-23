@@ -65,7 +65,7 @@ export function LoginForm({ isLoading = false }: LoginFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6" data-testid="login-form">
+    <form onSubmit={handleSubmit} className="space-y-6" data-testid="login-form" noValidate>
       {error && (
         <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md" data-testid="login-error-message">
           {error}
