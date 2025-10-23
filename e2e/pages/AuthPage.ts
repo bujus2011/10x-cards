@@ -1,15 +1,15 @@
 /**
  * Base Auth Page Object Model
- * 
+ *
  * Base class for all authentication pages (login, register, reset password).
  * Contains common elements and methods shared across auth pages.
  */
 
-import { type Page, type Locator, expect } from '@playwright/test';
+import { type Page, type Locator, expect } from "@playwright/test";
 
 export abstract class AuthPage {
   readonly page: Page;
-  
+
   // Common layout elements
   readonly authLayout: Locator;
   readonly authTitle: Locator;
@@ -18,12 +18,12 @@ export abstract class AuthPage {
 
   constructor(page: Page) {
     this.page = page;
-    
+
     // Common locators for all auth pages
-    this.authLayout = page.getByTestId('auth-layout');
-    this.authTitle = page.getByTestId('auth-title');
-    this.authSubtitle = page.getByTestId('auth-subtitle');
-    this.authContent = page.getByTestId('auth-content');
+    this.authLayout = page.getByTestId("auth-layout");
+    this.authTitle = page.getByTestId("auth-title");
+    this.authSubtitle = page.getByTestId("auth-subtitle");
+    this.authContent = page.getByTestId("auth-content");
   }
 
   /**
@@ -58,4 +58,3 @@ export abstract class AuthPage {
     return await this.authLayout.isVisible();
   }
 }
-

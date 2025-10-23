@@ -1,36 +1,36 @@
 /**
  * Authentication Test Helpers
- * 
+ *
  * Helper functions and utilities for authentication-related E2E tests.
  */
 
-import { type Page } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage';
+import { type Page } from "@playwright/test";
+import { LoginPage } from "../pages/LoginPage";
 
 /**
  * Test user credentials for E2E testing
  * These should match users in your test database
- * 
+ *
  * Valid user credentials are loaded from environment variables:
  * - E2E_USERNAME (email)
  * - E2E_PASSWORD
  */
 export const TEST_USERS = {
   valid: {
-    email: process.env.E2E_USERNAME || 'test@example.com',
-    password: process.env.E2E_PASSWORD || 'ValidPass123!',
+    email: process.env.E2E_USERNAME || "test@example.com",
+    password: process.env.E2E_PASSWORD || "ValidPass123!",
   },
   invalid: {
-    email: 'invalid@example.com',
-    password: 'WrongPassword123',
+    email: "invalid@example.com",
+    password: "WrongPassword123",
   },
   invalidEmail: {
-    email: 'not-an-email',
-    password: 'ValidPass123!',
+    email: "not-an-email",
+    password: "ValidPass123!",
   },
   shortPassword: {
-    email: process.env.E2E_USERNAME || 'test@example.com',
-    password: 'short',
+    email: process.env.E2E_USERNAME || "test@example.com",
+    password: "short",
   },
 } as const;
 
@@ -50,7 +50,7 @@ export async function loginAsUser(
   await loginPage.login(email, password);
 
   // Wait for navigation to complete (redirects to /generate for authenticated users)
-  await page.waitForURL('/generate');
+  await page.waitForURL("/generate");
 }
 
 /**
@@ -61,7 +61,7 @@ export async function loginAsUser(
 export async function isUserLoggedIn(page: Page): Promise<boolean> {
   try {
     // Check for logout button or user menu (adjust selector based on your app)
-    const logoutButton = page.getByRole('button', { name: /log out|sign out/i });
+    const logoutButton = page.getByRole("button", { name: /log out|sign out/i });
     return await logoutButton.isVisible({ timeout: 2000 });
   } catch {
     return false;
@@ -73,11 +73,11 @@ export async function isUserLoggedIn(page: Page): Promise<boolean> {
  * @param page - Playwright page instance
  */
 export async function logout(page: Page): Promise<void> {
-  const logoutButton = page.getByRole('button', { name: /log out|sign out/i });
+  const logoutButton = page.getByRole("button", { name: /log out|sign out/i });
   await logoutButton.click();
 
   // Wait for redirect to login page
-  await page.waitForURL('/auth/login');
+  await page.waitForURL("/auth/login");
 }
 
 /**
@@ -86,10 +86,7 @@ export async function logout(page: Page): Promise<void> {
  * @param options - Options for clearing auth data
  * @param options.clearStorage - Whether to clear localStorage and sessionStorage (default: true)
  */
-export async function clearAuthData(
-  page: Page,
-  options: { clearStorage?: boolean } = {}
-): Promise<void> {
+export async function clearAuthData(page: Page, options: { clearStorage?: boolean } = {}): Promise<void> {
   const { clearStorage = true } = options;
 
   await page.context().clearCookies();
@@ -103,7 +100,7 @@ export async function clearAuthData(
       });
     } catch {
       // If localStorage access fails (e.g., about:blank), navigate to base URL first
-      await page.goto('/');
+      await page.goto("/");
       await page.evaluate(() => {
         localStorage.clear();
         sessionStorage.clear();
@@ -121,6 +118,5 @@ export async function verifyAuthRequired(page: Page, protectedPath: string): Pro
   await page.goto(protectedPath);
 
   // Should redirect to login if not authenticated
-  await page.waitForURL('/auth/login');
+  await page.waitForURL("/auth/login");
 }
-

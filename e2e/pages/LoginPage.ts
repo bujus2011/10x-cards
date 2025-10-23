@@ -1,12 +1,12 @@
 /**
  * Login Page Object Model
- * 
+ *
  * Encapsulates the login page structure and interactions.
  * Uses data-testid selectors for resilient element selection.
  */
 
-import { type Page, type Locator, expect } from '@playwright/test';
-import { AuthPage } from './AuthPage';
+import { type Page, type Locator, expect } from "@playwright/test";
+import { AuthPage } from "./AuthPage";
 
 export class LoginPage extends AuthPage {
   // Form elements
@@ -14,36 +14,36 @@ export class LoginPage extends AuthPage {
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
   readonly submitButton: Locator;
-  
+
   // Error and feedback
   readonly errorMessage: Locator;
-  
+
   // Navigation links
   readonly forgotPasswordLink: Locator;
   readonly registerLink: Locator;
 
   constructor(page: Page) {
     super(page);
-    
+
     // Form locators
-    this.loginForm = page.getByTestId('login-form');
-    this.emailInput = page.getByTestId('login-email-input');
-    this.passwordInput = page.getByTestId('login-password-input');
-    this.submitButton = page.getByTestId('login-submit-button');
-    
+    this.loginForm = page.getByTestId("login-form");
+    this.emailInput = page.getByTestId("login-email-input");
+    this.passwordInput = page.getByTestId("login-password-input");
+    this.submitButton = page.getByTestId("login-submit-button");
+
     // Error locators
-    this.errorMessage = page.getByTestId('login-error-message');
-    
+    this.errorMessage = page.getByTestId("login-error-message");
+
     // Navigation locators
-    this.forgotPasswordLink = page.getByTestId('login-forgot-password-link');
-    this.registerLink = page.getByTestId('login-register-link');
+    this.forgotPasswordLink = page.getByTestId("login-forgot-password-link");
+    this.registerLink = page.getByTestId("login-register-link");
   }
 
   /**
    * Navigate to the login page
    */
   async goto() {
-    await this.page.goto('/auth/login');
+    await this.page.goto("/auth/login");
     await this.waitForPageLoad();
   }
 
@@ -133,9 +133,8 @@ export class LoginPage extends AuthPage {
    */
   async isSubmitting(): Promise<boolean> {
     const text = await this.submitButton.textContent();
-    return text?.includes('Signing in...') ?? false;
+    return text?.includes("Signing in...") ?? false;
   }
-
 
   /**
    * Check if all form elements are visible
@@ -148,4 +147,3 @@ export class LoginPage extends AuthPage {
     );
   }
 }
-

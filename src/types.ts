@@ -8,6 +8,9 @@ export type Flashcard = Database["public"]["Tables"]["flashcards"]["Row"];
 export type FlashcardInsert = Database["public"]["Tables"]["flashcards"]["Insert"];
 export type Generation = Database["public"]["Tables"]["generations"]["Row"];
 export type GenerationErrorLog = Database["public"]["Tables"]["generation_error_logs"]["Row"];
+export type ReviewLog = Database["public"]["Tables"]["review_logs"]["Row"];
+export type ReviewLogInsert = Database["public"]["Tables"]["review_logs"]["Insert"];
+export type ReviewLogUpdate = Database["public"]["Tables"]["review_logs"]["Update"];
 
 // ------------------------------------------------------------------------------------------------
 // 1. Flashcard DTO
@@ -117,3 +120,43 @@ export type GenerationErrorLogDto = Pick<
   GenerationErrorLog,
   "id" | "error_code" | "error_message" | "model" | "source_text_hash" | "source_text_length" | "created_at" | "user_id"
 >;
+
+// ------------------------------------------------------------------------------------------------
+// 11. Study Session DTOs
+//     Types for spaced repetition study sessions
+// ------------------------------------------------------------------------------------------------
+
+// Rating options for FSRS algorithm (1=Again, 2=Hard, 3=Good, 4=Easy)
+export type Rating = 1 | 2 | 3 | 4;
+
+// State of a flashcard in FSRS (0=New, 1=Learning, 2=Review, 3=Relearning)
+export type State = 0 | 1 | 2 | 3;
+
+// Flashcard with review data for study session
+export interface StudyCardDto {
+  flashcard: FlashcardDto;
+  review: {
+    state: State;
+    due: string;
+    stability: number;
+    difficulty: number;
+    elapsed_days: number;
+    scheduled_days: number;
+    reps: number;
+    lapses: number;
+    last_review: string | null;
+  };
+}
+
+// Command to submit a review rating
+export interface SubmitReviewCommand {
+  flashcard_id: number;
+  rating: Rating;
+}
+
+// Response after submitting a review
+export interface SubmitReviewResponseDto {
+  success: boolean;
+  next_due: string;
+  state: State;
+}

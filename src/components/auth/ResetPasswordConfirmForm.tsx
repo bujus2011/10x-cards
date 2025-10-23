@@ -90,7 +90,9 @@ export function ResetPasswordConfirmForm({ isLoading = false }: ResetPasswordCon
         </div>
 
         <a href="/auth/reset-password" className="block">
-          <Button className="w-full" data-testid="reset-password-confirm-request-new-link-button">Request New Reset Link</Button>
+          <Button className="w-full" data-testid="reset-password-confirm-request-new-link-button">
+            Request New Reset Link
+          </Button>
         </a>
 
         <div className="text-center text-sm">
@@ -117,7 +119,9 @@ export function ResetPasswordConfirmForm({ isLoading = false }: ResetPasswordCon
         </div>
 
         <a href="/auth/login" className="block">
-          <Button className="w-full" data-testid="reset-password-confirm-go-to-login-button">Go to Login</Button>
+          <Button className="w-full" data-testid="reset-password-confirm-go-to-login-button">
+            Go to Login
+          </Button>
         </a>
       </div>
     );

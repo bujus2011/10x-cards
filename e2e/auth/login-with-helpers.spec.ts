@@ -1,21 +1,21 @@
 /**
  * Login E2E Tests - Using Helpers
- * 
+ *
  * Example of using test helpers and Page Object Models together.
  * This demonstrates best practices for authentication testing.
  */
 
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages';
-import { TEST_USERS } from '../helpers';
+import { test, expect } from "@playwright/test";
+import { LoginPage } from "../pages";
+import { TEST_USERS } from "../helpers";
 
-test.describe('Login with Helpers', () => {
+test.describe("Login with Helpers", () => {
   test.beforeEach(async ({ context }) => {
     // Clear cookies at context level (more reliable)
     await context.clearCookies();
   });
 
-  test('should login with valid test user credentials', async ({ page }) => {
+  test("should login with valid test user credentials", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
 
@@ -24,13 +24,13 @@ test.describe('Login with Helpers', () => {
 
     // Wait for navigation to complete after successful login
     // Note: Home page redirects to /generate for authenticated users
-    await page.waitForURL('/generate');
+    await page.waitForURL("/generate");
 
     // Verify we're on the main app page
-    await expect(page).toHaveURL('/generate');
+    await expect(page).toHaveURL("/generate");
   });
 
-  test('should show error with invalid credentials', async ({ page }) => {
+  test("should show error with invalid credentials", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
 
@@ -41,7 +41,7 @@ test.describe('Login with Helpers', () => {
     await expect(loginPage.errorMessage).toBeVisible();
   });
 
-  test('should show error for invalid email format', async ({ page }) => {
+  test("should show error for invalid email format", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
 
@@ -50,10 +50,10 @@ test.describe('Login with Helpers', () => {
 
     await expect(loginPage.errorMessage).toBeVisible();
     const errorText = await loginPage.getErrorText();
-    expect(errorText).toContain('Invalid email');
+    expect(errorText).toContain("Invalid email");
   });
 
-  test('should show error for short password', async ({ page }) => {
+  test("should show error for short password", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
 
@@ -62,7 +62,6 @@ test.describe('Login with Helpers', () => {
 
     await expect(loginPage.errorMessage).toBeVisible();
     const errorText = await loginPage.getErrorText();
-    expect(errorText).toContain('Password must be at least 8 characters');
+    expect(errorText).toContain("Password must be at least 8 characters");
   });
 });
-

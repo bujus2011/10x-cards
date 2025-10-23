@@ -81,7 +81,15 @@ const ROUTE_CONFIG = {
    * Any route NOT in the public array is considered protected
    * Users will be redirected to /auth/login if not authenticated
    */
-  protected: ["/generate", "/my-flashcards", "/api/flashcards", "/api/generations"] as const,
+  protected: [
+    "/generate",
+    "/my-flashcards",
+    "/study-session",
+    "/api/flashcards",
+    "/api/generations",
+    "/api/study-session",
+    "/api/study-stats",
+  ] as const,
 } as const;
 
 /**

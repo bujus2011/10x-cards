@@ -47,6 +47,13 @@ export function Navbar({ user }: NavbarProps) {
             >
               My Flashcards
             </a>
+            <a
+              href="/study-session"
+              className="text-sm text-muted-foreground hover:text-foreground"
+              data-testid="navbar-study-session-link"
+            >
+              Study Session
+            </a>
           </div>
         </div>
 

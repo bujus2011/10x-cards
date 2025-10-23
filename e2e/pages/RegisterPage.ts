@@ -1,12 +1,12 @@
 /**
  * Register Page Object Model
- * 
+ *
  * Encapsulates the registration page structure and interactions.
  * Uses data-testid selectors for resilient element selection.
  */
 
-import { type Page, type Locator, expect } from '@playwright/test';
-import { AuthPage } from './AuthPage';
+import { type Page, type Locator, expect } from "@playwright/test";
+import { AuthPage } from "./AuthPage";
 
 export class RegisterPage extends AuthPage {
   // Form elements (to be added when register form gets data-testid attributes)
@@ -15,35 +15,35 @@ export class RegisterPage extends AuthPage {
   readonly passwordInput: Locator;
   readonly confirmPasswordInput: Locator;
   readonly submitButton: Locator;
-  
+
   // Error and feedback
   readonly errorMessage: Locator;
-  
+
   // Navigation links
   readonly loginLink: Locator;
 
   constructor(page: Page) {
     super(page);
-    
+
     // Form locators - placeholder selectors (update when data-testid attributes are added)
-    this.registerForm = page.locator('form');
+    this.registerForm = page.locator("form");
     this.emailInput = page.getByLabel(/email/i);
     this.passwordInput = page.getByLabel(/^password$/i);
     this.confirmPasswordInput = page.getByLabel(/confirm password/i);
-    this.submitButton = page.getByRole('button', { name: /sign up|register/i });
-    
+    this.submitButton = page.getByRole("button", { name: /sign up|register/i });
+
     // Error locators
     this.errorMessage = page.locator('[role="alert"]').first();
-    
+
     // Navigation locators
-    this.loginLink = page.getByRole('link', { name: /sign in|log in/i });
+    this.loginLink = page.getByRole("link", { name: /sign in|log in/i });
   }
 
   /**
    * Navigate to the register page
    */
   async goto() {
-    await this.page.goto('/auth/register');
+    await this.page.goto("/auth/register");
     await this.waitForPageLoad();
   }
 
@@ -148,4 +148,3 @@ export class RegisterPage extends AuthPage {
     );
   }
 }
-

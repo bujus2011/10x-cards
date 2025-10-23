@@ -1,47 +1,47 @@
 /**
  * Reset Password Page Object Model
- * 
+ *
  * Encapsulates the reset password page structure and interactions.
  * Uses data-testid selectors for resilient element selection.
  */
 
-import { type Page, type Locator, expect } from '@playwright/test';
-import { AuthPage } from './AuthPage';
+import { type Page, type Locator, expect } from "@playwright/test";
+import { AuthPage } from "./AuthPage";
 
 export class ResetPasswordPage extends AuthPage {
   // Form elements (to be added when reset password form gets data-testid attributes)
   readonly resetPasswordForm: Locator;
   readonly emailInput: Locator;
   readonly submitButton: Locator;
-  
+
   // Error and feedback
   readonly errorMessage: Locator;
   readonly successMessage: Locator;
-  
+
   // Navigation links
   readonly loginLink: Locator;
 
   constructor(page: Page) {
     super(page);
-    
+
     // Form locators - placeholder selectors (update when data-testid attributes are added)
-    this.resetPasswordForm = page.locator('form');
+    this.resetPasswordForm = page.locator("form");
     this.emailInput = page.getByLabel(/email/i);
-    this.submitButton = page.getByRole('button', { name: /reset|send/i });
-    
+    this.submitButton = page.getByRole("button", { name: /reset|send/i });
+
     // Error and success locators
     this.errorMessage = page.locator('[role="alert"]').first();
     this.successMessage = page.locator('.success-message, [role="status"]').first();
-    
+
     // Navigation locators
-    this.loginLink = page.getByRole('link', { name: /back to login|sign in/i });
+    this.loginLink = page.getByRole("link", { name: /back to login|sign in/i });
   }
 
   /**
    * Navigate to the reset password page
    */
   async goto() {
-    await this.page.goto('/auth/reset-password');
+    await this.page.goto("/auth/reset-password");
     await this.waitForPageLoad();
   }
 
@@ -139,10 +139,6 @@ export class ResetPasswordPage extends AuthPage {
    * Check if form is visible
    */
   async isFormVisible(): Promise<boolean> {
-    return (
-      (await this.emailInput.isVisible()) &&
-      (await this.submitButton.isVisible())
-    );
+    return (await this.emailInput.isVisible()) && (await this.submitButton.isVisible());
   }
 }
-
