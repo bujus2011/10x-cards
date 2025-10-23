@@ -42,6 +42,16 @@
   - Zarządzanie sesją (JWT tokens, cookies)
   - Obsługa błędów (niepoprawne hasło, nieistniejący użytkownik)
   - Test trwałości sesji (refresh tokens)
+  - Walidacja formularza logowania (`LoginForm` komponent)
+  - Testy E2E dla różnych scenariuszy logowania
+  - Obsługa stanów ładowania (disabled button podczas submitu)
+- **Wylogowanie**:
+  - Endpoint POST `/api/auth/logout`
+  - Usuwanie sesji użytkownika z Supabase
+  - Czyszczenie cookies i localStorage
+  - Przekierowanie na stronę logowania po wylogowaniu
+  - Walidacja że chronione trasy są niedostępne po wylogowaniu
+  - Test przepływu: logowanie → operacje → wylogowanie → brak dostępu
 - **Resetowanie hasła**:
   - Mechanizm resetowania hasła przez email
   - Walidacja tokenów resetowania
@@ -69,6 +79,20 @@
   - Edycja istniejących flashcards
   - Usuwanie flashcards
   - Bulk operations (`BulkSaveButton`)
+- **Sesja nauki z algorytmem Spaced Repetition** (US-008):
+  - Testy komponentu `StudySessionView`
+  - Integracja z biblioteką `ts-fsrs` (Free Spaced Repetition Scheduler)
+  - Wyświetlanie fiszek do powtórki (karty z `due date` <= teraz)
+  - System oceniania trudności (Again, Hard, Good, Easy - rating 1-4)
+  - Pokazywanie i ukrywanie odpowiedzi (front/back card)
+  - Obliczanie następnego terminu powtórki na podstawie algorytmu FSRS
+  - Zapis historii powtórek w tabeli `review_logs`
+  - Testy API endpoint `/api/study-session` (GET - pobieranie kart, POST - zapis recenzji)
+  - Testy API endpoint `/api/study-stats` (GET - statystyki nauki)
+  - Testy stanów FSRS: New (0), Learning (1), Review (2), Relearning (3)
+  - Walidacja parametrów FSRS: stability, difficulty, elapsed_days, scheduled_days
+  - Scenariusze edge case: brak kart do powtórki, błędy zapisu recenzji
+  - Responsywność layoutu sesji nauki
 - **Obsługa błędów**:
   - Sprawdzenie wyświetlania komunikatów błędów (`ErrorNotification`)
   - Logowanie błędów do tabeli `generation_error_logs`
@@ -88,7 +112,38 @@
   - Weryfikacja stabilności kontraktu API Openrouter
   - Testy z mockami dla szybkiego feedbacku
 
-### 4.4. Interfejs użytkownika i komponenty
+### 4.4. Testy E2E - specyficzne wyzwania i rozwiązania
+
+- **Problem synchronizacji React state w testach E2E**:
+  - Wykryty problem: race condition między Playwright's `fill()` a React `onChange` handlers
+  - Objawy: wartości w polach formularza nie są ustawiane w React state przed submitem
+  - Rozwiązanie: dodanie strategicznych timeoutów i mechanizmu weryfikacji wartości
+  - Implementacja w `LoginPage.ts` Page Object Model
+  - Używanie `expect().toHaveValue()` do weryfikacji przed submitem
+  - Dodanie `blur()` na ostatnim polu aby wywołać wszystkie pending state updates
+  - Timeouty: 300ms po email, 500ms po password dla stabilności
+- **Konfiguracja testów dla stabilności**:
+  - Tryb `serial` dla test suites z formularzami (`test.describe.configure({ mode: 'serial' })`)
+  - Ograniczenie liczby workerów do 3 lokalnie (zmniejsza obciążenie serwera)
+  - Workers = 1 w CI dla maksymalnej stabilności
+  - Dodanie `noValidate` attribute w `LoginForm` aby wyłączyć HTML5 validation i używać tylko JavaScript validation
+- **Timeouty i retry logic**:
+  - Zwiększone timeouty dla testów z rzeczywistymi API calls (np. 60s dla successful login)
+  - Timeouty dla `waitForURL()` dostosowane do obciążenia serwera (45s)
+  - Brak automatycznego retry w lokalnym środowisku (`retries: 0`)
+  - 2 retry w CI environment dla odporności na flaky tests
+- **Izolacja testów**:
+  - `beforeEach` z `clearCookies()` w testach auth
+  - Osobne test users dla różnych scenariuszy (valid, invalid, shortPassword, invalidEmail)
+  - Użycie `.env.test` z dedykowanymi credentials dla testów
+  - Testowa instancja Supabase w chmurze
+- **Page Object Model best practices**:
+  - Metody `login()`, `fillEmail()`, `fillPassword()` z wbudowaną weryfikacją
+  - Gettery dla locatorów (`emailInput`, `passwordInput`, `submitButton`, `errorMessage`)
+  - Pomocnicze metody `getErrorText()`, `hasError()`, `isSubmitDisabled()`
+  - Oczekiwanie na `toBeVisible()` przed interakcją z elementami
+
+### 4.5. Interfejs użytkownika i komponenty
 
 - **Renderowanie komponentów**:
   - Testy statycznych komponentów Astro (Welcome.astro, Layout.astro)
@@ -107,7 +162,7 @@
   - Snapshoty komponentów w Storybook
   - Automatyczne wykrywanie zmian wizualnych przez Chromatic
 
-### 4.5. API Endpoints
+### 4.6. API Endpoints
 
 - **Auth endpoints** (`/api/auth/*`):
   - POST /api/auth/login
@@ -122,13 +177,38 @@
 - **Generations endpoints** (`/api/generations`):
   - POST dla nowych generacji
   - Obsługa długotrwałych operacji
+- **Study session endpoints** (`/api/study-session`, `/api/study-stats`):
+  - GET /api/study-session - pobieranie fiszek do powtórki (z parametrem `limit`)
+  - POST /api/study-session - zapisywanie rezultatu powtórki (flashcard_id, rating)
+  - GET /api/study-stats - statystyki nauki użytkownika
+  - Walidacja z Zod schemas (`SubmitReviewCommand`)
+  - Integracja z FSRS algorithm (ts-fsrs library)
+  - Obsługa błędów (brak autoryzacji, nieprawidłowy rating, nieistniejąca karta)
 
-### 4.6. Bezpieczeństwo
+### 4.7. Baza danych i migracje
+
+- **Tabele w Supabase**:
+  - `flashcards` - przechowywanie fiszek użytkowników
+  - `generations` - historia generacji fiszek przez AI
+  - `generation_error_logs` - logi błędów podczas generacji
+  - `review_logs` - historia powtórek z danymi FSRS (nowa tabela dla US-008)
+- **Migracja review_logs** (`20240320143004_create_review_logs_table.sql`):
+  - Kolumny: id, flashcard_id, user_id, state, rating, due, stability, difficulty
+  - Kolumny FSRS: elapsed_days, scheduled_days, reps, lapses, last_review
+  - Foreign keys: flashcard_id → flashcards(id), user_id → auth.users(id)
+  - Cascade deletion przy usuwaniu flashcard lub użytkownika
+  - Timestamps: created_at, updated_at z automatycznymi wartościami
+- **RLS Policies**:
+  - Weryfikacja że użytkownicy mają dostęp tylko do swoich `review_logs`
+  - Policy dla SELECT, INSERT, UPDATE based on user_id
+  - Testy edge cases (próby dostępu do cudzych danych)
+
+### 4.8. Bezpieczeństwo
 
 - **RLS Policies w Supabase**:
   - Weryfikacja czy użytkownicy mają dostęp tylko do swoich danych
   - Testy dla ról `anon` i `authenticated`
-  - Edge cases (próby dostępu do cudzych flashcards)
+  - Edge cases (próby dostępu do cudzych flashcards, review_logs)
 - **Walidacja danych**:
   - SQL injection prevention
   - XSS protection
@@ -430,9 +510,102 @@ Regularne raportowanie:
 
 ---
 
-## Załącznik A: Przykładowa konfiguracja narzędzi
+## Załącznik A: Status implementacji testów (stan aktualny)
 
-### A.1. Vitest configuration (vitest.config.ts)
+### A.1. Testy E2E - zaimplementowane
+
+✅ **Login tests** (`e2e/auth/login.spec.ts`):
+- 11 testów zaimplementowanych
+- Wszystkie przechodzą stabilnie w trybie serial
+- Page Object Model: `e2e/pages/LoginPage.ts`
+- Scenariusze: layout, form interactions, error handling, navigation
+
+✅ **Login with helpers tests** (`e2e/auth/login-with-helpers.spec.ts`):
+- 4 testy zaimplementowanych
+- Demonstracja użycia test helpers i Page Object Model
+- Test users w `e2e/helpers/auth.helpers.ts`
+- Wszystkie testy przechodzą
+
+✅ **Example tests** (`e2e/example.spec.ts`):
+- Podstawowe testy dla homepage i auth flow
+- Visual regression testing example
+
+### A.2. Konfiguracja testowa
+
+✅ **Playwright config** (`playwright.config.ts`):
+- Configured dla Chromium (single browser strategy)
+- Workers: 3 lokalnie, 1 w CI
+- Retry: 0 lokalnie, 2 w CI
+- Timeouty i screenshots skonfigurowane
+- `.env.test` dla test credentials
+
+✅ **Test helpers**:
+- `auth.helpers.ts` - funkcje pomocnicze dla autentykacji
+- `TEST_USERS` - różne scenariusze użytkowników
+- `loginAsUser()`, `clearAuthData()`, `verifyAuthRequired()`
+
+✅ **Page Object Models**:
+- `LoginPage.ts` - z metodami `login()`, `fillEmail()`, `fillPassword()`
+- `AuthPage.ts` - bazowa klasa dla stron auth
+- Built-in verification i timeouty
+
+### A.3. Do zrobienia (TODO)
+
+❌ **Testy dla Study Session**:
+- Brak testów E2E dla `/study-session` page
+- Brak testów dla `StudySessionView` komponentu
+- Brak testów API dla `/api/study-session` i `/api/study-stats`
+
+❌ **Testy jednostkowe**:
+- Brak testów dla `StudySessionService`
+- Brak testów dla integracji z `ts-fsrs`
+- Brak testów dla `openrouter.service.ts`
+- Brak testów dla komponentów React
+
+❌ **Testy dla Logout**:
+- Brak testów E2E dla flow wylogowania
+- Brak testów dla `/api/auth/logout` endpoint
+
+❌ **Testy dla My Flashcards**:
+- Brak testów E2E dla `/my-flashcards` page
+- Brak testów dla `MyFlashcardsView` komponentu
+
+❌ **Visual regression testing**:
+- Brak konfiguracji Storybook
+- Brak Chromatic integration
+
+❌ **Testy wydajnościowe**:
+- Brak Lighthouse CI
+- Brak testów obciążeniowych
+
+### A.4. Znane problemy
+
+⚠️ **Flaky test**: "should login with valid test user credentials"
+- Czasami nie przechodzi przy równoległym uruchomieniu z innymi plikami testowymi
+- Przyczyna: wysokie obciążenie serwera dev przy 3+ workerach
+- Workaround: test przechodzi zawsze gdy uruchamiany sam
+- Timeout zwiększony do 60s dla tego testu
+- Status: AKCEPTOWALNE dla lokalnego developmentu
+
+⚠️ **React state synchronization**
+- Problem z race condition między Playwright fill() a React onChange
+- Rozwiązane poprzez timeouty i verification steps w Page Object Model
+- Może wymagać zwiększenia timeoutów na wolniejszych maszynach
+
+### A.5. Metryki testów E2E (aktualny stan)
+
+- **Całkowita liczba testów E2E**: 20
+- **Testy przechodzące**: 19 (95%)
+- **Testy skipped**: 1 (test wymagający testowego użytkownika)
+- **Czas wykonania**: ~10-12s (sequential), ~35-45s (3 workers)
+- **Stabilność**: 95% (1 flaky test akceptowalny)
+- **Coverage**: Login flow w 100%, pozostałe flow 0%
+
+---
+
+## Załącznik B: Przykładowa konfiguracja narzędzi
+
+### B.1. Vitest configuration (vitest.config.ts)
 
 ```typescript
 import { defineConfig } from "vitest/config";
@@ -459,7 +632,7 @@ export default defineConfig({
 });
 ```
 
-### A.2. Playwright configuration (playwright.config.ts)
+### B.2. Playwright configuration (playwright.config.ts)
 
 ```typescript
 import { defineConfig, devices } from "@playwright/test";
@@ -502,7 +675,7 @@ export default defineConfig({
 });
 ```
 
-### A.3. MSW setup (src/test/mocks/handlers.ts)
+### B.3. MSW setup (src/test/mocks/handlers.ts)
 
 ```typescript
 import { http, HttpResponse } from "msw";

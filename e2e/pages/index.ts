@@ -9,3 +9,4 @@ export { AuthPage } from "./AuthPage";
 export { LoginPage } from "./LoginPage";
 export { RegisterPage } from "./RegisterPage";
 export { ResetPasswordPage } from "./ResetPasswordPage";
+export { StudySessionPage } from "./StudySessionPage";

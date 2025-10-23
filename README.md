@@ -31,11 +31,21 @@
 
 **Testing:**
 
-- Vitest with React Testing Library for unit and integration tests
-- Playwright for end-to-end (E2E) testing
-- MSW 2.x for API mocking
-- Storybook 8.x with Chromatic for visual regression testing
-- axe-core for accessibility testing
+- **Unit & Integration Tests:**
+  - Vitest - test framework integrated with Vite/Astro
+  - React Testing Library - component testing focused on UX
+  - @testing-library/user-event - advanced user interaction simulation
+  - @testing-library/jest-dom - additional test matchers
+  - MSW 2.x - API mocking via Mock Service Worker
+  - jsdom / happy-dom - DOM environment simulation
+- **End-to-End Tests:**
+  - Playwright - cross-browser E2E testing with built-in test runner
+  - Playwright Test Runner - assertions and auto-waiting mechanisms
+  - Playwright Trace Viewer - test debugging and analysis
+- **Visual Regression & Accessibility:**
+  - Storybook 8.x - component documentation and isolated testing
+  - Chromatic - automated visual regression testing
+  - axe-core with @axe-core/playwright - accessibility audits
 
 **CI/CD / Deployment:**
 
