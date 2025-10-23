@@ -22,8 +22,12 @@ test.describe('Login with Helpers', () => {
     // Use test user from helpers
     await loginPage.login(TEST_USERS.valid.email, TEST_USERS.valid.password);
 
-    // Should redirect to home page (adjust based on your app)
-    await expect(page).toHaveURL('/');
+    // Wait for navigation to complete after successful login
+    // Note: Home page redirects to /generate for authenticated users
+    await page.waitForURL('/generate');
+
+    // Verify we're on the main app page
+    await expect(page).toHaveURL('/generate');
   });
 
   test('should show error with invalid credentials', async ({ page }) => {

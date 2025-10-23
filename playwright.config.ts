@@ -28,7 +28,7 @@ export default defineConfig({
   /* Shared settings for all the projects below */
   use: {
     /* Base URL to use in actions like `await page.goto('/')` */
-    baseURL: process.env.BASE_URL || "http://localhost:4321",
+    baseURL: process.env.BASE_URL || "http://localhost:3000",
 
     /* Collect trace when retrying the failed test */
     trace: "on-first-retry",
@@ -49,10 +49,10 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  // Commented out - run dev server manually with: npm run dev
+  // Commented out - run dev server manually with: npm run dev:e2e
   // webServer: {
-  //     command: 'npm run dev',
-  //     url: 'http://localhost:4321',
+  //     command: 'npm run dev:e2e',
+  //     url: 'http://localhost:3000',
   //     reuseExistingServer: true,
   //     timeout: 120 * 1000,
   // },

@@ -18,6 +18,18 @@ export function LoginForm({ isLoading = false }: LoginFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    // Client-side validation
+    if (!email || !email.includes("@")) {
+      setError("Invalid email");
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -29,19 +41,26 @@ export function LoginForm({ isLoading = false }: LoginFormProps) {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
-
-      if (data.status === "error") {
-        setError(data.error);
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        setError("Failed to process server response");
+        setIsSubmitting(false);
         return;
       }
 
-      // Reload the page to update server-side session
-      window.location.href = "/";
+      if (!response.ok || data.status === "error") {
+        setError(data.error || "An error occurred during login");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Reload the page to update server-side session and go to app home
+      window.location.href = "/generate";
     } catch {
-      setError("An unexpected error occurred. Please try again.");
-    } finally {
       setIsSubmitting(false);
+      setError("An unexpected error occurred. Please try again.");
     }
   };
 

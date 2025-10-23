@@ -49,16 +49,15 @@ test.describe('Login Page', () => {
     });
 
     test('should disable submit button while submitting', async () => {
-      // Fill form with invalid credentials to trigger error (not redirect)
+      // Fill form with valid format credentials that will trigger API call
       await loginPage.fillEmail('test@example.com');
-      await loginPage.fillPassword('short');
-      
-      // Click submit
+      await loginPage.fillPassword('validpassword123');
+
+      // Click submit and wait for the button to become disabled
       await loginPage.clickSubmit();
-      
-      // Check if button shows submitting state
-      const isSubmitting = await loginPage.isSubmitting();
-      expect(isSubmitting).toBe(true);
+
+      // Wait for the button to become disabled (React state update)
+      await expect(loginPage.submitButton).toBeDisabled({ timeout: 1000 });
     });
   });
 
@@ -68,7 +67,7 @@ test.describe('Login Page', () => {
 
       // Wait for error message to appear
       await expect(loginPage.errorMessage).toBeVisible({ timeout: 5000 });
-      
+
       // Verify error is detected
       const hasError = await loginPage.hasError();
       expect(hasError).toBe(true);
@@ -79,7 +78,7 @@ test.describe('Login Page', () => {
 
       // Wait for error message
       await expect(loginPage.errorMessage).toBeVisible({ timeout: 5000 });
-      
+
       const errorText = await loginPage.getErrorText();
       expect(errorText).toContain('Password must be at least 8 characters');
     });
@@ -89,7 +88,7 @@ test.describe('Login Page', () => {
 
       // Wait for error message
       await expect(loginPage.errorMessage).toBeVisible({ timeout: 5000 });
-      
+
       const errorText = await loginPage.getErrorText();
       expect(errorText).toContain('Invalid email');
     });

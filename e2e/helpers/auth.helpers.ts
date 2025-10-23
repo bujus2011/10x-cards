@@ -49,8 +49,8 @@ export async function loginAsUser(
   await loginPage.goto();
   await loginPage.login(email, password);
 
-  // Wait for navigation to complete
-  await page.waitForURL('/');
+  // Wait for navigation to complete (redirects to /generate for authenticated users)
+  await page.waitForURL('/generate');
 }
 
 /**
