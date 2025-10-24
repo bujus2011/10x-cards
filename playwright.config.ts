@@ -42,9 +42,42 @@ export default defineConfig({
 
   /* Configure projects for major browsers - using only Chromium as per guidelines */
   projects: [
+    // 1. Auth tests - test login functionality WITHOUT saved auth state (run FIRST)
+    // The last test in this suite ("authenticate and save state") saves auth state for other tests
     {
-      name: "chromium",
+      name: "auth-tests",
+      testMatch: /auth\/.*\.spec\.ts/,
       use: { ...devices["Desktop Chrome"] },
+    },
+
+    // 2. Flashcard Generation tests - run AFTER auth-tests, use saved auth state
+    {
+      name: "flashcard-generation",
+      testMatch: /flashcard-generation\/.*\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: ".auth/user.json",
+      },
+      dependencies: ["auth-tests"],
+    },
+
+    // 3. Study Session tests - run after flashcard-generation
+    {
+      name: "study-session",
+      testMatch: /study-session\/.*\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: ".auth/user.json",
+      },
+      dependencies: ["flashcard-generation"],
+    },
+
+    // 4. Cleanup - MUST run LAST to clear authentication state
+    {
+      name: "cleanup",
+      testMatch: /cleanup\/.*\.spec\.ts/,
+      use: { ...devices["Desktop Chrome"] },
+      dependencies: ["study-session"],
     },
   ],
 

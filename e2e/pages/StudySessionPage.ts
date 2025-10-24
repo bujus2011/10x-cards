@@ -125,18 +125,26 @@ export class StudySessionPage {
         );
     }
 
-    /**
-     * Wait for loading to complete and session to become active
-     */
-    async waitForActiveSession() {
-        // Wait for loading to disappear (if present)
-        if (await this.loadingContainer.isVisible()) {
-            await expect(this.loadingContainer).toBeHidden({ timeout: 10000 });
-        }
-
-        // Wait for active session to appear
-        await expect(this.activeContainer).toBeVisible({ timeout: 5000 });
+  /**
+   * Wait for loading to complete and session to become active
+   * @throws Error if session is complete/empty instead of active
+   */
+  async waitForActiveSession() {
+    // Wait for loading to disappear (if present)
+    const loadingVisible = await this.loadingContainer.isVisible().catch(() => false);
+    if (loadingVisible) {
+      await expect(this.loadingContainer).toBeHidden({ timeout: 10000 });
     }
+
+    // Check which state we're in
+    const isComplete = await this.completeContainer.isVisible().catch(() => false);
+    if (isComplete) {
+      throw new Error("Session is complete or empty - no cards available to study");
+    }
+
+    // Wait for active session to appear
+    await expect(this.activeContainer).toBeVisible({ timeout: 5000 });
+  }
 
     /**
      * Get the current session state

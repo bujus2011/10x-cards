@@ -43,6 +43,7 @@ export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit }: Fla
                   placeholder="Front side"
                   className="resize-none"
                   maxLength={200}
+                  data-testid="edit-front-textarea"
                 />
                 <div className="text-sm text-muted-foreground">{editedFront.length}/200 characters</div>
               </div>
@@ -53,6 +54,7 @@ export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit }: Fla
                   placeholder="Back side"
                   className="resize-none"
                   maxLength={500}
+                  data-testid="edit-back-textarea"
                 />
                 <div className="text-sm text-muted-foreground">{editedBack.length}/500 characters</div>
               </div>
@@ -73,6 +75,7 @@ export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit }: Fla
               disabled={
                 editedFront.length > 200 || editedBack.length > 500 || !editedFront.trim() || !editedBack.trim()
               }
+              data-testid="save-edit-button"
             >
               <Save className="h-4 w-4" />
             </Button>

@@ -29,7 +29,7 @@ export const TEST_USERS = {
     password: "ValidPass123!",
   },
   shortPassword: {
-    email: process.env.E2E_USERNAME || "test@example.com",
+    email: "test@gmail.com", // Valid email format with real domain to pass email validation
     password: "short",
   },
 } as const;
@@ -49,8 +49,8 @@ export async function loginAsUser(
   await loginPage.goto();
   await loginPage.login(email, password);
 
-  // Wait for navigation to complete (redirects to /generate for authenticated users)
-  await page.waitForURL("/generate");
+  // Wait for navigation away from login page (successful auth redirects to any protected page)
+  await page.waitForURL((url) => !url.pathname.includes("/auth/login"), { timeout: 10000 });
 }
 
 /**
