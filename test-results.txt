@@ -1,0 +1,257 @@
+[dotenv@17.2.3] injecting env (7) from .env.test -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+
+Running 55 tests using 1 worker
+
+[1A[2K[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+
+[1A[2K[1/55] [auth-tests] › e2e\auth\example.spec.ts:11:3 › Homepage › should redirect unauthenticated users to login
+[1A[2K[2/55] [auth-tests] › e2e\auth\example.spec.ts:25:3 › Homepage › should demonstrate visual regression testing on login page
+[1A[2K[3/55] [auth-tests] › e2e\auth\example.spec.ts:42:3 › Authentication Flow › should navigate to login page
+[1A[2K[4/55] [auth-tests] › e2e\auth\example.spec.ts:53:3 › Authentication Flow › should show validation errors for invalid input
+[1A[2K[5/55] [auth-tests] › e2e\auth\login-with-helpers.spec.ts:20:3 › Login with Helpers › should login with valid test user credentials
+[1A[2K[6/55] [auth-tests] › e2e\auth\login-with-helpers.spec.ts:39:3 › Login with Helpers › should show error with invalid credentials
+[1A[2K[7/55] [auth-tests] › e2e\auth\login-with-helpers.spec.ts:50:3 › Login with Helpers › should show error for invalid email format
+[1A[2K[8/55] [auth-tests] › e2e\auth\login-with-helpers.spec.ts:63:8 › Login with Helpers › should show error for short password
+[1A[2K[9/55] [auth-tests] › e2e\auth\login-with-helpers.spec.ts:83:3 › Login with Helpers › authenticate and save state
+[1A[2K[auth-tests] › e2e\auth\login-with-helpers.spec.ts:83:3 › Login with Helpers › authenticate and save state
+✓ Authentication state saved successfully to .auth/user.json
+
+[1A[2K[10/55] [auth-tests] › e2e\auth\login.spec.ts:21:5 › Login Page › Page Layout › should display auth layout with correct title and subtitle
+[1A[2K[11/55] [auth-tests] › e2e\auth\login.spec.ts:26:5 › Login Page › Page Layout › should display all login form elements
+[1A[2K[12/55] [auth-tests] › e2e\auth\login.spec.ts:33:5 › Login Page › Page Layout › should display navigation links
+[1A[2K[13/55] [auth-tests] › e2e\auth\login.spec.ts:40:5 › Login Page › Form Interactions › should allow filling email and password fields
+[1A[2K[14/55] [auth-tests] › e2e\auth\login.spec.ts:48:5 › Login Page › Form Interactions › should show submit button as enabled by default
+[1A[2K[15/55] [auth-tests] › e2e\auth\login.spec.ts:53:5 › Login Page › Form Interactions › should disable submit button while submitting
+[1A[2K[16/55] [auth-tests] › e2e\auth\login.spec.ts:67:5 › Login Page › Error Handling › should show error for invalid credentials
+[1A[2K[17/55] [auth-tests] › e2e\auth\login.spec.ts:79:10 › Login Page › Error Handling › should show error for short password
+[1A[2K[18/55] [auth-tests] › e2e\auth\login.spec.ts:89:5 › Login Page › Error Handling › should show error for invalid email format
+[1A[2K[19/55] [auth-tests] › e2e\auth\login.spec.ts:101:5 › Login Page › Navigation › should navigate to register page when clicking sign up link
+[1A[2K[20/55] [auth-tests] › e2e\auth\login.spec.ts:106:5 › Login Page › Navigation › should navigate to reset password page when clicking forgot password link
+[1A[2K[21/55] [auth-tests] › e2e\auth\login.spec.ts:114:10 › Login Page › Successful Login › should successfully log in with valid credentials
+[1A[2K[dotenv@17.2.3] injecting env (0) from .env.test -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+
+[1A[2K[22/55] [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:24:5 › Flashcard Generation Workflow › should complete full workflow: generate, edit, accept, and save flashcards
+[1A[2K[flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:24:5 › Flashcard Generation Workflow › should complete full workflow: generate, edit, accept, and save flashcards
+Generated 17 flashcards
+
+[1A[2KOriginal card 3 - Front: Jakie są zasady dziedziczenia w C#?...
+
+[1A[2K  1) [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:24:5 › Flashcard Generation Workflow › should complete full workflow: generate, edit, accept, and save flashcards › Wait for save success notification and page reload 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeEnabled[2m([22m[2m)[22m failed
+
+    Locator:  getByTestId('generate-button')
+    Expected: enabled
+    Received: disabled
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeEnabled" with timeout 5000ms[22m
+    [2m  - waiting for getByTestId('generate-button')[22m
+    [2m    9 × locator resolved to <button disabled data-slot="button" data-testid="generate-button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive …>Generate Flashcards</button>[22m
+    [2m      - unexpected value "disabled"[22m
+
+
+      116 |             // Verify page is reset to initial state
+      117 |             await expect(generatePage.sourceTextarea).toBeVisible();
+    > 118 |             await expect(generatePage.generateButton).toBeEnabled();
+          |                                                       ^
+      119 |             await expect(generatePage.flashcardList).toBeHidden();
+      120 |         });
+      121 |     });
+        at D:\DEVELOPER\GitHub\10xcards\10x-cards\e2e\flashcard-generation\generate-and-save.spec.ts:118:55
+        at D:\DEVELOPER\GitHub\10xcards\10x-cards\e2e\flashcard-generation\generate-and-save.spec.ts:113:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flashcard-generation-gener-5789e--accept-and-save-flashcards-flashcard-generation\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\flashcard-generation-gener-5789e--accept-and-save-flashcards-flashcard-generation\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flashcard-generation-gener-5789e--accept-and-save-flashcards-flashcard-generation\error-context.md
+
+
+[1A[2K[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🔄 add secrets lifecycle management: https://dotenvx.com/ops
+
+[1A[2K[23/55] [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:123:5 › Flashcard Generation Workflow › should disable generate button when text is too short
+[1A[2K[24/55] [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:128:5 › Flashcard Generation Workflow › should disable generate button when text is too long
+[1A[2K[25/55] [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:134:5 › Flashcard Generation Workflow › should enable generate button when text length is valid
+[1A[2K  2) [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:134:5 › Flashcard Generation Workflow › should enable generate button when text length is valid 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeEnabled[2m([22m[2m)[22m failed
+
+    Locator:  getByTestId('generate-button')
+    Expected: enabled
+    Received: disabled
+    Timeout:  10000ms
+
+    Call log:
+    [2m  - Expect "toBeEnabled" with timeout 10000ms[22m
+    [2m  - waiting for getByTestId('generate-button')[22m
+    [2m    14 × locator resolved to <button disabled data-slot="button" data-testid="generate-button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive …>Generate Flashcards</button>[22m
+    [2m       - unexpected value "disabled"[22m
+
+
+      135 |         const validText = "A".repeat(5000);
+      136 |         await generatePage.fillSourceText(validText);
+    > 137 |         await expect(generatePage.generateButton).toBeEnabled({ timeout: 10000 });
+          |                                                   ^
+      138 |     });
+      139 |
+      140 |     test("should save all flashcards without accepting", async () => {
+        at D:\DEVELOPER\GitHub\10xcards\10x-cards\e2e\flashcard-generation\generate-and-save.spec.ts:137:51
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flashcard-generation-gener-2efde-n-when-text-length-is-valid-flashcard-generation\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\flashcard-generation-gener-2efde-n-when-text-length-is-valid-flashcard-generation\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flashcard-generation-gener-2efde-n-when-text-length-is-valid-flashcard-generation\error-context.md
+
+
+[1A[2K[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+
+[1A[2K[26/55] [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:140:5 › Flashcard Generation Workflow › should save all flashcards without accepting
+[1A[2K[27/55] [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:151:5 › Flashcard Generation Workflow › should allow rejecting flashcards
+[1A[2K  3) [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:151:5 › Flashcard Generation Workflow › should allow rejecting flashcards 
+
+    Error: Generate button did not become enabled after retries: undefined
+
+       at pages\GenerateFlashcardsPage.ts:176
+
+      174 |
+      175 |         // If all retries failed, throw the last error
+    > 176 |         throw new Error(`Generate button did not become enabled after retries: ${lastError}`);
+          |               ^
+      177 |     }
+      178 |
+      179 |     /**
+        at GenerateFlashcardsPage.clickGenerate (D:\DEVELOPER\GitHub\10xcards\10x-cards\e2e\pages\GenerateFlashcardsPage.ts:176:15)
+        at GenerateFlashcardsPage.generateFlashcardsFromText (D:\DEVELOPER\GitHub\10xcards\10x-cards\e2e\pages\GenerateFlashcardsPage.ts:337:9)
+        at D:\DEVELOPER\GitHub\10xcards\10x-cards\e2e\flashcard-generation\generate-and-save.spec.ts:153:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flashcard-generation-gener-7c24d--allow-rejecting-flashcards-flashcard-generation\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\flashcard-generation-gener-7c24d--allow-rejecting-flashcards-flashcard-generation\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flashcard-generation-gener-7c24d--allow-rejecting-flashcards-flashcard-generation\error-context.md
+
+
+[1A[2K[dotenv@17.2.3] injecting env (0) from .env.test -- tip: ⚙️  override existing env vars with { override: true }
+
+[1A[2K[28/55] [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:168:5 › Flashcard Generation Workflow › should validate edit textarea character limits
+[1A[2K  4) [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:168:5 › Flashcard Generation Workflow › should validate edit textarea character limits 
+
+    Error: Generate button did not become enabled after retries: undefined
+
+       at pages\GenerateFlashcardsPage.ts:176
+
+      174 |
+      175 |         // If all retries failed, throw the last error
+    > 176 |         throw new Error(`Generate button did not become enabled after retries: ${lastError}`);
+          |               ^
+      177 |     }
+      178 |
+      179 |     /**
+        at GenerateFlashcardsPage.clickGenerate (D:\DEVELOPER\GitHub\10xcards\10x-cards\e2e\pages\GenerateFlashcardsPage.ts:176:15)
+        at GenerateFlashcardsPage.generateFlashcardsFromText (D:\DEVELOPER\GitHub\10xcards\10x-cards\e2e\pages\GenerateFlashcardsPage.ts:337:9)
+        at D:\DEVELOPER\GitHub\10xcards\10x-cards\e2e\flashcard-generation\generate-and-save.spec.ts:170:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flashcard-generation-gener-5fdf5-t-textarea-character-limits-flashcard-generation\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\flashcard-generation-gener-5fdf5-t-textarea-character-limits-flashcard-generation\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flashcard-generation-gener-5fdf5-t-textarea-character-limits-flashcard-generation\error-context.md
+
+
+[1A[2K[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+
+[1A[2K[29/55] [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:188:5 › Flashcard Generation Workflow › should show character counter in edit mode
+[1A[2K[30/55] [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:202:5 › Flashcard Generation Workflow › should disable Save Accepted when no flashcards are accepted
+[1A[2K  5) [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:202:5 › Flashcard Generation Workflow › should disable Save Accepted when no flashcards are accepted 
+
+    Error: Generate button did not become enabled after retries: undefined
+
+       at pages\GenerateFlashcardsPage.ts:176
+
+      174 |
+      175 |         // If all retries failed, throw the last error
+    > 176 |         throw new Error(`Generate button did not become enabled after retries: ${lastError}`);
+          |               ^
+      177 |     }
+      178 |
+      179 |     /**
+        at GenerateFlashcardsPage.clickGenerate (D:\DEVELOPER\GitHub\10xcards\10x-cards\e2e\pages\GenerateFlashcardsPage.ts:176:15)
+        at GenerateFlashcardsPage.generateFlashcardsFromText (D:\DEVELOPER\GitHub\10xcards\10x-cards\e2e\pages\GenerateFlashcardsPage.ts:337:9)
+        at D:\DEVELOPER\GitHub\10xcards\10x-cards\e2e\flashcard-generation\generate-and-save.spec.ts:204:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flashcard-generation-gener-63a41--no-flashcards-are-accepted-flashcard-generation\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\flashcard-generation-gener-63a41--no-flashcards-are-accepted-flashcard-generation\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flashcard-generation-gener-63a41--no-flashcards-are-accepted-flashcard-generation\error-context.md
+
+
+[1A[2K[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+
+[1A[2K[31/55] [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:210:5 › Flashcard Generation Workflow › should enable Save Accepted when at least one flashcard is accepted
+[1A[2K[32/55] [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:230:5 › Flashcard Generation - Error Handling › should show error notification on API failure
+[1A[2K  6) [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:230:5 › Flashcard Generation - Error Handling › should show error notification on API failure 
+
+    [31mTest timeout of 180000ms exceeded while running "beforeEach" hook.[39m
+
+      223 |     let generatePage: GenerateFlashcardsPage;
+      224 |
+    > 225 |     test.beforeEach(async ({ page }) => {
+          |          ^
+      226 |         generatePage = new GenerateFlashcardsPage(page);
+      227 |         await generatePage.goto();
+      228 |     });
+        at D:\DEVELOPER\GitHub\10xcards\10x-cards\e2e\flashcard-generation\generate-and-save.spec.ts:225:10
+
+    Error: browserContext.newPage: Test timeout of 180000ms exceeded.
+
+
+[1A[2K[33/55] [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:259:5 › Flashcard Generation - Multiple Edits › should allow editing multiple flashcards
+[1A[2K  7) [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:259:5 › Flashcard Generation - Multiple Edits › should allow editing multiple flashcards 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+
+[1A[2K[34/55] [flashcard-generation] › e2e\flashcard-generation\user-scenario.spec.ts:24:5 › User Scenario: Generate, Edit, and Save Flashcards › complete workflow from article to saved flashcards
+[1A[2K  8) [flashcard-generation] › e2e\flashcard-generation\user-scenario.spec.ts:24:5 › User Scenario: Generate, Edit, and Save Flashcards › complete workflow from article to saved flashcards 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+
+[1A[2K  8 failed
+    [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:24:5 › Flashcard Generation Workflow › should complete full workflow: generate, edit, accept, and save flashcards 
+    [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:134:5 › Flashcard Generation Workflow › should enable generate button when text length is valid 
+    [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:151:5 › Flashcard Generation Workflow › should allow rejecting flashcards 
+    [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:168:5 › Flashcard Generation Workflow › should validate edit textarea character limits 
+    [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:202:5 › Flashcard Generation Workflow › should disable Save Accepted when no flashcards are accepted 
+    [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:230:5 › Flashcard Generation - Error Handling › should show error notification on API failure 
+    [flashcard-generation] › e2e\flashcard-generation\generate-and-save.spec.ts:259:5 › Flashcard Generation - Multiple Edits › should allow editing multiple flashcards 
+    [flashcard-generation] › e2e\flashcard-generation\user-scenario.spec.ts:24:5 › User Scenario: Generate, Edit, and Save Flashcards › complete workflow from article to saved flashcards 
+  3 skipped
+  21 did not run
+  23 passed (7.6m)
+
+[36m  Serving HTML report at http://localhost:60472. Press Ctrl+C to quit.[39m

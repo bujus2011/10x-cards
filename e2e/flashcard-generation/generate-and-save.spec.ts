@@ -115,7 +115,8 @@ test.describe("Flashcard Generation Workflow", () => {
 
             // Verify page is reset to initial state
             await expect(generatePage.sourceTextarea).toBeVisible();
-            await expect(generatePage.generateButton).toBeEnabled();
+            await expect(generatePage.generateButton).toBeVisible();
+            await expect(generatePage.generateButton).toBeDisabled(); // Should be disabled since textarea is empty
             await expect(generatePage.flashcardList).toBeHidden();
         });
     });
@@ -134,7 +135,7 @@ test.describe("Flashcard Generation Workflow", () => {
     test("should enable generate button when text length is valid", async () => {
         const validText = "A".repeat(5000);
         await generatePage.fillSourceText(validText);
-        await expect(generatePage.generateButton).toBeEnabled();
+        await expect(generatePage.generateButton).toBeEnabled({ timeout: 10000 });
     });
 
     test("should save all flashcards without accepting", async () => {
@@ -174,14 +175,24 @@ test.describe("Flashcard Generation Workflow", () => {
         // Enter edit mode
         await card0.clickEdit();
 
-        // Try to enter text exceeding limits
+        // Try to enter text exceeding limits - maxLength will truncate it
         const tooLongFront = "A".repeat(201);
         const tooLongBack = "B".repeat(501);
 
         await card0.editFrontTextarea.fill(tooLongFront);
         await card0.editBackTextarea.fill(tooLongBack);
 
-        // Save button should be disabled
+        // Verify maxLength attribute enforces the limits (text is truncated to 200/500)
+        const frontValue = await card0.editFrontTextarea.inputValue();
+        const backValue = await card0.editBackTextarea.inputValue();
+        expect(frontValue.length).toBe(200);
+        expect(backValue.length).toBe(500);
+
+        // Save button should be enabled since truncated values are valid
+        await expect(card0.saveEditButton).toBeEnabled();
+
+        // Test that empty input disables the save button
+        await card0.editFrontTextarea.clear();
         await expect(card0.saveEditButton).toBeDisabled();
     });
 

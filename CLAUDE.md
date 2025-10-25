@@ -12,6 +12,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - TypeScript 5
 - Tailwind CSS 4 + Shadcn/ui
 - Supabase (PostgreSQL + Auth)
+- OpenRouter.ai API (for AI flashcard generation)
+- ts-fsrs (FSRS spaced repetition algorithm)
 - Vitest + Playwright for testing
 
 **Node Version:** 22.14.0 (specified in `.nvmrc`)
@@ -112,8 +114,10 @@ src/
 3. Middleware automatically protects unless path is in ROUTE_CONFIG.public
 
 **Cookie Configuration:**
-- In production: `secure: true` (HTTPS only)
-- In development/test: `secure: false` (allows HTTP for local testing)
+- Cookies are configured in `src/db/supabase.client.ts` with `cookieOptions`
+- Security settings automatically adjust based on environment:
+  - Production (`import.meta.env.PROD`): `secure: true` (HTTPS only)
+  - Development/test: `secure: false` (allows HTTP for localhost)
 
 ### API Design Patterns
 
@@ -126,9 +130,15 @@ src/
 - Access authenticated user via `Astro.locals.user`
 
 **Services Pattern:**
-- Services in `src/lib/` handle business logic (e.g., FlashcardService, GenerationService)
+- Services in `src/lib/` handle business logic
+- Available services:
+  - `FlashcardService` - CRUD operations for flashcards
+  - `GenerationService` - AI flashcard generation via OpenRouter
+  - `StudySessionService` - Spaced repetition logic using FSRS algorithm
+  - `OpenRouterService` - Integration with OpenRouter.ai API
 - Services receive Supabase client via dependency injection
 - Custom error types (e.g., DatabaseError) for proper error handling
+- Example instantiation: `new FlashcardService(locals.supabase)`
 
 ### Data Layer
 
@@ -198,6 +208,12 @@ src/
 - Auth helpers in `e2e/helpers/auth.helpers.ts`
 - Runs in Chromium only (as per guidelines)
 - Requires `.env.test` with E2E_USERNAME and E2E_PASSWORD
+- **Test Execution Order:** Tests run in dependency order:
+  1. `auth-tests` - Validates login and saves auth state to `.auth/user.json`
+  2. `flashcard-generation` - Uses saved auth state, tests AI generation
+  3. `study-session` - Uses saved auth state, tests spaced repetition
+  4. `cleanup` - Clears authentication state (must run last)
+- Project-specific timeouts configured in `playwright.config.ts` (e.g., 180s for AI generation)
 
 ## Environment Variables
 
@@ -226,4 +242,5 @@ Supabase migrations in `supabase/migrations/`:
 3. **Auth Middleware** - Always call `supabase.auth.getUser()` before other operations
 4. **SSR Configuration** - Auth pages require SSR (either `export const prerender = false` or `output: "server"` in config)
 5. **API Endpoints** - Always use uppercase method names: `POST`, `GET`, not `post`, `get`
-6. **Linter Feedback** - Use linter feedback to improve code when making changes
+6. **SupabaseClient Type** - Import `SupabaseClient` type from `src/db/supabase.client.ts`, NOT from `@supabase/supabase-js`
+7. **Linter Feedback** - Use linter feedback to improve code when making changes

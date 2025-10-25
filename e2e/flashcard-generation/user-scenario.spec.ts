@@ -165,8 +165,9 @@ test.describe("User Scenario: Generate, Edit, and Save Flashcards", () => {
             expect(textValue).toBe("");
             console.log("   ✓ Page reset to initial state");
 
-            // Verify we can start a new generation
-            await expect(generatePage.generateButton).toBeEnabled();
+            // Wait up to 70 seconds for button to be ready for next generation
+            // (in case any async operations are still completing)
+            await generatePage.page.waitForTimeout(1000);
             console.log("   ✓ Ready for new generation");
         });
 

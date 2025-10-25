@@ -87,7 +87,7 @@ export function FlashcardGenerationView() {
         onClick={handleGenerateFlashcards}
         disabled={isLoading || textValue.length < 1000 || textValue.length > 10000}
         isLoading={isLoading}
-        data-testid="generate-flashcards-button"
+        data-testid="generate-button"
       />
 
       {isLoading && <SkeletonLoader />}
@@ -100,7 +100,6 @@ export function FlashcardGenerationView() {
               generationId={generationId}
               disabled={isLoading}
               onSuccess={handleSaveSuccess}
-              data-testid="bulk-save-button"
             />
           )}
           <FlashcardList

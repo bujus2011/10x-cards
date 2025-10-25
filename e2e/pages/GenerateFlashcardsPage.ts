@@ -45,7 +45,7 @@ export class GenerateFlashcardsPage {
 
         // Text input locators
         this.sourceTextarea = page.getByTestId("source-text-textarea");
-        this.textCounter = page.locator(".text-sm", { hasText: "characters" });
+        this.textCounter = page.locator(".text-sm", { hasText: "/ 10000 characters" });
 
         // Generate button
         this.generateButton = page.getByTestId("generate-button");
@@ -86,14 +86,33 @@ export class GenerateFlashcardsPage {
      * @param text - Text to fill (1000-10000 characters)
      */
     async fillSourceText(text: string) {
-        await this.sourceTextarea.clear();
-        await this.sourceTextarea.fill(text);
+        // Click on textarea to focus it
+        await this.sourceTextarea.click();
 
-        // Trigger React onChange event - blur and focus to force update
-        await this.sourceTextarea.blur();
+        // Clear any existing content
+        await this.sourceTextarea.press('Control+A');
+        await this.sourceTextarea.press('Backspace');
+
+        // Wait a bit after clearing
         await this.page.waitForTimeout(100);
-        await this.sourceTextarea.focus();
-        await this.page.waitForTimeout(100);
+
+        // Use pressSequentially with delay: 0 for fast but reliable typing
+        // This sends real keyboard events that React 19 recognizes
+        await this.sourceTextarea.pressSequentially(text, { delay: 0 });
+
+        // Wait for React to process
+        await this.page.waitForTimeout(500);
+
+        // Verify the character counter updated
+        const expectedCount = text.length;
+        await expect(async () => {
+            const counterText = await this.textCounter.textContent();
+            const match = counterText?.match(/^(\d+)\s*\/\s*10000/);
+            const actualCount = match ? parseInt(match[1], 10) : 0;
+            if (actualCount !== expectedCount) {
+                throw new Error(`Counter shows ${actualCount}, expected ${expectedCount}`);
+            }
+        }).toPass({ timeout: 15000, intervals: [500] });
     }
 
     /**
@@ -108,6 +127,19 @@ export class GenerateFlashcardsPage {
      * @returns Current character count
      */
     async getCharacterCount(): Promise<number> {
+        // Wait for React to update the character counter
+        await this.page.waitForTimeout(500);
+
+        // Read from the visible character counter
+        const counterText = await this.textCounter.textContent();
+
+        // Extract number from text like "1234 / 10000 characters"
+        const match = counterText?.match(/^(\d+)\s*\/\s*10000/);
+        if (match) {
+            return parseInt(match[1], 10);
+        }
+
+        // Fallback to textarea value length
         const text = await this.sourceTextarea.inputValue();
         return text.length;
     }
@@ -121,17 +153,32 @@ export class GenerateFlashcardsPage {
 
     /**
      * Click the generate button
+     * Waits for button to be enabled with multiple attempts to handle React state updates
      */
     async clickGenerate() {
-        await expect(this.generateButton).toBeEnabled();
-        await this.generateButton.click();
+        // Try multiple times with small waits between attempts (max ~10 seconds total)
+        let lastError;
+        for (let attempt = 0; attempt < 20; attempt++) {
+            try {
+                if (await this.generateButton.isEnabled()) {
+                    await this.generateButton.click();
+                    return;
+                }
+            } catch (error) {
+                lastError = error;
+            }
+            await this.page.waitForTimeout(500);
+        }
+
+        // If all retries failed, throw the last error
+        throw new Error(`Generate button did not become enabled after retries: ${lastError}`);
     }
 
     /**
      * Wait for flashcards to be generated
      * @param timeout - Maximum wait time in milliseconds (default: 90000ms)
      */
-    async waitForFlashcards(timeout: number = 90000) {
+    async waitForFlashcards(timeout = 90000) {
         await expect(this.flashcardList).toBeVisible({ timeout });
         // Wait for at least one flashcard item
         await expect(this.flashcardItems.first()).toBeVisible({ timeout: 5000 });
@@ -229,7 +276,7 @@ export class GenerateFlashcardsPage {
      */
     async waitForSaveSuccess() {
         // Wait for success toast
-        const toast = this.page.locator('[data-sonner-toast]', { hasText: /Successfully saved/i });
+        const toast = this.page.locator("[data-sonner-toast]", { hasText: /Successfully saved/i });
         await expect(toast).toBeVisible({ timeout: 10000 });
 
         // Wait for flashcard list to disappear (page reset)
@@ -283,7 +330,7 @@ export class GenerateFlashcardsPage {
      * @param text - Source text to generate from
      * @param timeout - Maximum wait time for generation
      */
-    async generateFlashcardsFromText(text: string, timeout: number = 90000) {
+    async generateFlashcardsFromText(text: string, timeout = 90000) {
         await this.fillSourceText(text);
         await this.clickGenerate();
         await this.waitForFlashcards(timeout);
@@ -293,9 +340,9 @@ export class GenerateFlashcardsPage {
      * Get all flashcard contents
      * @returns Array of flashcard front/back pairs
      */
-    async getAllFlashcardContents(): Promise<Array<{ front: string; back: string }>> {
+    async getAllFlashcardContents(): Promise<{ front: string; back: string }[]> {
         const count = await this.getFlashcardCount();
-        const flashcards: Array<{ front: string; back: string }> = [];
+        const flashcards: { front: string; back: string }[] = [];
 
         for (let i = 0; i < count; i++) {
             const item = this.getFlashcardItem(i);
@@ -451,4 +498,3 @@ export class FlashcardItem {
         await expect(this.container).toBeVisible();
     }
 }
-

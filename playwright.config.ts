@@ -22,6 +22,9 @@ export default defineConfig({
   /* Opt out of parallel tests on CI, limit workers locally for stability */
   workers: process.env.CI ? 1 : 3,
 
+  /* Global test timeout - increased for AI generation tasks */
+  timeout: 120000,
+
   /* Reporter to use */
   reporter: "html",
 
@@ -48,6 +51,7 @@ export default defineConfig({
       name: "auth-tests",
       testMatch: /auth\/.*\.spec\.ts/,
       use: { ...devices["Desktop Chrome"] },
+      timeout: 60000,
     },
 
     // 2. Flashcard Generation tests - run AFTER auth-tests, use saved auth state
@@ -59,6 +63,7 @@ export default defineConfig({
         storageState: ".auth/user.json",
       },
       dependencies: ["auth-tests"],
+      timeout: 180000, // Increase timeout for flashcard generation (AI can be slow)
     },
 
     // 3. Study Session tests - run after flashcard-generation
@@ -70,6 +75,7 @@ export default defineConfig({
         storageState: ".auth/user.json",
       },
       dependencies: ["flashcard-generation"],
+      timeout: 60000,
     },
 
     // 4. Cleanup - MUST run LAST to clear authentication state
@@ -78,6 +84,7 @@ export default defineConfig({
       testMatch: /cleanup\/.*\.spec\.ts/,
       use: { ...devices["Desktop Chrome"] },
       dependencies: ["study-session"],
+      timeout: 30000,
     },
   ],
 

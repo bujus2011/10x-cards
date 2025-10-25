@@ -10,9 +10,10 @@ interface FlashcardListItemProps {
   onAccept: () => void;
   onReject: () => void;
   onEdit: (front: string, back: string) => void;
+  itemTestId?: string;
 }
 
-export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit }: FlashcardListItemProps) {
+export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit, itemTestId }: FlashcardListItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedFront, setEditedFront] = useState(flashcard.front);
   const [editedBack, setEditedBack] = useState(flashcard.back);
@@ -31,6 +32,7 @@ export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit }: Fla
         flashcard.accepted ? "bg-green-50/50 border-green-200" : "bg-white",
         !flashcard.accepted && "opacity-75"
       )}
+      data-testid={itemTestId}
     >
       <div className="flex justify-between items-start gap-4">
         <div className="flex-1 space-y-4">
