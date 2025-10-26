@@ -211,8 +211,9 @@ src/
 - **Test Execution Order:** Tests run in dependency order:
   1. `auth-tests` - First runs `00-setup-auth.spec.ts` (alphabetically first) which saves auth state to `.auth/user.json`, then validates login functionality
   2. `flashcard-generation` - Uses saved auth state, tests AI generation
-  3. `study-session` - Uses saved auth state, tests spaced repetition
-  4. `cleanup` - Clears authentication state (must run last)
+  3. `my-flashcards` - Uses saved auth state, tests flashcard management (editing, deleting)
+  4. `study-session` - Uses saved auth state, tests spaced repetition
+  5. `cleanup` - Clears authentication state and database (must run last)
 - Project-specific timeouts configured in `playwright.config.ts` (e.g., 180s for AI generation)
 
 ## Environment Variables

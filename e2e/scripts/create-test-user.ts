@@ -9,15 +9,16 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
-import dotenv from "dotenv";
-import path from "path";
+import { loadE2EEnvironment, validateE2EEnvironment } from "../helpers/env.helpers";
 
-// Load environment variables from .env.test
-const envPath = path.resolve(process.cwd(), ".env.test");
-const result = dotenv.config({ path: envPath });
+const env = loadE2EEnvironment();
 
-if (result.error) {
-  console.error("❌ Error: Could not find .env.test file");
+// Validate environment variables
+try {
+  validateE2EEnvironment(env);
+} catch (err) {
+  console.error("❌ Error: Configuration is incomplete");
+  console.error(err instanceof Error ? err.message : String(err));
   console.error("\n📝 Please create a .env.test file with the following content:");
   console.error(`
 SUPABASE_URL=your-supabase-url
@@ -29,35 +30,19 @@ BASE_URL=http://localhost:4321
   process.exit(1);
 }
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
-const testEmail = process.env.E2E_USERNAME;
-const testPassword = process.env.E2E_PASSWORD;
-
-// Validate environment variables
-if (!supabaseUrl || !supabaseKey || !testEmail || !testPassword) {
-  console.error("❌ Error: Missing required environment variables in .env.test");
-  console.error("\nRequired variables:");
-  console.error("  - SUPABASE_URL:", supabaseUrl ? "✓" : "✗");
-  console.error("  - SUPABASE_KEY:", supabaseKey ? "✓" : "✗");
-  console.error("  - E2E_USERNAME:", testEmail ? "✓" : "✗");
-  console.error("  - E2E_PASSWORD:", testPassword ? "✓" : "✗");
-  process.exit(1);
-}
-
 async function createTestUser() {
   console.log("🔧 Creating test user for E2E tests...\n");
-  console.log(`📧 Email: ${testEmail}`);
-  console.log(`🔗 Supabase URL: ${supabaseUrl}\n`);
+  console.log(`📧 Email: ${env.e2eUsername}`);
+  console.log(`🔗 Supabase URL: ${env.supabaseUrl}\n`);
 
   // Create Supabase admin client
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  const supabase = createClient(env.supabaseUrl, env.supabaseKey);
 
   try {
     // Try to sign up the user
     const { data, error } = await supabase.auth.signUp({
-      email: testEmail,
-      password: testPassword,
+      email: env.e2eUsername,
+      password: env.e2ePassword,
       options: {
         emailRedirectTo: undefined, // Don't send confirmation email
       },
@@ -70,8 +55,8 @@ async function createTestUser() {
 
         // Try to sign in to verify credentials work
         const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: testEmail,
-          password: testPassword,
+          email: env.e2eUsername,
+          password: env.e2ePassword,
         });
 
         if (signInError) {
@@ -85,6 +70,12 @@ async function createTestUser() {
         }
 
         console.log("✅ Test user already exists and credentials are valid!");
+        if (data.user?.id) {
+          console.log(`   User ID: ${data.user.id}`);
+          console.log(
+            "💡 Add this to your .env.test as E2E_USERNAME_ID for database cleanup",
+          );
+        }
         console.log("\n✨ You can now run E2E tests:");
         console.log("   npm run test:e2e\n");
         process.exit(0);
@@ -96,6 +87,9 @@ async function createTestUser() {
     if (data.user) {
       console.log("✅ Test user created successfully!");
       console.log(`   User ID: ${data.user.id}`);
+      console.log(
+        "💡 Add this to your .env.test as E2E_USERNAME_ID for database cleanup",
+      );
 
       if (data.user.confirmed_at) {
         console.log("   Status: Email confirmed ✓");
