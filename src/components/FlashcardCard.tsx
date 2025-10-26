@@ -98,7 +98,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
 
   if (isEditing) {
     return (
-      <Card className="h-full">
+      <Card className="h-full" data-testid={`flashcard-edit-form-${flashcard.id}`}>
         <CardHeader>
           <CardTitle className="text-sm">Edit Flashcard</CardTitle>
         </CardHeader>
@@ -116,6 +116,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
               className="resize-none"
               rows={3}
               aria-describedby="front-char-count"
+              data-testid={`edit-flashcard-front-${flashcard.id}`}
             />
             <div id="front-char-count" className="text-xs text-muted-foreground">
               {editedFront.length}/200 characters
@@ -135,6 +136,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
               className="resize-none"
               rows={4}
               aria-describedby="back-char-count"
+              data-testid={`edit-flashcard-back-${flashcard.id}`}
             />
             <div id="back-char-count" className="text-xs text-muted-foreground">
               {editedBack.length}/500 characters
@@ -148,6 +150,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
               onClick={handleCancel}
               disabled={isSaving}
               aria-label="Cancel editing flashcard"
+              data-testid={`cancel-edit-flashcard-${flashcard.id}`}
             >
               <X className="h-4 w-4 mr-1" />
               Cancel
@@ -157,6 +160,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
               onClick={handleSave}
               disabled={isSaving || !editedFront.trim() || !editedBack.trim()}
               aria-label="Save flashcard changes"
+              data-testid={`save-flashcard-${flashcard.id}`}
             >
               <Save className="h-4 w-4 mr-1" />
               {isSaving ? "Saving..." : "Save"}
@@ -180,10 +184,13 @@ const FlashcardCardComponent = memo(function FlashcardCard({
           handleToggleFlip();
         }
       }}
+      data-testid={`flashcard-card-${flashcard.id}`}
     >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-sm line-clamp-2">{flashcard.front}</CardTitle>
+          <CardTitle className="text-sm line-clamp-2" data-testid={`flashcard-front-${flashcard.id}`}>
+            {flashcard.front}
+          </CardTitle>
           <div className="flex gap-1 flex-shrink-0">
             <Button
               variant="ghost"
@@ -196,6 +203,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
               disabled={isLoading}
               aria-label="Copy flashcard to clipboard"
               title="Copy flashcard content"
+              data-testid={`copy-flashcard-${flashcard.id}`}
             >
               <Copy className="h-3.5 w-3.5" />
             </Button>
@@ -210,6 +218,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
               disabled={isLoading}
               aria-label="Edit flashcard"
               title="Edit this flashcard"
+              data-testid={`edit-flashcard-${flashcard.id}`}
             >
               <Edit2 className="h-3.5 w-3.5" />
             </Button>
@@ -224,6 +233,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
               disabled={isLoading || isDeleting}
               aria-label="Delete flashcard"
               title="Delete this flashcard permanently"
+              data-testid={`delete-flashcard-${flashcard.id}`}
             >
               <Trash2 className="h-3.5 w-3.5" />
             </Button>
@@ -233,7 +243,9 @@ const FlashcardCardComponent = memo(function FlashcardCard({
       </CardHeader>
       <CardContent>
         <div className="min-h-[100px] flex items-center">
-          <p className="text-sm text-muted-foreground line-clamp-4">{isFlipped ? flashcard.back : flashcard.front}</p>
+          <p className="text-sm text-muted-foreground line-clamp-4" data-testid={`flashcard-content-${flashcard.id}`}>
+            {isFlipped ? flashcard.back : flashcard.front}
+          </p>
         </div>
         <div className="text-xs text-center text-muted-foreground mt-2">
           {isFlipped ? "Click to see front" : "Click to see back"}

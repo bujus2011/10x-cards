@@ -10,7 +10,13 @@ interface GenerateButtonProps {
 
 export function GenerateButton({ onClick, disabled, isLoading, "data-testid": testId }: GenerateButtonProps) {
   return (
-    <Button onClick={onClick} disabled={disabled} size="lg" className="w-full sm:w-auto" data-testid={testId || "generate-button"}>
+    <Button
+      onClick={onClick}
+      disabled={disabled}
+      size="lg"
+      className="w-full sm:w-auto"
+      data-testid={testId || "generate-button"}
+    >
       {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
       {isLoading ? "Generating..." : "Generate Flashcards"}
     </Button>

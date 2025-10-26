@@ -123,26 +123,39 @@ export function StudySessionView() {
   return (
     <div className="max-w-2xl mx-auto mt-8 space-y-4" data-testid="study-session-active">
       {/* Progress indicator */}
-      <div className="flex justify-between items-center text-sm text-gray-600 mb-4" data-testid="study-progress-indicator">
+      <div
+        className="flex justify-between items-center text-sm text-gray-600 mb-4"
+        data-testid="study-progress-indicator"
+      >
         <span data-testid="study-progress-current">
           Card {currentIndex + 1} of {cards.length}
         </span>
-        <span data-testid="study-progress-percentage">{Math.round(((currentIndex + 1) / cards.length) * 100)}% complete</span>
+        <span data-testid="study-progress-percentage">
+          {Math.round(((currentIndex + 1) / cards.length) * 100)}% complete
+        </span>
       </div>
 
       {/* Flashcard */}
       <Card data-testid="flashcard-container">
         <CardHeader>
-          <CardTitle className="text-center" data-testid="flashcard-side-label">{showBack ? "Answer" : "Question"}</CardTitle>
+          <CardTitle className="text-center" data-testid="flashcard-side-label">
+            {showBack ? "Answer" : "Question"}
+          </CardTitle>
         </CardHeader>
         <CardContent className="min-h-[200px] flex items-center justify-center">
           <div className="text-center">
             {!showBack ? (
-              <p className="text-xl" data-testid="flashcard-question">{currentCard.flashcard.front}</p>
+              <p className="text-xl" data-testid="flashcard-question">
+                {currentCard.flashcard.front}
+              </p>
             ) : (
               <div className="space-y-4" data-testid="flashcard-answer-container">
-                <p className="text-lg text-gray-600" data-testid="flashcard-question-on-back">{currentCard.flashcard.front}</p>
-                <p className="text-xl font-semibold" data-testid="flashcard-answer">{currentCard.flashcard.back}</p>
+                <p className="text-lg text-gray-600" data-testid="flashcard-question-on-back">
+                  {currentCard.flashcard.front}
+                </p>
+                <p className="text-xl font-semibold" data-testid="flashcard-answer">
+                  {currentCard.flashcard.back}
+                </p>
               </div>
             )}
           </div>
@@ -154,9 +167,17 @@ export function StudySessionView() {
             </Button>
           ) : (
             <div className="w-full space-y-4" data-testid="rating-buttons-container">
-              <p className="text-center text-sm text-gray-600 mb-4" data-testid="rating-prompt">How well do you know this flashcard?</p>
+              <p className="text-center text-sm text-gray-600 mb-4" data-testid="rating-prompt">
+                How well do you know this flashcard?
+              </p>
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-                <Button onClick={() => handleRating(1)} disabled={submitting} variant="destructive" className="w-full" data-testid="rating-button-again">
+                <Button
+                  onClick={() => handleRating(1)}
+                  disabled={submitting}
+                  variant="destructive"
+                  className="w-full"
+                  data-testid="rating-button-again"
+                >
                   Again
                 </Button>
                 <Button

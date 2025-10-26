@@ -381,7 +381,7 @@ describe("FlashcardListItem", () => {
       const frontTextarea = screen.getByDisplayValue(mockFlashcard.front);
       // maxLength attribute prevents typing more than 200 characters
       expect(frontTextarea).toHaveAttribute("maxLength", "200");
-      
+
       // Assert - with maxLength, we can't actually type 201 characters
       // The textarea enforces the limit at the HTML level
       await user.clear(frontTextarea);
@@ -425,7 +425,7 @@ describe("FlashcardListItem", () => {
       // Act
       const frontTextarea = screen.getByDisplayValue(mockFlashcard.front);
       await user.clear(frontTextarea);
-      
+
       const backTextarea = screen.getByDisplayValue(mockFlashcard.back);
       await user.clear(backTextarea);
 
@@ -453,7 +453,7 @@ describe("FlashcardListItem", () => {
       // Act
       const frontTextarea = screen.getByDisplayValue(mockFlashcard.front);
       await user.clear(frontTextarea);
-      
+
       const backTextarea = screen.getByDisplayValue(mockFlashcard.back);
       await user.clear(backTextarea);
 
@@ -563,4 +563,3 @@ describe("FlashcardListItem", () => {
     });
   });
 });
-

@@ -33,7 +33,7 @@ test.describe("Study Session", () => {
    */
   async function skipIfNoCards() {
     const state = await studyPage.getSessionState();
-    if (state === 'complete' || state === 'empty') {
+    if (state === "complete" || state === "empty") {
       test.skip();
     }
   }
@@ -70,7 +70,7 @@ test.describe("Study Session", () => {
 
       // Skip if no cards available
       const state = await studyPage.getSessionState();
-      if (state === 'complete' || state === 'empty') {
+      if (state === "complete" || state === "empty") {
         test.skip();
       }
 
@@ -364,4 +364,3 @@ test.describe("Study Session", () => {
     });
   });
 });
-

@@ -1,47 +1,48 @@
-# Page Object Model (POM) - E2E Testing
+# Page Object Model (POM) - Testy E2E
 
-This directory contains Page Object Models for E2E testing with Playwright. The POM pattern encapsulates page structure and interactions, making tests more maintainable and readable.
+Ten katalog zawiera modele Page Object Model do testów E2E z Playwright. Wzorzec POM enkapsuluje strukturę strony i interakcje, czyniąc testy bardziej łatwymi w utrzymaniu i czytelnymi.
 
-## 📁 Structure
+## 📁 Struktura
 
 ```
 e2e/pages/
-├── index.ts                      # Central export file
-├── AuthPage.ts                   # Base class for auth pages
-├── LoginPage.ts                  # Login page POM
-├── RegisterPage.ts               # Register page POM
-├── ResetPasswordPage.ts          # Reset password page POM
-├── GenerateFlashcardsPage.ts     # Generate flashcards page POM
-├── StudySessionPage.ts           # Study session page POM
-└── README.md                     # This file
+├── index.ts                      # Centralny plik eksportujący
+├── AuthPage.ts                   # Klasa bazowa dla stron autoryzacji
+├── LoginPage.ts                  # POM strony logowania
+├── RegisterPage.ts               # POM strony rejestracji
+├── ResetPasswordPage.ts          # POM strony resetowania hasła
+├── GenerateFlashcardsPage.ts     # POM strony generowania fiszek
+├── MyFlashcardsPage.ts           # POM strony Moje Fiszki
+├── StudySessionPage.ts           # POM strony sesji nauki
+└── README.md                     # Ten plik
 ```
 
-## 🎯 Design Principles
+## 🎯 Zasady projektowania
 
-### 1. **Inheritance Hierarchy**
+### 1. **Hierarchia dziedziczenia**
 
-- `AuthPage` - Base class for all authentication pages
-  - `LoginPage` - Extends AuthPage
-  - `RegisterPage` - Extends AuthPage
-  - `ResetPasswordPage` - Extends AuthPage
+- `AuthPage` - Klasa bazowa dla wszystkich stron autoryzacji
+  - `LoginPage` - Rozszerza AuthPage
+  - `RegisterPage` - Rozszerza AuthPage
+  - `ResetPasswordPage` - Rozszerza AuthPage
 
-### 2. **Locator Strategy**
+### 2. **Strategia lokatorów**
 
-All pages use `data-testid` attributes for resilient element selection:
+Wszystkie strony używają atrybutów `data-testid` dla odpornego wyboru elementów:
 
-- `page.getByTestId('element-name')` - Primary strategy
-- Semantic selectors as fallback for elements without data-testid
+- `page.getByTestId('element-name')` - Główna strategia
+- Selektory semantyczne jako fallback dla elementów bez data-testid
 
-### 3. **Method Organization**
+### 3. **Organizacja metod**
 
-#### Navigation Methods
+#### Metody nawigacji
 
 ```typescript
 async goto(): Promise<void>
 async waitForPageLoad(): Promise<void>
 ```
 
-#### Interaction Methods
+#### Metody interakcji
 
 ```typescript
 async fillEmail(email: string): Promise<void>
@@ -49,7 +50,7 @@ async fillPassword(password: string): Promise<void>
 async clickSubmit(): Promise<void>
 ```
 
-#### Assertion Helpers
+#### Helpery asercji
 
 ```typescript
 async hasError(): Promise<boolean>
@@ -57,74 +58,74 @@ async getErrorText(): Promise<string | null>
 async isFormVisible(): Promise<boolean>
 ```
 
-#### Complex Actions
+#### Złożone akcje
 
 ```typescript
 async login(email: string, password: string): Promise<void>
 async register(email: string, password: string): Promise<void>
 ```
 
-## 📚 Usage Examples
+## 📚 Przykłady użycia
 
-### Basic Usage
+### Podstawowe użycie
 
 ```typescript
 import { test, expect } from "@playwright/test";
 import { LoginPage } from "../pages/LoginPage";
 
-test("user can login", async ({ page }) => {
+test("użytkownik może się zalogować", async ({ page }) => {
   const loginPage = new LoginPage(page);
 
-  // Navigate to page
+  // Nawigacja do strony
   await loginPage.goto();
 
-  // Perform login
+  // Wykonaj logowanie
   await loginPage.login("user@example.com", "password123");
 
-  // Verify redirect
+  // Weryfikuj przekierowanie
   await expect(page).toHaveURL("/");
 });
 ```
 
-### Using Individual Methods
+### Używanie poszczególnych metod
 
 ```typescript
-test("verify error message", async ({ page }) => {
+test("weryfikuj komunikat błędu", async ({ page }) => {
   const loginPage = new LoginPage(page);
   await loginPage.goto();
 
-  // Fill fields individually
+  // Wypełnij pola indywidualnie
   await loginPage.fillEmail("invalid@example.com");
   await loginPage.fillPassword("wrong");
   await loginPage.clickSubmit();
 
-  // Check for error
+  // Sprawdź błąd
   await expect(loginPage.errorMessage).toBeVisible();
   const errorText = await loginPage.getErrorText();
   expect(errorText).toContain("Invalid");
 });
 ```
 
-### Using Shared Methods from AuthPage
+### Używanie współdzielonych metod z AuthPage
 
 ```typescript
-test("verify page content", async ({ page }) => {
+test("weryfikuj zawartość strony", async ({ page }) => {
   const loginPage = new LoginPage(page);
   await loginPage.goto();
 
-  // Method inherited from AuthPage
+  // Metoda odziedziczona z AuthPage
   await loginPage.verifyPageContent("Welcome back", "Sign in to your account");
 
-  // Check layout visibility
+  // Sprawdź widoczność layoutu
   const isVisible = await loginPage.isLayoutVisible();
   expect(isVisible).toBe(true);
 });
 ```
 
-### Testing Navigation
+### Testowanie nawigacji
 
 ```typescript
-test("navigate to register page", async ({ page }) => {
+test("przejdź do strony rejestracji", async ({ page }) => {
   const loginPage = new LoginPage(page);
   await loginPage.goto();
 
@@ -133,9 +134,9 @@ test("navigate to register page", async ({ page }) => {
 });
 ```
 
-## 🔧 Adding New Pages
+## 🔧 Dodawanie nowych stron
 
-### 1. Create New Page Class
+### 1. Utwórz nową klasę strony
 
 ```typescript
 // e2e/pages/NewPage.ts
@@ -160,152 +161,213 @@ export class NewPage {
 }
 ```
 
-### 2. Export from Index
+### 2. Eksportuj z pliku index
 
 ```typescript
 // e2e/pages/index.ts
 export { NewPage } from "./NewPage";
 ```
 
-### 3. Use in Tests
+### 3. Użyj w testach
 
 ```typescript
 import { NewPage } from "../pages/NewPage";
 
-test("new page test", async ({ page }) => {
+test("test nowej strony", async ({ page }) => {
   const newPage = new NewPage(page);
   await newPage.goto();
   await newPage.doSomething();
 });
 ```
 
-## 🎨 Best Practices
+## 🎨 Najlepsze praktyki
 
-### ✅ DO
+### ✅ RÓB
 
-- Use `data-testid` for all interactive elements
-- Keep methods focused and single-purpose
-- Use descriptive method names (`login` not `submit`)
-- Return promises for async operations
-- Add JSDoc comments for complex methods
-- Group related locators together
+- Używaj `data-testid` dla wszystkich interaktywnych elementów
+- Utrzymuj metody skoncentrowane i jednocelowe
+- Używaj opisowych nazw metod (`login` zamiast `submit`)
+- Zwracaj promisy dla operacji asynchronicznych
+- Dodawaj komentarze JSDoc dla złożonych metod
+- Grupuj powiązane lokatory razem
 
-### ❌ DON'T
+### ❌ NIE RÓB
 
-- Include assertions in Page Objects (use in tests)
-- Make Page Objects aware of other pages
-- Use complex selectors (CSS/XPath) as primary strategy
-- Create god objects with too many responsibilities
-- Duplicate methods across pages (use inheritance)
+- Nie umieszczaj asercji w obiektach Page Object (używaj w testach)
+- Nie twórz Page Objects świadomych innych stron
+- Nie używaj złożonych selektorów (CSS/XPath) jako głównej strategii
+- Nie twórz obiektów boga z zbyt wieloma odpowiedzialnościami
+- Nie duplikuj metod między stronami (używaj dziedziczenia)
 
-## 📖 Reference
+## 📖 Referencje
 
-### AuthPage (Base Class)
+### AuthPage (Klasa bazowa)
 
-**Locators:**
+**Lokatory:**
 
-- `authLayout` - Main auth container
-- `authTitle` - Page title
-- `authSubtitle` - Page subtitle
-- `authContent` - Content wrapper
+- `authLayout` - Główny kontener autoryzacji
+- `authTitle` - Tytuł strony
+- `authSubtitle` - Podtytuł strony
+- `authContent` - Wrapper zawartości
 
-**Methods:**
+**Metody:**
 
-- `goto()` - Navigate to page (abstract)
-- `waitForPageLoad()` - Wait for page to load
-- `verifyPageContent(title, subtitle?)` - Verify title/subtitle
-- `isLayoutVisible()` - Check layout visibility
+- `goto()` - Nawigacja do strony (abstrakcyjna)
+- `waitForPageLoad()` - Czekaj na załadowanie strony
+- `verifyPageContent(title, subtitle?)` - Weryfikuj tytuł/podtytuł
+- `isLayoutVisible()` - Sprawdź widoczność layoutu
 
 ### LoginPage
 
-**Locators:**
+**Lokatory:**
 
-- All from `AuthPage`
-- `loginForm` - Form element
-- `emailInput` - Email input field
-- `passwordInput` - Password input field
-- `submitButton` - Submit button
-- `errorMessage` - Error message container
-- `forgotPasswordLink` - Forgot password link
-- `registerLink` - Register link
+- Wszystkie z `AuthPage`
+- `loginForm` - Element formularza
+- `emailInput` - Pole email
+- `passwordInput` - Pole hasła
+- `submitButton` - Przycisk submit
+- `errorMessage` - Kontener komunikatu błędu
+- `forgotPasswordLink` - Link do resetowania hasła
+- `registerLink` - Link do rejestracji
 
-**Methods:**
+**Metody:**
 
-- All from `AuthPage`
-- `login(email, password)` - Complete login flow
-- `fillEmail(email)` - Fill email field
-- `fillPassword(password)` - Fill password field
-- `clickSubmit()` - Click submit button
-- `getErrorText()` - Get error message text
-- `hasError()` - Check if error is visible
-- `goToForgotPassword()` - Navigate to reset password
-- `goToRegister()` - Navigate to register
-- `isSubmitDisabled()` - Check if button is disabled
-- `isSubmitting()` - Check if form is submitting
-- `isFormVisible()` - Check if form is visible
+- Wszystkie z `AuthPage`
+- `login(email, password)` - Kompletny proces logowania
+- `fillEmail(email)` - Wypełnij pole email
+- `fillPassword(password)` - Wypełnij pole hasła
+- `clickSubmit()` - Kliknij przycisk submit
+- `getErrorText()` - Pobierz tekst komunikatu błędu
+- `hasError()` - Sprawdź czy błąd jest widoczny
+- `goToForgotPassword()` - Przejdź do resetowania hasła
+- `goToRegister()` - Przejdź do rejestracji
+- `isSubmitDisabled()` - Sprawdź czy przycisk jest wyłączony
+- `isSubmitting()` - Sprawdź czy formularz jest wysyłany
+- `isFormVisible()` - Sprawdź czy formularz jest widoczny
 
 ### RegisterPage & ResetPasswordPage
 
-See individual class files for full method documentation.
+Zobacz poszczególne pliki klas dla pełnej dokumentacji metod.
 
 ### GenerateFlashcardsPage
 
-**Locators:**
+**Lokatory:**
 
-- `sourceTextarea` - Source text input area
-- `textCounter` - Character counter display
-- `generateButton` - Generate flashcards button
-- `flashcardList` - Flashcard list container
-- `flashcardItems` - All flashcard items
-- `saveAcceptedButton` - Save accepted flashcards button
-- `saveAllButton` - Save all flashcards button
-- `errorNotification` - Error message container
-- `loadingSkeletons` - Loading state indicators
+- `sourceTextarea` - Pole tekstowe źródłowe
+- `textCounter` - Wyświetlacz licznika znaków
+- `generateButton` - Przycisk generowania fiszek
+- `flashcardList` - Kontener listy fiszek
+- `flashcardItems` - Wszystkie elementy fiszek
+- `saveAcceptedButton` - Przycisk zapisz zaakceptowane fiszki
+- `saveAllButton` - Przycisk zapisz wszystkie fiszki
+- `errorNotification` - Kontener komunikatu błędu
+- `loadingSkeletons` - Wskaźniki stanu ładowania
 
-**Methods:**
+**Metody:**
 
-- `goto()` - Navigate to generate page
-- `waitForPageLoad()` - Wait for page to load
-- `fillSourceText(text)` - Fill source text area
-- `clearSourceText()` - Clear source text area
-- `getCharacterCount()` - Get current character count
-- `isGenerateButtonEnabled()` - Check if generate button is enabled
-- `clickGenerate()` - Click generate button
-- `waitForFlashcards(timeout?)` - Wait for flashcards (default 90s)
-- `waitForLoading()` - Wait for loading state
-- `waitForLoadingToDisappear()` - Wait for loading to finish
-- `getFlashcardCount()` - Get number of generated flashcards
-- `getFlashcardItem(index)` - Get FlashcardItem helper by index
-- `acceptFlashcard(index)` - Accept a flashcard
-- `acceptMultipleFlashcards(indices)` - Accept multiple flashcards
-- `rejectFlashcard(index)` - Reject a flashcard
-- `editFlashcard(index, front, back)` - Edit a flashcard
-- `clickSaveAccepted()` - Click Save Accepted button
-- `clickSaveAll()` - Click Save All button
-- `waitForSaveSuccess()` - Wait for save success notification
-- `verifyErrorVisible(message?)` - Verify error is visible
-- `hasError()` - Check if error is visible
-- `verifySaveButtonsVisible()` - Verify save buttons are visible
-- `verifySaveAcceptedState(enabled)` - Verify Save Accepted state
-- `generateFlashcardsFromText(text, timeout?)` - Complete generation workflow
-- `getAllFlashcardContents()` - Get all flashcard front/back pairs
+- `goto()` - Przejdź do strony generowania
+- `waitForPageLoad()` - Czekaj na załadowanie strony
+- `fillSourceText(text)` - Wypełnij pole tekstowe źródłowe
+- `clearSourceText()` - Wyczyść pole tekstowe źródłowe
+- `getCharacterCount()` - Pobierz aktualną liczbę znaków
+- `isGenerateButtonEnabled()` - Sprawdź czy przycisk generowania jest aktywny
+- `clickGenerate()` - Kliknij przycisk generowania
+- `waitForFlashcards(timeout?)` - Czekaj na fiszki (domyślnie 90s)
+- `waitForLoading()` - Czekaj na stan ładowania
+- `waitForLoadingToDisappear()` - Czekaj na zakończenie ładowania
+- `getFlashcardCount()` - Pobierz liczbę wygenerowanych fiszek
+- `getFlashcardItem(index)` - Pobierz helper FlashcardItem według indeksu
+- `acceptFlashcard(index)` - Zaakceptuj fiszkę
+- `acceptMultipleFlashcards(indices)` - Zaakceptuj wiele fiszek
+- `rejectFlashcard(index)` - Odrzuć fiszkę
+- `editFlashcard(index, front, back)` - Edytuj fiszkę
+- `clickSaveAccepted()` - Kliknij przycisk Zapisz zaakceptowane
+- `clickSaveAll()` - Kliknij przycisk Zapisz wszystkie
+- `waitForSaveSuccess()` - Czekaj na powiadomienie o udanym zapisie
+- `verifyErrorVisible(message?)` - Weryfikuj czy błąd jest widoczny
+- `hasError()` - Sprawdź czy błąd jest widoczny
+- `verifySaveButtonsVisible()` - Weryfikuj czy przyciski zapisu są widoczne
+- `verifySaveAcceptedState(enabled)` - Weryfikuj stan przycisku Zapisz zaakceptowane
+- `generateFlashcardsFromText(text, timeout?)` - Kompletny workflow generowania
+- `getAllFlashcardContents()` - Pobierz wszystkie pary przód/tył fiszek
 
-**FlashcardItem Helper:**
+**Helper FlashcardItem:**
 
-- `accept()` - Accept the flashcard
-- `reject()` - Reject the flashcard
-- `clickEdit()` - Enter edit mode
-- `edit(front, back)` - Edit and save flashcard
-- `getFrontText()` - Get front text
-- `getBackText()` - Get back text
-- `isAccepted()` - Check if accepted
-- `isEdited()` - Check if edited
-- `isInEditMode()` - Check if in edit mode
-- `verifyContent(front, back)` - Verify content
-- `verifyVisible()` - Verify flashcard is visible
+- `accept()` - Zaakceptuj fiszkę
+- `reject()` - Odrzuć fiszkę
+- `clickEdit()` - Wejdź w tryb edycji
+- `edit(front, back)` - Edytuj i zapisz fiszkę
+- `getFrontText()` - Pobierz tekst z przodu
+- `getBackText()` - Pobierz tekst z tyłu
+- `isAccepted()` - Sprawdź czy zaakceptowana
+- `isEdited()` - Sprawdź czy edytowana
+- `isInEditMode()` - Sprawdź czy w trybie edycji
+- `verifyContent(front, back)` - Weryfikuj zawartość
+- `verifyVisible()` - Weryfikuj czy fiszka jest widoczna
 
-## 🔗 Related Files
+### MyFlashcardsPage
 
-- `/10x-cards/src/components/auth/` - React components
-- `/10x-cards/e2e/auth/` - E2E test specs
-- `/10x-cards/playwright.config.ts` - Playwright configuration
+**Lokatory:**
+
+- `loadingSkeleton` - Wyświetlacz szkieletu ładowania
+- `createButton` - Przycisk utwórz nową fiszkę
+- `searchInput` - Pole wyszukiwania
+- `flashcardsGrid` - Kontener siatki fiszek
+- `errorAlert` - Kontener alertu błędu
+- `retryButton` - Przycisk ponów po błędzie
+- `countDisplay` - Wyświetlacz liczby fiszek
+
+**Metody:**
+
+- `goto()` - Przejdź do strony Moje Fiszki
+- `waitForFlashcardsLoaded(timeout?)` - Czekaj na zakończenie ładowania fiszek
+- `waitForLoading()` - Czekaj na pojawienie się stanu ładowania
+- `isLoading()` - Sprawdź czy fiszki są aktualnie ładowane
+- `getFlashcard(id)` - Pobierz helper MyFlashcard według ID z bazy danych
+- `getAllFlashcardIds()` - Pobierz wszystkie widoczne ID fiszek
+- `getFlashcardCount()` - Pobierz liczbę widocznych fiszek
+- `search(query)` - Wyszukaj fiszki
+- `clearSearch()` - Wyczyść wyszukiwanie
+- `getCountText()` - Pobierz tekst liczby wyników wyszukiwania
+- `clickCreate()` - Kliknij przycisk utwórz nową fiszkę
+- `verifyErrorVisible(message?)` - Weryfikuj czy błąd jest widoczny
+- `hasError()` - Sprawdź czy błąd jest widoczny
+- `clickRetry()` - Kliknij przycisk ponów po błędzie
+- `verifyGridVisible()` - Weryfikuj czy siatka fiszek jest widoczna
+- `isGridVisible()` - Sprawdź czy siatka jest widoczna
+- `verifyEmptyState(message?)` - Weryfikuj czy pusty stan jest wyświetlony
+- `waitForToast(message, timeout?)` - Czekaj na powiadomienie toast
+- `waitForSaveSuccess()` - Czekaj na toast sukcesu zapisu
+- `waitForDeleteSuccess()` - Czekaj na toast sukcesu usunięcia
+
+**Helper MyFlashcard:**
+
+- `waitForVisible(timeout?)` - Czekaj aż fiszka będzie widoczna
+- `verifyVisible()` - Weryfikuj czy fiszka jest widoczna
+- `clickFlip()` - Kliknij fiszkę aby ją odwrócić
+- `getFrontText()` - Pobierz tekst z przodu
+- `getContentText()` - Pobierz aktualnie wyświetlaną zawartość
+- `clickCopy()` - Kliknij przycisk kopiuj
+- `clickEdit()` - Kliknij przycisk edytuj aby wejść w tryb edycji
+- `waitForEditFormVisible(timeout?)` - Czekaj na załadowanie formularza edycji
+- `isInEditMode()` - Sprawdź czy w trybie edycji
+- `getEditFrontValue()` - Pobierz wartość pola textarea przód
+- `getEditBackValue()` - Pobierz wartość pola textarea tył
+- `editFront(text)` - Wypełnij pole textarea przód
+- `editBack(text)` - Wypełnij pole textarea tył
+- `clickSave()` - Kliknij przycisk zapisz
+- `waitForSaveComplete(timeout?)` - Czekaj na zakończenie zapisu
+- `isSaveEnabled()` - Sprawdź czy przycisk zapisz jest aktywny
+- `isSaving()` - Sprawdź czy zapis jest w toku
+- `clickCancel()` - Kliknij przycisk anuluj
+- `clickDelete()` - Kliknij przycisk usuń
+- `waitForDeleted(timeout?)` - Czekaj aż fiszka zostanie usunięta
+- `edit(newFront, newBack)` - Kompletny workflow edycji
+- `verifyContent(expectedFront, expectedContent?)` - Weryfikuj zawartość fiszki
+- `verifyEditFormValues(expectedFront, expectedBack)` - Weryfikuj wartości formularza edycji
+
+## 🔗 Powiązane pliki
+
+- `/10x-cards/src/components/auth/` - Komponenty React
+- `/10x-cards/e2e/auth/` - Specyfikacje testów E2E
+- `/10x-cards/playwright.config.ts` - Konfiguracja Playwright

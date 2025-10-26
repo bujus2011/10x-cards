@@ -45,8 +45,8 @@ export default defineConfig({
 
   /* Configure projects for major browsers - using only Chromium as per guidelines */
   projects: [
-    // 1. Auth tests - test login functionality WITHOUT saved auth state (run FIRST)
-    // The last test in this suite ("authenticate and save state") saves auth state for other tests
+    // 1. Auth tests - test login functionality (run FIRST)
+    // The 00-setup-auth.spec.ts test runs first (alphabetically) and saves auth state for other tests
     {
       name: "auth-tests",
       testMatch: /auth\/.*\.spec\.ts/,
@@ -66,10 +66,10 @@ export default defineConfig({
       timeout: 180000, // Increase timeout for flashcard generation (AI can be slow)
     },
 
-    // 3. Study Session tests - run after flashcard-generation
+    // 3. My Flashcards tests - run after flashcard-generation, use saved auth state
     {
-      name: "study-session",
-      testMatch: /study-session\/.*\.spec\.ts/,
+      name: "my-flashcards",
+      testMatch: /my-flashcards\/.*\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
         storageState: ".auth/user.json",
@@ -78,7 +78,19 @@ export default defineConfig({
       timeout: 60000,
     },
 
-    // 4. Cleanup - MUST run LAST to clear authentication state
+    // 4. Study Session tests - run after my-flashcards
+    {
+      name: "study-session",
+      testMatch: /study-session\/.*\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: ".auth/user.json",
+      },
+      dependencies: ["my-flashcards"],
+      timeout: 60000,
+    },
+
+    // 5. Cleanup - MUST run LAST to clear authentication state
     {
       name: "cleanup",
       testMatch: /cleanup\/.*\.spec\.ts/,

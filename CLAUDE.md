@@ -209,7 +209,7 @@ src/
 - Runs in Chromium only (as per guidelines)
 - Requires `.env.test` with E2E_USERNAME and E2E_PASSWORD
 - **Test Execution Order:** Tests run in dependency order:
-  1. `auth-tests` - Validates login and saves auth state to `.auth/user.json`
+  1. `auth-tests` - First runs `00-setup-auth.spec.ts` (alphabetically first) which saves auth state to `.auth/user.json`, then validates login functionality
   2. `flashcard-generation` - Uses saved auth state, tests AI generation
   3. `study-session` - Uses saved auth state, tests spaced repetition
   4. `cleanup` - Clears authentication state (must run last)

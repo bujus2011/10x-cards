@@ -10,22 +10,21 @@ import fs from "fs/promises";
 import path from "path";
 
 test.describe("Cleanup", () => {
-    test("clear authentication state file", async () => {
-        const authFile = path.resolve(process.cwd(), ".auth/user.json");
+  test("clear authentication state file", async () => {
+    const authFile = path.resolve(process.cwd(), ".auth/user.json");
 
-        console.log("🧹 Cleaning up authentication state...");
+    console.log("🧹 Cleaning up authentication state...");
 
-        // Create empty auth state structure
-        const emptyAuthState = {
-            cookies: [],
-            origins: [],
-        };
+    // Create empty auth state structure
+    const emptyAuthState = {
+      cookies: [],
+      origins: [],
+    };
 
-        // Write empty state to file
-        await fs.writeFile(authFile, JSON.stringify(emptyAuthState, null, 2), "utf-8");
+    // Write empty state to file
+    await fs.writeFile(authFile, JSON.stringify(emptyAuthState, null, 2), "utf-8");
 
-        console.log("✓ Authentication state cleared successfully");
-        console.log("✓ File:", authFile);
-    });
+    console.log("✓ Authentication state cleared successfully");
+    console.log("✓ File:", authFile);
+  });
 });
-

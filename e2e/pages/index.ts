@@ -11,3 +11,4 @@ export { RegisterPage } from "./RegisterPage";
 export { ResetPasswordPage } from "./ResetPasswordPage";
 export { GenerateFlashcardsPage, FlashcardItem } from "./GenerateFlashcardsPage";
 export { StudySessionPage } from "./StudySessionPage";
+export { MyFlashcardsPage, MyFlashcard } from "./MyFlashcardsPage";

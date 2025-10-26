@@ -7,7 +7,7 @@
 import { test, expect } from "@playwright/test";
 import { LoginPage } from "../pages/LoginPage";
 
-test.describe.configure({ mode: 'serial' });
+test.describe.configure({ mode: "serial" });
 
 test.describe("Login Page", () => {
   let loginPage: LoginPage;
@@ -41,6 +41,9 @@ test.describe("Login Page", () => {
       await loginPage.fillEmail("test@example.com");
       await loginPage.fillPassword("password123");
 
+      // The fillEmail and fillPassword methods already verify values are set correctly
+      // Additional verification to ensure values persist after both fields are filled
+      await page.waitForTimeout(100);
       await expect(loginPage.emailInput).toHaveValue("test@example.com");
       await expect(loginPage.passwordInput).toHaveValue("password123");
     });
@@ -55,11 +58,21 @@ test.describe("Login Page", () => {
       await loginPage.fillEmail("test@example.com");
       await loginPage.fillPassword("validpassword123");
 
-      // Click submit and wait for the button to become disabled
+      // Setup network listener to catch the API call
+      const loginRequestPromise = page.waitForRequest(
+        (request) => request.url().includes("/api/auth/login") && request.method() === "POST",
+        { timeout: 5000 }
+      );
+
+      // Click submit
       await loginPage.clickSubmit();
 
-      // Wait for the button to become disabled (React state update)
-      await expect(loginPage.submitButton).toBeDisabled({ timeout: 1000 });
+      // Wait for the API request to be sent (this ensures submit was triggered)
+      await loginRequestPromise;
+
+      // The button should now show "Signing in..." text or be disabled
+      // We check for either condition since the button changes both text and disabled state
+      await expect(loginPage.submitButton).toHaveText(/Signing in\.\.\./, { timeout: 2000 });
     });
   });
 

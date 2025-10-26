@@ -424,7 +424,9 @@ describe("FlashcardCard", () => {
   describe("Loading States", () => {
     it("should disable buttons when isLoading is true", () => {
       // Act
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} isLoading={true} />);
+      render(
+        <FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} isLoading={true} />
+      );
 
       // Assert
       expect(screen.getByLabelText(/Copy flashcard/i)).toBeDisabled();
@@ -535,4 +537,3 @@ describe("FlashcardCard", () => {
     });
   });
 });
-
