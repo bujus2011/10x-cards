@@ -1,48 +1,45 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail } from "lucide-react";
+import { resetPasswordSchema, type ResetPasswordFormData } from "@/lib/validations";
+import { useAuth } from "@/hooks/api";
 
 interface ResetPasswordFormProps {
-  onSubmit?: (email: string) => void;
   isLoading?: boolean;
 }
 
 export function ResetPasswordForm({ isLoading = false }: ResetPasswordFormProps) {
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { resetPassword, isLoading: isAuthLoading } = useAuth();
+  
+  const {
+    register,
+    handleSubmit,
+    setError,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError(null);
-    setSuccess(false);
-    setIsSubmitting(true);
-
-    try {
-      const response = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-
-      if (data.status === "error") {
-        setError(data.error);
-        return;
-      }
-
+  const onSubmit = async (data: ResetPasswordFormData) => {
+    const result = await resetPassword(data);
+    
+    if (result.success) {
       setSuccess(true);
-      setEmail("");
-    } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
-    } finally {
-      setIsSubmitting(false);
+      reset();
+    } else if (result.error) {
+      setError("root", {
+        type: "manual",
+        message: result.error,
+      });
     }
   };
 
@@ -62,7 +59,7 @@ export function ResetPasswordForm({ isLoading = false }: ResetPasswordFormProps)
         <Button
           onClick={() => {
             setSuccess(false);
-            setEmail("");
+            reset();
           }}
           variant="outline"
           className="w-full"
@@ -80,9 +77,15 @@ export function ResetPasswordForm({ isLoading = false }: ResetPasswordFormProps)
     );
   }
 
+  const isFormLoading = isSubmitting || isAuthLoading || isLoading;
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {error && <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">{error}</div>}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {errors.root && (
+        <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">
+          {errors.root.message}
+        </div>
+      )}
 
       <div className="space-y-2">
         <Label htmlFor="email">Email address</Label>
@@ -92,20 +95,22 @@ export function ResetPasswordForm({ isLoading = false }: ResetPasswordFormProps)
           </div>
           <Input
             id="email"
-            name="email"
             type="email"
             autoComplete="email"
-            required
-            className="pl-10"
+            className={`pl-10 ${errors.email ? "border-destructive" : ""}`}
             placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...register("email")}
           />
         </div>
+        {errors.email && (
+          <p className="text-sm text-destructive">
+            {errors.email.message}
+          </p>
+        )}
       </div>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
-        {isSubmitting ? "Sending instructions..." : "Reset password"}
+      <Button type="submit" className="w-full" disabled={isFormLoading}>
+        {isFormLoading ? "Sending instructions..." : "Reset password"}
       </Button>
 
       <div className="text-center text-sm">

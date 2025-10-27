@@ -2,15 +2,17 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
 interface GenerateButtonProps {
-  onClick: () => void;
+  onClick?: () => void;
   disabled: boolean;
   isLoading: boolean;
+  type?: "button" | "submit" | "reset";
   "data-testid"?: string;
 }
 
-export function GenerateButton({ onClick, disabled, isLoading, "data-testid": testId }: GenerateButtonProps) {
+export function GenerateButton({ onClick, disabled, isLoading, type = "button", "data-testid": testId }: GenerateButtonProps) {
   return (
     <Button
+      type={type}
       onClick={onClick}
       disabled={disabled}
       size="lg"

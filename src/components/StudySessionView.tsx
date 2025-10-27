@@ -1,69 +1,41 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { StudyCardDto, Rating } from "../types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import { toast } from "sonner";
 import { BookOpen, RotateCw } from "lucide-react";
+import { useStudySession } from "@/hooks/api";
 
 export function StudySessionView() {
   const [cards, setCards] = useState<StudyCardDto[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showBack, setShowBack] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(false);
 
+  const { fetchDueCards, submitReview, isLoading, isSubmitting } = useStudySession();
+
   useEffect(() => {
-    fetchDueCards();
+    loadDueCards();
   }, []);
 
-  const fetchDueCards = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch("/api/study-session?limit=20");
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch due cards");
-      }
-
-      const data = await response.json();
-      setCards(data.cards || []);
-
-      if (data.cards.length === 0) {
-        setSessionComplete(true);
-      }
-    } catch (error) {
-      console.error("Error fetching due cards:", error);
-      toast.error("Failed to fetch flashcards for study");
-    } finally {
-      setLoading(false);
+  const loadDueCards = useCallback(async () => {
+    const result = await fetchDueCards(20);
+    
+    if (result.data) {
+      setCards(result.data);
+      setSessionComplete(result.data.length === 0);
     }
-  };
+  }, [fetchDueCards]);
 
-  const handleShowBack = () => {
+  const handleShowBack = useCallback(() => {
     setShowBack(true);
-  };
+  }, []);
 
-  const handleRating = async (rating: Rating) => {
-    if (submitting || !cards[currentIndex]) return;
+  const handleRating = useCallback(async (rating: Rating) => {
+    if (isSubmitting || !cards[currentIndex]) return;
 
-    setSubmitting(true);
-    try {
-      const response = await fetch("/api/study-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          flashcard_id: cards[currentIndex].flashcard.id,
-          rating,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to submit review");
-      }
-
+    const result = await submitReview(cards[currentIndex].flashcard.id, rating);
+    
+    if (result.success) {
       // Move to next card
       if (currentIndex < cards.length - 1) {
         setCurrentIndex(currentIndex + 1);
@@ -71,22 +43,17 @@ export function StudySessionView() {
       } else {
         setSessionComplete(true);
       }
-    } catch (error) {
-      console.error("Error submitting review:", error);
-      toast.error("Failed to submit review");
-    } finally {
-      setSubmitting(false);
     }
-  };
+  }, [isSubmitting, cards, currentIndex, submitReview]);
 
-  const handleRestart = () => {
+  const handleRestart = useCallback(() => {
     setSessionComplete(false);
     setCurrentIndex(0);
     setShowBack(false);
-    fetchDueCards();
-  };
+    loadDueCards();
+  }, [loadDueCards]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]" data-testid="study-session-loading">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
@@ -173,7 +140,7 @@ export function StudySessionView() {
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                 <Button
                   onClick={() => handleRating(1)}
-                  disabled={submitting}
+                  disabled={isSubmitting}
                   variant="destructive"
                   className="w-full"
                   data-testid="rating-button-again"
@@ -182,7 +149,7 @@ export function StudySessionView() {
                 </Button>
                 <Button
                   onClick={() => handleRating(2)}
-                  disabled={submitting}
+                  disabled={isSubmitting}
                   variant="outline"
                   className="w-full border-orange-500 text-orange-600 hover:bg-orange-50"
                   data-testid="rating-button-hard"
@@ -191,7 +158,7 @@ export function StudySessionView() {
                 </Button>
                 <Button
                   onClick={() => handleRating(3)}
-                  disabled={submitting}
+                  disabled={isSubmitting}
                   variant="outline"
                   className="w-full border-green-500 text-green-600 hover:bg-green-50"
                   data-testid="rating-button-good"
@@ -200,7 +167,7 @@ export function StudySessionView() {
                 </Button>
                 <Button
                   onClick={() => handleRating(4)}
-                  disabled={submitting}
+                  disabled={isSubmitting}
                   variant="default"
                   className="w-full bg-blue-600 hover:bg-blue-700"
                   data-testid="rating-button-easy"

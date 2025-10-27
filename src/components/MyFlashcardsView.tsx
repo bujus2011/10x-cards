@@ -1,133 +1,29 @@
-import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { FlashcardCard } from "./FlashcardCard";
 import { CreateFlashcardForm } from "./CreateFlashcardForm";
 import { AlertCircle, Search } from "lucide-react";
-import type { FlashcardDto, FlashcardUpdateDto } from "@/types";
-import { toast } from "sonner";
+import { useFlashcardManagement } from "@/hooks/useFlashcardManagement";
+import { useFlashcardSearch } from "@/hooks/useFlashcardSearch";
 
 export function MyFlashcardsView() {
-  const [flashcards, setFlashcards] = useState<FlashcardDto[]>([]);
-  const [filteredFlashcards, setFilteredFlashcards] = useState<FlashcardDto[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    flashcards,
+    error,
+    isLoading,
+    handleCreateFlashcard,
+    handleUpdateFlashcard,
+    handleDeleteFlashcard,
+    handleRetry,
+  } = useFlashcardManagement();
 
-  // Fetch flashcards on mount
-  useEffect(() => {
-    fetchFlashcards();
-  }, []);
-
-  // Filter flashcards when search query changes
-  useEffect(() => {
-    const query = searchQuery.toLowerCase();
-    const filtered = flashcards.filter(
-      (fc) => fc.front.toLowerCase().includes(query) || fc.back.toLowerCase().includes(query)
-    );
-    setFilteredFlashcards(filtered);
-  }, [searchQuery, flashcards]);
-
-  const fetchFlashcards = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("/api/flashcards", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch flashcards");
-      }
-
-      const data = await response.json();
-      setFlashcards(data.flashcards || []);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Unknown error occurred";
-      setError(message);
-      toast.error(message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const handleCreateFlashcard = useCallback(async (front: string, back: string) => {
-    try {
-      const response = await fetch("/api/flashcards", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          flashcards: [
-            {
-              front,
-              back,
-              source: "manual",
-              generation_id: null,
-            },
-          ],
-        }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to create flashcard");
-      }
-
-      const data = await response.json();
-      setFlashcards((prev) => [data.flashcards[0], ...prev]);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Unknown error occurred";
-      throw new Error(message);
-    }
-  }, []);
-
-  const handleUpdateFlashcard = useCallback(async (id: number, updates: FlashcardUpdateDto) => {
-    try {
-      const response = await fetch("/api/flashcards", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, ...updates }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to update flashcard");
-      }
-
-      const data = await response.json();
-      setFlashcards((prev) => prev.map((fc) => (fc.id === id ? data.flashcard : fc)));
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Unknown error occurred";
-      throw new Error(message);
-    }
-  }, []);
-
-  const handleDeleteFlashcard = useCallback(async (id: number) => {
-    try {
-      const response = await fetch("/api/flashcards", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to delete flashcard");
-      }
-
-      setFlashcards((prev) => prev.filter((fc) => fc.id !== id));
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Unknown error occurred";
-      throw new Error(message);
-    }
-  }, []);
-
-  const handleRetry = useCallback(() => {
-    setError(null);
-    fetchFlashcards();
-  }, [fetchFlashcards]);
+  const {
+    searchQuery,
+    setSearchQuery,
+    filteredFlashcards,
+    searchStats,
+  } = useFlashcardSearch({ flashcards });
 
   if (isLoading) {
     return <SkeletonLoader data-testid="flashcards-loading" />;
@@ -157,7 +53,7 @@ export function MyFlashcardsView() {
 
       <CreateFlashcardForm onSubmit={handleCreateFlashcard} isLoading={isLoading} />
 
-      {flashcards.length > 0 && (
+      {searchStats.total > 0 && (
         <div className="space-y-4">
           <div className="relative">
             <Search
@@ -174,21 +70,21 @@ export function MyFlashcardsView() {
           </div>
 
           <div className="text-sm text-muted-foreground" aria-live="polite">
-            {filteredFlashcards.length} of {flashcards.length} flashcard
-            {flashcards.length !== 1 ? "s" : ""}
-            {searchQuery && ` (filtered)`}
+            {searchStats.filtered} of {searchStats.total} flashcard
+            {searchStats.total !== 1 ? "s" : ""}
+            {searchStats.hasQuery && ` (filtered)`}
           </div>
         </div>
       )}
 
-      {filteredFlashcards.length === 0 && flashcards.length === 0 && (
+      {searchStats.filtered === 0 && searchStats.total === 0 && (
         <div className="text-center py-12">
           <div className="text-lg font-medium text-muted-foreground mb-2">No flashcards yet</div>
           <p className="text-sm text-muted-foreground">Create your first flashcard to get started</p>
         </div>
       )}
 
-      {filteredFlashcards.length === 0 && flashcards.length > 0 && (
+      {searchStats.filtered === 0 && searchStats.total > 0 && (
         <div className="text-center py-12">
           <div className="text-lg font-medium text-muted-foreground mb-2">No matching flashcards</div>
           <p className="text-sm text-muted-foreground">Try searching with different keywords</p>

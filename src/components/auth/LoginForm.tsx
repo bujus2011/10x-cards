@@ -1,74 +1,50 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock } from "lucide-react";
+import { loginSchema, type LoginFormData } from "@/lib/validations";
+import { useAuth } from "@/hooks/api";
 
 interface LoginFormProps {
-  onSubmit?: (email: string, password: string) => void;
   isLoading?: boolean;
 }
 
 export function LoginForm({ isLoading = false }: LoginFormProps) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { login, isLoading: isAuthLoading } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-    // Client-side validation
-    if (!email || !email.includes("@")) {
-      setError("Invalid email");
-      return;
-    }
+  const onSubmit = async (data: LoginFormData) => {
+    const result = await login(data);
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+    if (!result.success && result.error) {
+      setError("root", {
+        type: "manual",
+        message: result.error,
       });
-
-      let data;
-      try {
-        data = await response.json();
-      } catch {
-        setError("Failed to process server response");
-        setIsSubmitting(false);
-        return;
-      }
-
-      if (!response.ok || data.status === "error") {
-        setError(data.error || "An error occurred during login");
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Reload the page to update server-side session and go to app home
-      window.location.href = "/generate";
-    } catch {
-      setIsSubmitting(false);
-      setError("An unexpected error occurred. Please try again.");
     }
   };
 
+  const isFormLoading = isSubmitting || isAuthLoading || isLoading;
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6" data-testid="login-form" noValidate>
-      {error && (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" data-testid="login-form" noValidate>
+      {errors.root && (
         <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md" data-testid="login-error-message">
-          {error}
+          {errors.root.message}
         </div>
       )}
 
@@ -80,17 +56,19 @@ export function LoginForm({ isLoading = false }: LoginFormProps) {
           </div>
           <Input
             id="email"
-            name="email"
             type="email"
             autoComplete="email"
-            required
-            className="pl-10"
+            className={`pl-10 ${errors.email ? "border-destructive" : ""}`}
             placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             data-testid="login-email-input"
+            {...register("email")}
           />
         </div>
+        {errors.email && (
+          <p className="text-sm text-destructive" data-testid="login-email-error">
+            {errors.email.message}
+          </p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -101,17 +79,19 @@ export function LoginForm({ isLoading = false }: LoginFormProps) {
           </div>
           <Input
             id="password"
-            name="password"
             type="password"
             autoComplete="current-password"
-            required
-            className="pl-10"
+            className={`pl-10 ${errors.password ? "border-destructive" : ""}`}
             placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             data-testid="login-password-input"
+            {...register("password")}
           />
         </div>
+        {errors.password && (
+          <p className="text-sm text-destructive" data-testid="login-password-error">
+            {errors.password.message}
+          </p>
+        )}
       </div>
 
       <div className="flex items-center justify-between">
@@ -126,8 +106,8 @@ export function LoginForm({ isLoading = false }: LoginFormProps) {
         </div>
       </div>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting || isLoading} data-testid="login-submit-button">
-        {isSubmitting ? "Signing in..." : "Sign in"}
+      <Button type="submit" className="w-full" disabled={isFormLoading} data-testid="login-submit-button">
+        {isFormLoading ? "Signing in..." : "Sign in"}
       </Button>
 
       <div className="text-center text-sm">
