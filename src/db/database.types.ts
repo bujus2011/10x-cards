@@ -136,6 +136,68 @@ export interface Database {
         };
         Relationships: [];
       };
+      review_logs: {
+        Row: {
+          id: number;
+          flashcard_id: number;
+          user_id: string;
+          state: number;
+          rating: number | null;
+          due: string;
+          stability: number;
+          difficulty: number;
+          elapsed_days: number;
+          scheduled_days: number;
+          reps: number;
+          lapses: number;
+          last_review: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          flashcard_id: number;
+          user_id: string;
+          state?: number;
+          rating?: number | null;
+          due?: string;
+          stability?: number;
+          difficulty?: number;
+          elapsed_days?: number;
+          scheduled_days?: number;
+          reps?: number;
+          lapses?: number;
+          last_review?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          flashcard_id?: number;
+          user_id?: string;
+          state?: number;
+          rating?: number | null;
+          due?: string;
+          stability?: number;
+          difficulty?: number;
+          elapsed_days?: number;
+          scheduled_days?: number;
+          reps?: number;
+          lapses?: number;
+          last_review?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "review_logs_flashcard_id_fkey";
+            columns: ["flashcard_id"];
+            isOneToOne: false;
+            referencedRelation: "flashcards";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<never, never>;
     Functions: Record<never, never>;

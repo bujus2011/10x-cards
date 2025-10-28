@@ -14,11 +14,22 @@ yarn-error.log*
 pnpm-debug.log*
 
 # environment variables
+.cursorignore
 .env
+.env.test
 .env.production
+.test-results-latest.txt
 
 # macOS-specific files
 .DS_Store
 
 # jetbrains setting folder
 .idea/
+
+# testing
+coverage/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+.vitest/

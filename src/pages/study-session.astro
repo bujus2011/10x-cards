@@ -1,0 +1,28 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { StudySessionView } from "../components/StudySessionView";
+
+export const prerender = false;
+
+const user = Astro.locals.user;
+
+// Defensive check - redirect if not authenticated
+if (!user) {
+  return Astro.redirect("/auth/login?redirect=/study-session");
+}
+---
+
+<Layout title="Study Session - 10xCards">
+  <div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+      <div class="mb-8" data-testid="study-session-header">
+        <h1 class="text-3xl font-bold mb-2" data-testid="study-session-title">Study Session</h1>
+        <p class="text-gray-600" data-testid="study-session-description">
+          Learn your flashcards with spaced repetition algorithm
+        </p>
+      </div>
+
+      <StudySessionView client:load />
+    </div>
+  </div>
+</Layout>

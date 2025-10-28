@@ -2,9 +2,40 @@
 import Layout from "@/layouts/Layout.astro";
 import { FlashcardGenerationView } from "@/components/FlashcardGenerationView";
 
-// Protect this route
+/**
+ * Protected Route: Generate Flashcards
+ *
+ * This page is protected by TWO layers of authentication:
+ *
+ * 1. MIDDLEWARE LEVEL (src/middleware/index.ts)
+ *    - Validates user session via Supabase JWT token
+ *    - Redirects unauthenticated users to /auth/login
+ *    - Runs on every request before reaching this page
+ *
+ * 2. PAGE LEVEL (this file)
+ *    - Defensive check to ensure user data exists in locals
+ *    - Provides graceful fallback and error handling
+ *    - Serves as a safety net in case middleware is bypassed
+ *
+ * Architecture: Fail-secure design pattern
+ * If either layer fails, the user cannot access this page
+ */
+
+// Defensive check: Verify user exists in locals (set by middleware)
 const user = Astro.locals.user;
+
+// Guard clause: Redirect to login if user is not authenticated
+// This should rarely execute if middleware is working correctly,
+// but provides defense-in-depth security
 if (!user) {
+  // Log security event (in production, log to monitoring service)
+  console.warn("[SECURITY] Unauthorized access attempt to /generate detected");
+  return Astro.redirect("/auth/login");
+}
+
+// Validate user object has required properties
+if (!user.id || !user.email) {
+  console.error("[SECURITY] User object is malformed in locals");
   return Astro.redirect("/auth/login");
 }
 ---
@@ -12,6 +43,17 @@ if (!user) {
 <Layout title="Generate Flashcards - 10xCards">
   <div class="container mx-auto px-4 py-8">
     <h1 class="text-4xl font-bold mb-8">Generate Flashcards</h1>
+    {
+      /* 
+        FlashcardGenerationView is a React component that handles:
+        - Fetching authenticated user's flashcard data via API
+        - Generating new flashcards using OpenRouter AI
+        - User interaction and form submission
+        
+        User data is passed as a prop for reference but should never
+        be used for authentication - that's handled server-side
+      */
+    }
     <FlashcardGenerationView client:load />
   </div>
 </Layout>

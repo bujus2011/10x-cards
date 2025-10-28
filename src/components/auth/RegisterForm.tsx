@@ -1,44 +1,56 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { registerSchema, type RegisterFormData } from "@/lib/validations";
+import { useAuth } from "@/hooks/api";
 
 interface RegisterFormProps {
-  onSubmit: (email: string, password: string) => void;
   isLoading?: boolean;
 }
 
-export function RegisterForm({ onSubmit, isLoading = false }: RegisterFormProps) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+export function RegisterForm({ isLoading = false }: RegisterFormProps) {
+  const { register: registerUser, isLoading: isAuthLoading } = useAuth();
+  
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-  const validatePassword = (value: string) => {
-    if (value.length < 8) {
-      setPasswordError("Password must be at least 8 characters long");
-      return false;
+  const onSubmit = async (data: RegisterFormData) => {
+    const result = await registerUser(data);
+    
+    if (!result.success && result.error) {
+      setError("root", {
+        type: "manual",
+        message: result.error,
+      });
     }
-    setPasswordError("");
-    return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      setPasswordError("Passwords do not match");
-      return;
-    }
-    if (!validatePassword(password)) {
-      return;
-    }
-    onSubmit(email, password);
-  };
+  const isFormLoading = isSubmitting || isAuthLoading || isLoading;
+  const hasPasswordError = errors.password || errors.confirmPassword;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {errors.root && (
+        <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">
+          {errors.root.message}
+        </div>
+      )}
+
       <div className="space-y-2">
         <Label htmlFor="email">Email address</Label>
         <div className="relative">
@@ -47,16 +59,19 @@ export function RegisterForm({ onSubmit, isLoading = false }: RegisterFormProps)
           </div>
           <Input
             id="email"
-            name="email"
             type="email"
             autoComplete="email"
-            required
-            className="pl-10"
+            className={cn("pl-10", errors.email && "border-destructive")}
             placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            data-testid="register-email-input"
+            {...register("email")}
           />
         </div>
+        {errors.email && (
+          <p className="text-sm text-destructive" data-testid="register-email-error">
+            {errors.email.message}
+          </p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -67,19 +82,19 @@ export function RegisterForm({ onSubmit, isLoading = false }: RegisterFormProps)
           </div>
           <Input
             id="password"
-            name="password"
             type="password"
             autoComplete="new-password"
-            required
-            className={cn("pl-10", passwordError && "border-destructive")}
+            className={cn("pl-10", errors.password && "border-destructive")}
             placeholder="Enter your password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              validatePassword(e.target.value);
-            }}
+            data-testid="register-password-input"
+            {...register("password")}
           />
         </div>
+        {errors.password && (
+          <p className="text-sm text-destructive" data-testid="register-password-error">
+            {errors.password.message}
+          </p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -90,27 +105,28 @@ export function RegisterForm({ onSubmit, isLoading = false }: RegisterFormProps)
           </div>
           <Input
             id="confirmPassword"
-            name="confirmPassword"
             type="password"
             autoComplete="new-password"
-            required
-            className={cn("pl-10", passwordError && "border-destructive")}
+            className={cn("pl-10", errors.confirmPassword && "border-destructive")}
             placeholder="Confirm your password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            data-testid="register-confirm-password-input"
+            {...register("confirmPassword")}
           />
         </div>
+        {errors.confirmPassword && (
+          <p className="text-sm text-destructive" data-testid="register-confirm-password-error">
+            {errors.confirmPassword.message}
+          </p>
+        )}
       </div>
 
-      {passwordError && (
-        <div className="flex items-center gap-2 text-sm text-destructive">
-          <AlertCircle className="h-4 w-4" />
-          <span>{passwordError}</span>
-        </div>
-      )}
-
-      <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Creating account..." : "Create account"}
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={isFormLoading}
+        data-testid="register-submit-button"
+      >
+        {isFormLoading ? "Creating account..." : "Create account"}
       </Button>
 
       <div className="text-center text-sm">

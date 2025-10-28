@@ -11,9 +11,11 @@ export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKe
 export type SupabaseClient = typeof supabaseClient;
 
 // Cookie options for server-side auth
+// Note: In local dev/tests over HTTP, cookies cannot be set with `Secure`
+// which would break session persistence and auth redirects in E2E.
 export const cookieOptions: CookieOptionsWithName = {
   path: "/",
-  secure: true,
+  secure: import.meta.env.PROD,
   httpOnly: true,
   sameSite: "lax",
 };
