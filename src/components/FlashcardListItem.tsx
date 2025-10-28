@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Check, X, Edit2, Save } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { FlashcardProposalViewModel } from "./FlashcardGenerationView";
+import type { FlashcardProposalViewModel } from "@/hooks/useFlashcardGeneration";
 
 interface FlashcardListItemProps {
   flashcard: FlashcardProposalViewModel;
@@ -77,6 +77,7 @@ export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit, itemT
               disabled={
                 editedFront.length > 200 || editedBack.length > 500 || !editedFront.trim() || !editedBack.trim()
               }
+              type="button"
               data-testid="save-edit-button"
             >
               <Save className="h-4 w-4" />
@@ -87,14 +88,15 @@ export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit, itemT
                 size="icon"
                 variant={flashcard.accepted ? "default" : "outline"}
                 onClick={onAccept}
+                type="button"
                 data-testid="accept-button"
               >
                 <Check className="h-4 w-4" />
               </Button>
-              <Button size="icon" variant="outline" onClick={() => setIsEditing(true)} data-testid="edit-button">
+              <Button size="icon" variant="outline" onClick={() => setIsEditing(true)} type="button" data-testid="edit-button">
                 <Edit2 className="h-4 w-4" />
               </Button>
-              <Button size="icon" variant="outline" onClick={onReject} data-testid="reject-button">
+              <Button size="icon" variant="outline" onClick={onReject} type="button" data-testid="reject-button">
                 <X className="h-4 w-4" />
               </Button>
             </>

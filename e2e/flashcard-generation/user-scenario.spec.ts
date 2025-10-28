@@ -129,6 +129,10 @@ test.describe("User Scenario: Generate, Edit, and Save Flashcards", () => {
 
       expect(await card3.isAccepted()).toBe(true);
       console.log("   ✓ Edited flashcard accepted");
+
+      // Wait for React state to update in BulkSaveButton
+      // The visual update (CSS classes) happens faster than React state update
+      await page.waitForTimeout(300);
     });
 
     // KROK 7: Naciśnij przycisk Save Accepted

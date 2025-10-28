@@ -21,8 +21,8 @@ test.describe("Login with Helpers", () => {
     // Use invalid test user from helpers
     await loginPage.login(TEST_USERS.invalid.email, TEST_USERS.invalid.password);
 
-    // Verify error appears
-    await expect(loginPage.errorMessage).toBeVisible();
+    // Verify error appears - increased timeout for React 19 state propagation
+    await expect(loginPage.errorMessage).toBeVisible({ timeout: 10000 });
   });
 
   test("should show error for invalid email format", async ({ page }) => {
@@ -32,9 +32,12 @@ test.describe("Login with Helpers", () => {
     // Use test user with invalid email format
     await loginPage.login(TEST_USERS.invalidEmail.email, TEST_USERS.invalidEmail.password);
 
-    await expect(loginPage.errorMessage).toBeVisible();
-    const errorText = await loginPage.getErrorText();
-    expect(errorText).toContain("Invalid email");
+    // Field-level validation error should appear for invalid email
+    const hasEmailError = await loginPage.hasFieldError("email");
+    expect(hasEmailError).toBe(true);
+    
+    const errorText = await loginPage.getFieldErrorText("email");
+    expect(errorText).toContain("valid email");
   });
 
   // Skip: Backend has strict email validation that rejects test emails

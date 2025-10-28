@@ -86,7 +86,14 @@ src/
 ├── components/         # UI components (Astro static, React dynamic)
 │   ├── ui/            # Shadcn/ui components
 │   └── auth/          # Auth-related components
+├── hooks/             # Custom React hooks
+│   ├── api/           # API-related hooks (useAuth, useFlashcards, etc.)
+│   ├── useFlashcardSearch.ts
+│   ├── useFlashcardManagement.ts
+│   ├── useFlashcardGeneration.ts
+│   └── index.ts       # Hook exports
 ├── lib/               # Services and utilities
+│   ├── validations/   # Zod validation schemas
 │   └── __tests__/     # Service unit tests
 ├── db/                # Supabase clients and types
 │   ├── supabase.client.ts
@@ -124,8 +131,8 @@ src/
 **Astro API Routes:**
 - Use uppercase HTTP method exports: `export const POST`, `export const GET`
 - Add `export const prerender = false` for dynamic routes
-- Validate input with Zod schemas
-- Extract business logic to services in `src/lib/services`
+- Validate input with Zod schemas from `src/lib/validations/`
+- Extract business logic to services in `src/lib/`
 - Access Supabase via `Astro.locals.supabase`
 - Access authenticated user via `Astro.locals.user`
 
@@ -164,7 +171,7 @@ src/
 **React Components (.tsx):**
 - Use ONLY for interactive UI elements
 - Never use "use client" directive (Next.js-specific, not needed in Astro)
-- Extract logic to custom hooks in `src/components/hooks`
+- Extract logic to custom hooks in `src/hooks/` (NOT `src/components/hooks`)
 - Use React.memo() for expensive components
 - Use useCallback/useMemo for optimization
 
@@ -225,6 +232,7 @@ Required environment variables (see `.env.example`):
 
 For E2E tests (`.env.test`):
 - `BASE_URL` - Test server URL (default: http://localhost:3000)
+- `E2E_USERNAME_ID` - Test user UUID
 - `E2E_USERNAME` - Test user email
 - `E2E_PASSWORD` - Test user password
 

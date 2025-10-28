@@ -10,6 +10,9 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env.test") });
 export default defineConfig({
   testDir: "./e2e",
 
+  /* Global setup - runs before all tests */
+  globalSetup: "./e2e/global-setup.ts",
+
   /* Run tests in files in parallel */
   fullyParallel: true,
 
@@ -20,7 +23,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
 
   /* Opt out of parallel tests on CI, limit workers locally for stability */
-  workers: process.env.CI ? 1 : 3,
+  workers: process.env.CI ? 1 : 1,
 
   /* Global test timeout - increased for AI generation tasks */
   timeout: 120000,

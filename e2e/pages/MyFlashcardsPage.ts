@@ -225,7 +225,7 @@ export class MyFlashcardsPage {
    * @param timeout - Maximum wait time
    */
   async waitForToast(message: string | RegExp, timeout = 5000) {
-    const toast = this.page.locator("[data-sonner-toast]", { hasText: message });
+    const toast = this.page.locator("[data-sonner-toast]", { hasText: message }).first();
     await expect(toast).toBeVisible({ timeout });
   }
 

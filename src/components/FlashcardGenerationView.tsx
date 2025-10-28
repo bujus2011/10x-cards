@@ -11,19 +11,6 @@ import { useFlashcardGeneration } from "@/hooks/useFlashcardGeneration";
 
 export function FlashcardGenerationView() {
   const {
-    generationId,
-    flashcards,
-    error,
-    isLoading,
-    handleGenerateFlashcards,
-    handleFlashcardAccept,
-    handleFlashcardReject,
-    handleFlashcardEdit,
-    handleSaveFlashcards,
-    resetGeneration,
-  } = useFlashcardGeneration();
-
-  const {
     register,
     handleSubmit,
     watch,
@@ -36,17 +23,24 @@ export function FlashcardGenerationView() {
     },
   });
 
+  const {
+    generationId,
+    flashcards,
+    error,
+    isLoading,
+    handleGenerateFlashcards,
+    handleFlashcardAccept,
+    handleFlashcardReject,
+    handleFlashcardEdit,
+    handleSaveAcceptedFlashcards,
+    handleSaveAllFlashcards,
+    resetGeneration,
+  } = useFlashcardGeneration(() => reset());
+
   const textValue = watch("source_text");
 
   const onSubmit = async (data: GenerateFlashcardsFormData) => {
     await handleGenerateFlashcards(data);
-  };
-
-  const handleSaveSuccess = async () => {
-    const result = await handleSaveFlashcards();
-    if (result.success) {
-      reset();
-    }
   };
 
   const isFormValid = textValue.length >= 1000 && textValue.length <= 10000;
@@ -56,9 +50,10 @@ export function FlashcardGenerationView() {
       {error && <ErrorNotification message={error} />}
 
       <div className="space-y-2">
-        <TextInputArea 
+        <TextInputArea
           {...register("source_text")}
-          disabled={isLoading} 
+          value={textValue}
+          disabled={isLoading}
         />
         {errors.source_text && (
           <p className="text-sm text-destructive">
@@ -81,9 +76,10 @@ export function FlashcardGenerationView() {
           {generationId !== null && (
             <BulkSaveButton
               flashcards={flashcards}
-              generationId={generationId}
               disabled={isLoading}
-              onSuccess={handleSaveSuccess}
+              isLoading={isLoading}
+              onSaveAccepted={handleSaveAcceptedFlashcards}
+              onSaveAll={handleSaveAllFlashcards}
             />
           )}
           <FlashcardList

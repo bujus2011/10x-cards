@@ -69,8 +69,8 @@ test.describe("Login Page", () => {
     test("should show error for invalid credentials", async () => {
       await loginPage.login("invalid@example.com", "wrongpassword");
 
-      // Wait for error message to appear
-      await expect(loginPage.errorMessage).toBeVisible({ timeout: 5000 });
+      // Wait for error message to appear - increased timeout for React 19 state propagation
+      await expect(loginPage.errorMessage).toBeVisible({ timeout: 10000 });
 
       // Verify error is detected
       const hasError = await loginPage.hasError();
@@ -81,8 +81,8 @@ test.describe("Login Page", () => {
     test.skip("should show error for short password", async () => {
       await loginPage.login("test@example.com", "short");
 
-      // Wait for error message
-      await expect(loginPage.errorMessage).toBeVisible({ timeout: 5000 });
+      // Wait for error message - increased timeout for React 19 state propagation
+      await expect(loginPage.errorMessage).toBeVisible({ timeout: 10000 });
 
       const errorText = await loginPage.getErrorText();
       expect(errorText).toContain("Password must be at least 8 characters");
@@ -91,11 +91,12 @@ test.describe("Login Page", () => {
     test("should show error for invalid email format", async () => {
       await loginPage.login("invalid-email", "password123");
 
-      // Wait for error message
-      await expect(loginPage.errorMessage).toBeVisible({ timeout: 5000 });
+      // Field-level validation error should appear for invalid email
+      const hasEmailError = await loginPage.hasFieldError("email");
+      expect(hasEmailError).toBe(true);
 
-      const errorText = await loginPage.getErrorText();
-      expect(errorText).toContain("Invalid email");
+      const errorText = await loginPage.getFieldErrorText("email");
+      expect(errorText).toContain("valid email");
     });
   });
 

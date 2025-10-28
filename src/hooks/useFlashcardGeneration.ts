@@ -11,7 +11,7 @@ export type FlashcardProposalViewModel = {
     source: "ai-full" | "ai-edited";
 };
 
-export function useFlashcardGeneration() {
+export function useFlashcardGeneration(onSaveSuccess?: () => void) {
     const [generationId, setGenerationId] = useState<number | null>(null);
     const [flashcards, setFlashcards] = useState<FlashcardProposalViewModel[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -62,14 +62,14 @@ export function useFlashcardGeneration() {
         );
     }, []);
 
-    const handleSaveFlashcards = useCallback(async () => {
+    const handleSaveFlashcards = useCallback(async (onlyAccepted: boolean = true) => {
         if (!generationId) {
             setError("No generation ID available");
             return { success: false };
         }
 
-        const acceptedFlashcards: FlashcardCreateDto[] = flashcards
-            .filter((card) => card.accepted)
+        const flashcardsToSave: FlashcardCreateDto[] = flashcards
+            .filter((card) => !onlyAccepted || card.accepted)
             .map((card) => ({
                 front: card.front,
                 back: card.back,
@@ -77,19 +77,30 @@ export function useFlashcardGeneration() {
                 generation_id: generationId,
             }));
 
-        const result = await saveFlashcards(acceptedFlashcards);
+        const result = await saveFlashcards(flashcardsToSave);
 
         if (result.success) {
             // Reset state after successful save
             setFlashcards([]);
             setGenerationId(null);
             setError(null);
+
+            // Call onSuccess callback if provided
+            onSaveSuccess?.();
         } else if (result.error) {
             setError(result.error);
         }
 
         return result;
-    }, [flashcards, generationId, saveFlashcards]);
+    }, [flashcards, generationId, saveFlashcards, onSaveSuccess]);
+
+    const handleSaveAcceptedFlashcards = useCallback(async () => {
+        await handleSaveFlashcards(true);
+    }, [handleSaveFlashcards]);
+
+    const handleSaveAllFlashcards = useCallback(async () => {
+        await handleSaveFlashcards(false);
+    }, [handleSaveFlashcards]);
 
     const resetGeneration = useCallback(() => {
         setFlashcards([]);
@@ -107,6 +118,8 @@ export function useFlashcardGeneration() {
         handleFlashcardReject,
         handleFlashcardEdit,
         handleSaveFlashcards,
+        handleSaveAcceptedFlashcards,
+        handleSaveAllFlashcards,
         resetGeneration,
     };
 }

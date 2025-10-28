@@ -50,9 +50,9 @@ const FlashcardCardComponent = memo(function FlashcardCard({
         generation_id: flashcard.generation_id,
       });
       setIsEditing(false);
-      toast.success("Flashcard updated successfully");
+      // Toast is shown by useFlashcards hook
     } catch (error) {
-      toast.error("Failed to update flashcard");
+      // Error toast is shown by useFlashcards hook
       console.error(error);
     } finally {
       setIsSaving(false);
@@ -63,9 +63,9 @@ const FlashcardCardComponent = memo(function FlashcardCard({
     setIsDeleting(true);
     try {
       await onDelete(flashcard.id);
-      toast.success("Flashcard deleted successfully");
+      // Toast is shown by useFlashcards hook
     } catch (error) {
-      toast.error("Failed to delete flashcard");
+      // Error toast is shown by useFlashcards hook
       console.error(error);
     } finally {
       setIsDeleting(false);

@@ -1,5 +1,5 @@
 import { FlashcardListItem } from "./FlashcardListItem";
-import type { FlashcardProposalViewModel } from "./FlashcardGenerationView";
+import type { FlashcardProposalViewModel } from "@/hooks/useFlashcardGeneration";
 
 interface FlashcardListProps {
   flashcards: FlashcardProposalViewModel[];

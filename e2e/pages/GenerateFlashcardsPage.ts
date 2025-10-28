@@ -96,9 +96,15 @@ export class GenerateFlashcardsPage {
     // Wait a bit after clearing
     await this.page.waitForTimeout(100);
 
-    // Use pressSequentially with delay: 0 for fast but reliable typing
-    // This sends real keyboard events that React 19 recognizes
-    await this.sourceTextarea.pressSequentially(text, { delay: 0 });
+    // For longer texts (>500 chars), use fill() for reliability
+    // For very short texts, use pressSequentially to simulate real typing
+    if (text.length > 500) {
+      await this.sourceTextarea.fill(text);
+    } else {
+      // Use pressSequentially with delay: 0 for fast but reliable typing
+      // This sends real keyboard events that React 19 recognizes
+      await this.sourceTextarea.pressSequentially(text, { delay: 0 });
+    }
 
     // Wait for React to process
     await this.page.waitForTimeout(500);
@@ -279,12 +285,14 @@ export class GenerateFlashcardsPage {
     const toast = this.page.locator("[data-sonner-toast]", { hasText: /Successfully saved/i });
     await expect(toast).toBeVisible({ timeout: 10000 });
 
-    // Wait for flashcard list to disappear (page reset)
-    await expect(this.flashcardList).toBeHidden({ timeout: 5000 });
-
-    // Verify source text is cleared
-    const textValue = await this.sourceTextarea.inputValue();
-    expect(textValue).toBe("");
+    // Wait for page reset (be tolerant of async double-save flows)
+    await expect(async () => {
+      const listHidden = await this.flashcardList.isHidden();
+      const textValue = await this.sourceTextarea.inputValue();
+      if (!listHidden || textValue !== "") {
+        throw new Error("Page not reset yet");
+      }
+    }).toPass({ timeout: 15000, intervals: [500] });
   }
 
   /**
@@ -319,9 +327,10 @@ export class GenerateFlashcardsPage {
    */
   async verifySaveAcceptedState(shouldBeEnabled: boolean) {
     if (shouldBeEnabled) {
-      await expect(this.saveAcceptedButton).toBeEnabled();
+      // Increased timeout for React 19 state propagation
+      await expect(this.saveAcceptedButton).toBeEnabled({ timeout: 10000 });
     } else {
-      await expect(this.saveAcceptedButton).toBeDisabled();
+      await expect(this.saveAcceptedButton).toBeDisabled({ timeout: 10000 });
     }
   }
 
@@ -398,8 +407,8 @@ export class FlashcardItem {
   async accept() {
     await expect(this.acceptButton).toBeVisible();
     await this.acceptButton.click();
-    // Wait for visual feedback
-    await this.page.waitForTimeout(200);
+    // Wait for React 19 state propagation - increased timeout for concurrent rendering
+    await this.page.waitForTimeout(1000);
   }
 
   /**

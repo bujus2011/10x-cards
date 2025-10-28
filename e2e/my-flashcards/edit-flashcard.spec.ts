@@ -92,6 +92,8 @@ test.describe("My Flashcards - Edit Flashcard", () => {
     await myFlashcardsPage.waitForFlashcardsLoaded();
 
     const flashcardIds = await myFlashcardsPage.getAllFlashcardIds();
+    expect(flashcardIds.length).toBeGreaterThan(0);
+
     const flashcard = myFlashcardsPage.getFlashcard(flashcardIds[0]);
 
     // Get original content
@@ -123,6 +125,8 @@ test.describe("My Flashcards - Edit Flashcard", () => {
     await myFlashcardsPage.waitForFlashcardsLoaded();
 
     const flashcardIds = await myFlashcardsPage.getAllFlashcardIds();
+    expect(flashcardIds.length).toBeGreaterThan(0);
+
     const flashcard = myFlashcardsPage.getFlashcard(flashcardIds[0]);
 
     // Enter edit mode
@@ -150,6 +154,8 @@ test.describe("My Flashcards - Edit Flashcard", () => {
     await myFlashcardsPage.waitForFlashcardsLoaded();
 
     const flashcardIds = await myFlashcardsPage.getAllFlashcardIds();
+    expect(flashcardIds.length).toBeGreaterThan(0);
+
     const flashcard = myFlashcardsPage.getFlashcard(flashcardIds[0]);
 
     // Enter edit mode
@@ -175,6 +181,8 @@ test.describe("My Flashcards - Edit Flashcard", () => {
     await myFlashcardsPage.waitForFlashcardsLoaded();
 
     const flashcardIds = await myFlashcardsPage.getAllFlashcardIds();
+    expect(flashcardIds.length).toBeGreaterThan(0);
+
     const flashcard = myFlashcardsPage.getFlashcard(flashcardIds[0]);
 
     // Use the complete edit workflow helper

@@ -17,6 +17,7 @@ export class LoginPage extends AuthPage {
 
   // Error and feedback
   readonly errorMessage: Locator;
+  readonly emailError: Locator;
 
   // Navigation links
   readonly forgotPasswordLink: Locator;
@@ -33,6 +34,7 @@ export class LoginPage extends AuthPage {
 
     // Error locators
     this.errorMessage = page.getByTestId("login-error-message");
+    this.emailError = page.getByTestId("login-email-error");
 
     // Navigation locators
     this.forgotPasswordLink = page.getByTestId("login-forgot-password-link");
@@ -94,6 +96,17 @@ export class LoginPage extends AuthPage {
     await this.page.waitForTimeout(500);
 
     await this.submitButton.click();
+
+    // Wait for either navigation on success or error message on failure
+    // This makes subsequent assertions more reliable in both cases
+    try {
+      await Promise.race([
+        this.page.waitForURL((url) => !url.pathname.includes("/auth/login"), { timeout: 10000 }),
+        this.errorMessage.waitFor({ state: "visible", timeout: 10000 }),
+      ]);
+    } catch {
+      // Ignore timeout here; individual tests will assert the expected outcome
+    }
   }
 
   /**
@@ -155,6 +168,35 @@ export class LoginPage extends AuthPage {
    */
   async hasError(): Promise<boolean> {
     return await this.errorMessage.isVisible();
+  }
+
+  /**
+   * Get error message text from field-level validation (email, password, etc.)
+   * @param field - The form field to get error for (defaults to "email")
+   * @returns Error message text or null if not visible
+   */
+  async getFieldErrorText(field: "email" | "password" = "email"): Promise<string | null> {
+    const errorLocator = field === "email" ? this.emailError : this.page.getByTestId("login-password-error");
+    try {
+      if (await errorLocator.isVisible({ timeout: 1000 })) {
+        return await errorLocator.textContent();
+      }
+    } catch {
+      // Error element not found or not visible
+    }
+    return null;
+  }
+
+  /**
+   * Check if there's a field-level error (for client-side validation)
+   */
+  async hasFieldError(field: "email" | "password" = "email"): Promise<boolean> {
+    const errorLocator = field === "email" ? this.emailError : this.page.getByTestId("login-password-error");
+    try {
+      return await errorLocator.isVisible({ timeout: 1000 });
+    } catch {
+      return false;
+    }
   }
 
   /**

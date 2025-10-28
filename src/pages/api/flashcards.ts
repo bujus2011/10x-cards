@@ -145,7 +145,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     const createdFlashcards = await flashcardService.createBatch(locals.user.id, command.flashcards);
 
-    return new Response(JSON.stringify({ flashcards: createdFlashcards }), {
+    return new Response(JSON.stringify({ flashcards: createdFlashcards, saved_count: createdFlashcards.length }), {
       status: 201,
       headers: { "Content-Type": "application/json" },
     });

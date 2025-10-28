@@ -140,7 +140,45 @@ test.describe("Flashcard Generation Workflow", () => {
 
   test("should save all flashcards without accepting", async () => {
     // Generate flashcards
-    await generatePage.generateFlashcardsFromText(SAMPLE_ARTICLE);
+    //await generatePage.generateFlashcardsFromText(SAMPLE_ARTICLE);
+
+    // KROK 1: Wypełnij pole artykułem o C#
+    await test.step("1. Fill source text field with C# article", async () => {
+      console.log("📝 Filling source text with C# article...");
+      await generatePage.fillSourceText(SAMPLE_ARTICLE);
+
+      // Verify text was filled
+      const charCount = await generatePage.getCharacterCount();
+      console.log(`   Character count: ${charCount}`);
+      expect(charCount).toBeGreaterThanOrEqual(1000);
+      expect(charCount).toBeLessThanOrEqual(10000);
+    });
+
+    // KROK 2: Naciśnij przycisk Generate
+    await test.step("2. Click Generate button", async () => {
+      console.log("🔄 Clicking Generate button...");
+      await generatePage.clickGenerate();
+
+      // Verify button shows loading state
+      await expect(generatePage.generateButton).toContainText(/Generating/i);
+    });
+
+    // KROK 3: Poczekaj do 70 sekund na wynik kolekcję fiszek
+    await test.step("3. Wait up to 70 seconds for flashcard collection", async () => {
+      console.log("⏳ Waiting for flashcards to be generated (max 70 seconds)...");
+      const startTime = Date.now();
+
+      await generatePage.waitForFlashcards(70000);
+
+      const endTime = Date.now();
+      const duration = Math.round((endTime - startTime) / 1000);
+      console.log(`   ✅ Flashcards generated in ${duration} seconds`);
+
+      const count = await generatePage.getFlashcardCount();
+      console.log(`   📚 Total flashcards: ${count}`);
+      expect(count).toBeGreaterThan(0);
+    });
+
 
     // Click Save All (no need to accept any)
     await generatePage.clickSaveAll();
