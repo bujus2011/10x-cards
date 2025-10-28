@@ -1,0 +1,266 @@
+---
+description: Standards and best practices for My Flashcards feature
+globs: src/components/Flashcard*.tsx,src/components/MyFlashcards*.tsx,src/components/CreateFlashcard*.tsx
+alwaysApply: false
+---
+
+# My Flashcards Feature Standards
+
+This document outlines the coding standards and best practices specific to the My Flashcards feature implementation.
+
+## Component Structure
+
+### React Components
+
+- **No 'use client' directives**: This is Astro + React, not Next.js
+- **Always use `React.memo()`**: Wrap all exported components to prevent unnecessary re-renders
+- **Proper exports**: Use named exports with displayName for better debugging
+
+```tsx
+const ComponentImpl = memo(function ComponentName(props) {
+  // ... component logic
+});
+
+ComponentImpl.displayName = "ComponentName";
+export const ComponentName = ComponentImpl;
+```
+
+### Props and Types
+
+- Use **explicit types** for all props - no `any` types allowed
+- Props should use types from `@/types` (e.g., `FlashcardDto`, `FlashcardUpdateDto`)
+- Always define `interface` for component props
+
+```tsx
+interface MyComponentProps {
+  data: FlashcardDto;
+  onUpdate: (id: number, data: FlashcardUpdateDto) => Promise<void>;
+}
+```
+
+## Performance Optimizations
+
+### useCallback
+
+All event handlers passed to child components MUST use `useCallback`:
+
+```tsx
+const handleClick = useCallback(() => {
+  // ... handler logic
+}, [dependencies]);
+```
+
+**Where to apply:**
+
+- Event handlers (`onClick`, `onChange`, etc.)
+- Functions passed as props to child components
+- Callbacks passed to effects
+
+### React.memo
+
+All components rendering lists or with expensive computations should be memoized:
+
+```tsx
+export const FlashcardCard = memo(function FlashcardCard(props) {
+  // ... component
+});
+```
+
+### useId for Accessibility
+
+Generate unique IDs using `useId()` for all form inputs:
+
+```tsx
+const inputId = useId();
+
+return (
+  <>
+    <label htmlFor={inputId}>Label</label>
+    <input id={inputId} />
+  </>
+);
+```
+
+## Accessibility (a11y)
+
+### ARIA Labels
+
+Every interactive element MUST have appropriate ARIA attributes:
+
+- **Buttons with only icons**: `aria-label` is required
+- **Form inputs**: `aria-describedby` for descriptions
+- **Interactive cards**: `role="button"` and keyboard support
+- **Dynamic content**: `aria-live` for updates
+
+```tsx
+<Button size="icon" onClick={handleDelete} aria-label="Delete flashcard" title="Delete this flashcard permanently">
+  <Trash2 className="h-4 w-4" />
+</Button>
+```
+
+### Form Fields
+
+All form fields MUST have:
+
+- Associated `<label>` with `htmlFor`
+- Unique `id` generated with `useId()`
+- `aria-describedby` for helper text
+
+```tsx
+const inputId = useId();
+const descId = useId();
+
+return (
+  <>
+    <label htmlFor={inputId}>Front</label>
+    <Textarea id={inputId} aria-describedby={descId} />
+    <div id={descId} className="text-xs">
+      {content.length}/200 characters
+    </div>
+  </>
+);
+```
+
+### Interactive Cards
+
+Cards that act as buttons must:
+
+- Have `role="button"`
+- Be keyboard accessible (`tabIndex={0}`)
+- Handle `Enter` and `Space` keys
+
+```tsx
+<Card
+  role="button"
+  tabIndex={0}
+  aria-label="Flashcard description"
+  onClick={handleClick}
+  onKeyDown={(e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleClick();
+    }
+  }}
+>
+  {/* content */}
+</Card>
+```
+
+### Alert Regions
+
+Error messages and notifications:
+
+- Use `role="alert"` for error containers
+- Use `aria-live="polite"` for count updates
+- Use `aria-hidden="true"` for decorative icons
+
+```tsx
+<div role="alert" className="error-container">
+  <AlertCircle aria-hidden="true" />
+  <p>Error message</p>
+</div>
+
+<div aria-live="polite">
+  {count} results found
+</div>
+```
+
+## API Integration
+
+### Type Safety
+
+API callbacks should accept strong types:
+
+```tsx
+// ❌ Wrong
+onUpdate: (id: number, data: any) => Promise<void>;
+
+// ✅ Correct
+onUpdate: (id: number, data: FlashcardUpdateDto) => Promise<void>;
+```
+
+### Error Handling
+
+- Always wrap API calls in try-catch
+- Use `toast` for user feedback
+- Provide meaningful error messages
+- Console.error for debugging
+
+### Loading States
+
+- Track loading with separate state variables
+- Disable interactions during loading
+- Show visual feedback (disabled buttons, loading spinners)
+
+## Styling
+
+### Tailwind CSS
+
+- Use responsive variants: `sm:`, `md:`, `lg:`
+- Use state variants: `hover:`, `focus-visible:`, `active:`
+- Use dark mode: `dark:`
+- Avoid inline styles - use Tailwind classes
+
+### Card Interactions
+
+Cards should have hover effects:
+
+```tsx
+<Card className="transition-all hover:shadow-lg">{/* content */}</Card>
+```
+
+## Testing Considerations
+
+When testing My Flashcards components:
+
+1. **Accessibility**: Test with keyboard navigation and screen readers
+2. **Performance**: Verify memoization prevents unnecessary renders
+3. **Type Safety**: Ensure no `any` types slip through
+4. **Error Handling**: Test network errors and edge cases
+5. **User Feedback**: Verify toast notifications appear
+
+## Common Patterns
+
+### Collapsible Form
+
+```tsx
+const [isOpen, setIsOpen] = useState(false);
+
+if (isOpen) {
+  return <Form onClose={() => setIsOpen(false)} />;
+}
+
+return <Button onClick={() => setIsOpen(true)}>Open</Button>;
+```
+
+### List Filtering
+
+```tsx
+useEffect(() => {
+  const filtered = items.filter((item) => item.text.toLowerCase().includes(searchQuery.toLowerCase()));
+  setFiltered(filtered);
+}, [searchQuery, items]);
+```
+
+### Async Operations
+
+```tsx
+const handleAction = useCallback(async () => {
+  setLoading(true);
+  try {
+    await api.call();
+    toast.success("Success");
+  } catch (error) {
+    toast.error("Error occurred");
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+}, []);
+```
+
+## References
+
+- Cursor rules: `.cursor/rules/react.mdc`, `frontend.mdc`, `shared.mdc`
+- WCAG 2.1: https://www.w3.org/WAI/WCAG21/quickref/
+- React best practices: https://react.dev/learn

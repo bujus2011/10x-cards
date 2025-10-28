@@ -1,92 +1,72 @@
-import { useState } from "react";
-import type { FlashcardProposalDto, GenerationCreateResponseDto } from "@/types";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { TextInputArea } from "./TextInputArea";
 import { GenerateButton } from "./GenerateButton";
 import { FlashcardList } from "./FlashcardList";
 import { SkeletonLoader } from "./SkeletonLoader";
 import { BulkSaveButton } from "./BulkSaveButton";
 import { ErrorNotification } from "./ErrorNotification";
-
-export type FlashcardProposalViewModel = Omit<FlashcardProposalDto, "source"> & {
-  accepted: boolean;
-  edited: boolean;
-  source: "ai-full" | "ai-edited";
-};
+import { generateFlashcardsSchema, type GenerateFlashcardsFormData } from "@/lib/validations";
+import { useFlashcardGeneration } from "@/hooks/useFlashcardGeneration";
 
 export function FlashcardGenerationView() {
-  const [textValue, setTextValue] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [generationId, setGenerationId] = useState<number | null>(null);
-  const [flashcards, setFlashcards] = useState<FlashcardProposalViewModel[]>([]);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<GenerateFlashcardsFormData>({
+    resolver: zodResolver(generateFlashcardsSchema),
+    defaultValues: {
+      source_text: "",
+    },
+  });
 
-  const handleTextChange = (value: string) => {
-    setTextValue(value);
-    setErrorMessage(null);
+  const {
+    generationId,
+    flashcards,
+    error,
+    isLoading,
+    handleGenerateFlashcards,
+    handleFlashcardAccept,
+    handleFlashcardReject,
+    handleFlashcardEdit,
+    handleSaveAcceptedFlashcards,
+    handleSaveAllFlashcards,
+    resetGeneration,
+  } = useFlashcardGeneration(() => reset());
+
+  const textValue = watch("source_text");
+
+  const onSubmit = async (data: GenerateFlashcardsFormData) => {
+    await handleGenerateFlashcards(data);
   };
 
-  const handleGenerateFlashcards = async () => {
-    try {
-      setIsLoading(true);
-      setErrorMessage(null);
-
-      const response = await fetch("/api/generations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ source_text: textValue }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate flashcards. Please try again.");
-      }
-
-      const data: GenerationCreateResponseDto = await response.json();
-      setGenerationId(data.generation_id);
-      setFlashcards(
-        data.flashcards_proposals.map((proposal) => ({
-          ...proposal,
-          accepted: false,
-          edited: false,
-          source: "ai-full" as const,
-        }))
-      );
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "An unexpected error occurred");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleFlashcardAccept = (index: number) => {
-    setFlashcards((prev) => prev.map((card, i) => (i === index ? { ...card, accepted: true } : card)));
-  };
-
-  const handleFlashcardReject = (index: number) => {
-    setFlashcards((prev) => prev.map((card, i) => (i === index ? { ...card, accepted: false } : card)));
-  };
-
-  const handleFlashcardEdit = (index: number, front: string, back: string) => {
-    setFlashcards((prev) =>
-      prev.map((card, i) => (i === index ? { ...card, front, back, edited: true, source: "ai-edited" as const } : card))
-    );
-  };
-
-  const handleSaveSuccess = () => {
-    setTextValue("");
-    setFlashcards([]);
-    setGenerationId(null);
-  };
+  const isFormValid = textValue.length >= 1000 && textValue.length <= 10000;
 
   return (
-    <div className="space-y-6">
-      {errorMessage && <ErrorNotification message={errorMessage} />}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {error && <ErrorNotification message={error} />}
 
-      <TextInputArea value={textValue} onChange={handleTextChange} disabled={isLoading} />
+      <div className="space-y-2">
+        <TextInputArea
+          {...register("source_text")}
+          value={textValue}
+          disabled={isLoading}
+        />
+        {errors.source_text && (
+          <p className="text-sm text-destructive">
+            {errors.source_text.message}
+          </p>
+        )}
+      </div>
 
       <GenerateButton
-        onClick={handleGenerateFlashcards}
-        disabled={isLoading || textValue.length < 1000 || textValue.length > 10000}
+        type="submit"
+        disabled={isLoading || !isFormValid}
         isLoading={isLoading}
+        data-testid="generate-button"
       />
 
       {isLoading && <SkeletonLoader />}
@@ -96,9 +76,10 @@ export function FlashcardGenerationView() {
           {generationId !== null && (
             <BulkSaveButton
               flashcards={flashcards}
-              generationId={generationId}
               disabled={isLoading}
-              onSuccess={handleSaveSuccess}
+              isLoading={isLoading}
+              onSaveAccepted={handleSaveAcceptedFlashcards}
+              onSaveAll={handleSaveAllFlashcards}
             />
           )}
           <FlashcardList
@@ -106,9 +87,10 @@ export function FlashcardGenerationView() {
             onAccept={handleFlashcardAccept}
             onReject={handleFlashcardReject}
             onEdit={handleFlashcardEdit}
+            data-testid="flashcard-list"
           />
         </>
       )}
-    </div>
+    </form>
   );
 }

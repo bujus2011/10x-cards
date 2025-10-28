@@ -3,16 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Check, X, Edit2, Save } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { FlashcardProposalViewModel } from "./FlashcardGenerationView";
+import type { FlashcardProposalViewModel } from "@/hooks/useFlashcardGeneration";
 
 interface FlashcardListItemProps {
   flashcard: FlashcardProposalViewModel;
   onAccept: () => void;
   onReject: () => void;
   onEdit: (front: string, back: string) => void;
+  itemTestId?: string;
 }
 
-export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit }: FlashcardListItemProps) {
+export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit, itemTestId }: FlashcardListItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedFront, setEditedFront] = useState(flashcard.front);
   const [editedBack, setEditedBack] = useState(flashcard.back);
@@ -31,6 +32,7 @@ export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit }: Fla
         flashcard.accepted ? "bg-green-50/50 border-green-200" : "bg-white",
         !flashcard.accepted && "opacity-75"
       )}
+      data-testid={itemTestId}
     >
       <div className="flex justify-between items-start gap-4">
         <div className="flex-1 space-y-4">
@@ -43,6 +45,7 @@ export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit }: Fla
                   placeholder="Front side"
                   className="resize-none"
                   maxLength={200}
+                  data-testid="edit-front-textarea"
                 />
                 <div className="text-sm text-muted-foreground">{editedFront.length}/200 characters</div>
               </div>
@@ -53,6 +56,7 @@ export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit }: Fla
                   placeholder="Back side"
                   className="resize-none"
                   maxLength={500}
+                  data-testid="edit-back-textarea"
                 />
                 <div className="text-sm text-muted-foreground">{editedBack.length}/500 characters</div>
               </div>
@@ -73,18 +77,26 @@ export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit }: Fla
               disabled={
                 editedFront.length > 200 || editedBack.length > 500 || !editedFront.trim() || !editedBack.trim()
               }
+              type="button"
+              data-testid="save-edit-button"
             >
               <Save className="h-4 w-4" />
             </Button>
           ) : (
             <>
-              <Button size="icon" variant={flashcard.accepted ? "default" : "outline"} onClick={onAccept}>
+              <Button
+                size="icon"
+                variant={flashcard.accepted ? "default" : "outline"}
+                onClick={onAccept}
+                type="button"
+                data-testid="accept-button"
+              >
                 <Check className="h-4 w-4" />
               </Button>
-              <Button size="icon" variant="outline" onClick={() => setIsEditing(true)}>
+              <Button size="icon" variant="outline" onClick={() => setIsEditing(true)} type="button" data-testid="edit-button">
                 <Edit2 className="h-4 w-4" />
               </Button>
-              <Button size="icon" variant="outline" onClick={onReject}>
+              <Button size="icon" variant="outline" onClick={onReject} type="button" data-testid="reject-button">
                 <X className="h-4 w-4" />
               </Button>
             </>

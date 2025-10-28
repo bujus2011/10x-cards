@@ -1,9 +1,14 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function SkeletonLoader() {
+interface SkeletonLoaderProps {
+  count?: number;
+  "data-testid"?: string;
+}
+
+export function SkeletonLoader({ count = 3, "data-testid": dataTestId }: SkeletonLoaderProps) {
   return (
-    <div className="space-y-4">
-      {Array.from({ length: 3 }).map((_, index) => (
+    <div className="space-y-4" data-testid={dataTestId}>
+      {Array.from({ length: count }).map((_, index) => (
         <div key={index} className="border rounded-lg p-4 space-y-3">
           <div className="flex justify-between items-start">
             <div className="space-y-2 flex-1">
