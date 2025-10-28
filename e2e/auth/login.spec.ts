@@ -6,6 +6,7 @@
 
 import { test, expect } from "@playwright/test";
 import { LoginPage } from "../pages/LoginPage";
+import { TEST_USERS } from "../helpers";
 
 test.describe.configure({ mode: "serial" });
 
@@ -113,12 +114,16 @@ test.describe("Login Page", () => {
   });
 
   test.describe("Successful Login", () => {
-    // This test would require a test user in your database
-    test.skip("should successfully log in with valid credentials", async ({ page }) => {
-      await loginPage.login("test@example.com", "validpassword123");
+    // This test uses the test user created in 00-setup-auth.spec.ts
+    test("should successfully log in with valid credentials", async ({ page }) => {
+      // Use the actual test user credentials from environment
+      await loginPage.login(TEST_USERS.valid.email, TEST_USERS.valid.password);
 
-      // Should redirect to home page
-      await expect(page).toHaveURL("/");
+      // Should redirect to /generate page after successful login
+      await expect(page).toHaveURL("/generate", { timeout: 10000 });
+
+      // Verify we're actually logged in by checking page content
+      await expect(page.getByTestId("generate-button")).toBeVisible();
     });
   });
 });
