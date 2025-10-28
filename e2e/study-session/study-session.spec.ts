@@ -65,8 +65,18 @@ test.describe("Study Session", () => {
       // Wait for initial load to complete
       await studyPage.waitForInitialLoad();
 
-      // Check if we have cards available
-      const state = await studyPage.getSessionState();
+      // Wait a bit longer for loading state to transition
+      // The loading state should disappear within a few seconds
+      await page.waitForTimeout(1000);
+
+      // Now check the state
+      let state = await studyPage.getSessionState();
+
+      // If still loading, wait for it to finish
+      if (state === "loading") {
+        await page.waitForTimeout(2000);
+        state = await studyPage.getSessionState();
+      }
 
       // Skip if no cards available
       if (state === "complete" || state === "empty") {
