@@ -1,5 +1,4 @@
 import { useState, useCallback } from "react";
-import { toast } from "sonner";
 import type { FlashcardDto, FlashcardUpdateDto } from "@/types";
 import type { ManualFlashcardFormData } from "@/lib/validations";
 
@@ -66,12 +65,10 @@ export function useFlashcards() {
         const result: FlashcardsResponse = await response.json();
         const flashcard = result.flashcards[0];
 
-        toast.success("Flashcard created successfully");
         return { data: flashcard };
       } catch (error) {
         const message = error instanceof Error ? error.message : "Unknown error occurred";
         console.error("Create flashcard error:", error);
-        toast.error(message);
         return { error: message };
       } finally {
         setIsLoading(false);
@@ -97,12 +94,10 @@ export function useFlashcards() {
 
         const result: FlashcardResponse = await response.json();
 
-        toast.success("Flashcard updated successfully");
         return { data: result.flashcard };
       } catch (error) {
         const message = error instanceof Error ? error.message : "Unknown error occurred";
         console.error("Update flashcard error:", error);
-        toast.error(message);
         return { error: message };
       } finally {
         setIsLoading(false);
@@ -125,12 +120,10 @@ export function useFlashcards() {
         throw new Error(errorData.error || "Failed to delete flashcard");
       }
 
-      toast.success("Flashcard deleted successfully");
       return { success: true };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error occurred";
       console.error("Delete flashcard error:", error);
-      toast.error(message);
       return { success: false, error: message };
     } finally {
       setIsLoading(false);
