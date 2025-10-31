@@ -316,7 +316,6 @@ describe("FlashcardCard", () => {
     it("should not allow saving when front exceeds 200 characters", async () => {
       // Arrange
       const user = userEvent.setup();
-      const { toast } = await import("sonner");
       render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
       await user.click(screen.getByLabelText(/Edit flashcard/i));
 
