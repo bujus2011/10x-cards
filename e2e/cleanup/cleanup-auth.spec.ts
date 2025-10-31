@@ -1,3 +1,4 @@
+/* eslint-disable no-console -- Cleanup script needs explicit logging for CI traces */
 /**
  * Cleanup Test - Clear Database and Authentication State
  *
@@ -79,18 +80,20 @@ async function cleanupDatabase(supabaseUrl: string, supabaseKey: string, userId:
       try {
         console.log(`  Deleting ${table.description}...`);
 
-        const { count, error } = await supabase
+        const { data, error } = await supabase
           .from(table.name as never)
           .delete()
           .match({ user_id: userId })
-          .select("id", { count: "exact", head: true });
+          .select("id");
+
+        const deletedCount = data?.length ?? 0;
 
         if (error) {
           console.error(`  ❌ Error deleting from ${table.name}:`, error.message);
           throw error;
         }
 
-        console.log(`  ✓ Deleted ${count} ${table.description} record(s)`);
+        console.log(`  ✓ Deleted ${deletedCount} ${table.description} record(s)`);
       } catch (error) {
         console.error(`  ❌ Failed to clean ${table.name}:`, error instanceof Error ? error.message : String(error));
         throw error;
