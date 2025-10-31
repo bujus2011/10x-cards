@@ -68,6 +68,8 @@ Testy są uruchamiane w następującej kolejności:
 4. **study-session** - Testy sesji nauki (używa zapisanego stanu)
 5. **cleanup** - Czyszczenie stanu autentykacji
 
+**Ważne:** Testy używają **1 workera** (skonfigurowane w `playwright.config.ts`), aby zapobiec wzajemnemu zakłócaniu się testów poprzez sekwencyjne uruchamianie. Dzięki temu każdy test działa w izolacji bez konfliktów dotyczących stanu aplikacji czy bazy danych.
+
 ## Troubleshooting
 
 ### Problem: `ERR_CONNECTION_REFUSED`

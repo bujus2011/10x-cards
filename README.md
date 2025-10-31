@@ -109,7 +109,9 @@
 - **`npm run test:e2e:codegen`**: Otwiera codegen Playwright do nagrywania testów.
 - **`npm run test:all`**: Uruchamia zarówno testy jednostkowe jak i E2E.
 
-Aby uzyskać szczegółową dokumentację testową, zobacz [TESTING.md](./TESTING.md).
+**Uwaga:** Testy E2E używają 1 workera, aby zapobiec wzajemnemu zakłócaniu się testów.
+
+Aby uzyskać szczegółową dokumentację testową, zobacz [TESTING-E2E.md](./TESTING-E2E.md).
 
 ## Zakres projektu
 

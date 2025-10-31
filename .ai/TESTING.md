@@ -80,6 +80,7 @@ describe('MyComponent', () => {
 Playwright is configured in `playwright.config.ts` with:
 
 - Chromium/Desktop Chrome as the test browser (as per guidelines)
+- **1 worker** to prevent tests from interfering with each other by running sequentially
 - Automatic dev server startup
 - Visual regression testing support
 - Trace collection on first retry
@@ -129,7 +130,7 @@ test.describe("User Authentication", () => {
 5. **Codegen tool** - Use `npm run test:e2e:codegen` for test recording
 6. **Trace viewer** - Debug with traces on failure
 7. **Test hooks** - Use `beforeEach`/`afterEach` for setup/teardown
-8. **Parallel execution** - Tests run in parallel by default
+8. **Sequential execution** - Tests run sequentially using 1 worker to prevent interference
 
 ## Running Tests
 

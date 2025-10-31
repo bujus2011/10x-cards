@@ -214,6 +214,7 @@ src/
 - Uses Page Object Model pattern (e.g., `e2e/pages/LoginPage.ts`)
 - Auth helpers in `e2e/helpers/auth.helpers.ts`
 - Runs in Chromium only (as per guidelines)
+- **Uses 1 worker** (configured in `playwright.config.ts`) to prevent tests from interfering with each other by running sequentially
 - Requires `.env.test` with E2E_USERNAME and E2E_PASSWORD
 - **Test Execution Order:** Tests run in dependency order:
   1. `auth-tests` - First runs `00-setup-auth.spec.ts` (alphabetically first) which saves auth state to `.auth/user.json`, then validates login functionality
