@@ -8,6 +8,9 @@
  * in your Supabase database for testing purposes.
  */
 
+/* eslint-env node */
+/* eslint-disable no-console, no-undef */
+
 import { createClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
 import path from "path";
