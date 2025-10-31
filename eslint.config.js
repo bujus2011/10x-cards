@@ -56,11 +56,21 @@ const reactConfig = tseslint.config({
   },
 });
 
+const nodeE2EScriptsConfig = {
+  files: ["e2e/scripts/**/*.{js,mjs,cjs,ts}"],
+  languageOptions: {
+    globals: {
+      process: "readonly",
+    },
+  },
+};
+
 export default tseslint.config(
   includeIgnoreFile(gitignorePath),
   baseConfig,
   jsxA11yConfig,
   reactConfig,
+  nodeE2EScriptsConfig,
   eslintPluginAstro.configs["flat/recommended"],
   eslintPluginPrettier
 );
