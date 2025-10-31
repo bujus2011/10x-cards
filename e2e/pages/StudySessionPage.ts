@@ -204,7 +204,11 @@ export class StudySessionPage {
     // Click and wait for navigation or state change
     await Promise.all([
       // Wait for either the active container to appear or complete to reappear
-      this.page.waitForResponse(resp => resp.url().includes('/api/study-session') && resp.request().method() === 'GET', { timeout: 10000 }).catch(() => null),
+      this.page
+        .waitForResponse((resp) => resp.url().includes("/api/study-session") && resp.request().method() === "GET", {
+          timeout: 10000,
+        })
+        .catch(() => null),
       this.startNewSessionButton.click(),
     ]);
 

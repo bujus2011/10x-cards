@@ -35,7 +35,7 @@ test.describe("Login with Helpers", () => {
     // Field-level validation error should appear for invalid email
     const hasEmailError = await loginPage.hasFieldError("email");
     expect(hasEmailError).toBe(true);
-    
+
     const errorText = await loginPage.getFieldErrorText("email");
     expect(errorText).toContain("valid email");
   });

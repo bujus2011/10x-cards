@@ -24,7 +24,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       }),
       { status: 200 }
     );
-  } catch (err) {
+  } catch {
     return new Response(
       JSON.stringify({
         error: "An unexpected error occurred",

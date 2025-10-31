@@ -9,7 +9,13 @@ interface GenerateButtonProps {
   "data-testid"?: string;
 }
 
-export function GenerateButton({ onClick, disabled, isLoading, type = "button", "data-testid": testId }: GenerateButtonProps) {
+export function GenerateButton({
+  onClick,
+  disabled,
+  isLoading,
+  type = "button",
+  "data-testid": testId,
+}: GenerateButtonProps) {
   return (
     <Button
       type={type}

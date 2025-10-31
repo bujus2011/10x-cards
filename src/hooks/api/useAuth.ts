@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { toast } from "sonner";
 import type { LoginFormData, RegisterFormData, ResetPasswordFormData } from "@/lib/validations";
 
 interface AuthResponse {

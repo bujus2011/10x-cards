@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { FlashcardService, DatabaseError } from "../flashcard.service";
 import type { FlashcardCreateDto, FlashcardUpdateDto } from "../../types";
 
@@ -33,6 +33,7 @@ describe("FlashcardService", () => {
 
   beforeEach(() => {
     mockSupabase = createMockSupabaseClient();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     flashcardService = new FlashcardService(mockSupabase as any);
   });
 

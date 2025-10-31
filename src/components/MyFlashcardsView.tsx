@@ -18,12 +18,7 @@ export function MyFlashcardsView() {
     handleRetry,
   } = useFlashcardManagement();
 
-  const {
-    searchQuery,
-    setSearchQuery,
-    filteredFlashcards,
-    searchStats,
-  } = useFlashcardSearch({ flashcards });
+  const { searchQuery, setSearchQuery, filteredFlashcards, searchStats } = useFlashcardSearch({ flashcards });
 
   if (isLoading) {
     return <SkeletonLoader data-testid="flashcards-loading" />;

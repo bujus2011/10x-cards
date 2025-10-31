@@ -18,7 +18,6 @@ import { MyFlashcardsPage } from "../pages/MyFlashcardsPage";
 test.use({ storageState: ".auth/user.json" });
 
 test.describe("My Flashcards - Edit Flashcard", () => {
-
   test("should successfully edit a flashcard", async ({ page }) => {
     const myFlashcardsPage = new MyFlashcardsPage(page);
 
@@ -51,7 +50,6 @@ test.describe("My Flashcards - Edit Flashcard", () => {
 
     // Verify form loaded with correct data
     const editFrontValue = await flashcard.getEditFrontValue();
-    const editBackValue = await flashcard.getEditBackValue();
 
     expect(editFrontValue).toBe(originalFront);
     console.log(`Edit form loaded with front: "${editFrontValue}"`);

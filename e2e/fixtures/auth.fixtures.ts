@@ -15,6 +15,7 @@ export const test = base.extend({
    * Provides a page with cleared authentication state
    * This fixture automatically clears cookies before each test
    */
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   authenticatedPage: async ({ page, context }, use) => {
     // Clear cookies before test
     await context.clearCookies();

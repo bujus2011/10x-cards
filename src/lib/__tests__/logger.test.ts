@@ -8,7 +8,9 @@ describe("Logger", () => {
 
   beforeEach(() => {
     // Spy on console methods
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
     logger = new Logger("TestContext");

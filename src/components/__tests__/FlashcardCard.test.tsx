@@ -12,10 +12,10 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FlashcardCard } from "../FlashcardCard";
-import type { FlashcardDto, FlashcardUpdateDto } from "@/types";
+import type { FlashcardDto } from "@/types";
 
 // Mock sonner toast
 vi.mock("sonner", () => ({

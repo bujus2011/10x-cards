@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Mail, Lock, AlertCircle } from "lucide-react";
+import { Mail, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { registerSchema, type RegisterFormData } from "@/lib/validations";
 import { useAuth } from "@/hooks/api";
@@ -14,7 +14,7 @@ interface RegisterFormProps {
 
 export function RegisterForm({ isLoading = false }: RegisterFormProps) {
   const { register: registerUser, isLoading: isAuthLoading } = useAuth();
-  
+
   const {
     register,
     handleSubmit,
@@ -31,7 +31,7 @@ export function RegisterForm({ isLoading = false }: RegisterFormProps) {
 
   const onSubmit = async (data: RegisterFormData) => {
     const result = await registerUser(data);
-    
+
     if (!result.success && result.error) {
       setError("root", {
         type: "manual",
@@ -41,14 +41,11 @@ export function RegisterForm({ isLoading = false }: RegisterFormProps) {
   };
 
   const isFormLoading = isSubmitting || isAuthLoading || isLoading;
-  const hasPasswordError = errors.password || errors.confirmPassword;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {errors.root && (
-        <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">
-          {errors.root.message}
-        </div>
+        <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">{errors.root.message}</div>
       )}
 
       <div className="space-y-2">
@@ -120,12 +117,7 @@ export function RegisterForm({ isLoading = false }: RegisterFormProps) {
         )}
       </div>
 
-      <Button
-        type="submit"
-        className="w-full"
-        disabled={isFormLoading}
-        data-testid="register-submit-button"
-      >
+      <Button type="submit" className="w-full" disabled={isFormLoading} data-testid="register-submit-button">
         {isFormLoading ? "Creating account..." : "Create account"}
       </Button>
 

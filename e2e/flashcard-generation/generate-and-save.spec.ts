@@ -75,7 +75,6 @@ test.describe("Flashcard Generation Workflow", () => {
 
       // Get original content for comparison
       const originalFront = await card3.getFrontText();
-      const originalBack = await card3.getBackText();
       console.log(`Original card 3 - Front: ${originalFront.substring(0, 50)}...`);
 
       // Edit the flashcard
@@ -178,7 +177,6 @@ test.describe("Flashcard Generation Workflow", () => {
       console.log(`   📚 Total flashcards: ${count}`);
       expect(count).toBeGreaterThan(0);
     });
-
 
     // Click Save All (no need to accept any)
     await generatePage.clickSaveAll();

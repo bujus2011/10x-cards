@@ -3,123 +3,121 @@ import type { FlashcardCreateDto } from "@/types";
 import type { GenerateFlashcardsFormData } from "@/lib/validations";
 import { useGeneration } from "@/hooks/api";
 
-export type FlashcardProposalViewModel = {
-    front: string;
-    back: string;
-    accepted: boolean;
-    edited: boolean;
-    source: "ai-full" | "ai-edited";
-};
+export interface FlashcardProposalViewModel {
+  front: string;
+  back: string;
+  accepted: boolean;
+  edited: boolean;
+  source: "ai-full" | "ai-edited";
+}
 
 export function useFlashcardGeneration(onSaveSuccess?: () => void) {
-    const [generationId, setGenerationId] = useState<number | null>(null);
-    const [flashcards, setFlashcards] = useState<FlashcardProposalViewModel[]>([]);
-    const [error, setError] = useState<string | null>(null);
+  const [generationId, setGenerationId] = useState<number | null>(null);
+  const [flashcards, setFlashcards] = useState<FlashcardProposalViewModel[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-    const { generateFlashcards, saveFlashcards, isLoading } = useGeneration();
+  const { generateFlashcards, saveFlashcards, isLoading } = useGeneration();
 
-    const handleGenerateFlashcards = useCallback(async (data: GenerateFlashcardsFormData) => {
-        setError(null);
-        const result = await generateFlashcards(data);
+  const handleGenerateFlashcards = useCallback(
+    async (data: GenerateFlashcardsFormData) => {
+      setError(null);
+      const result = await generateFlashcards(data);
 
-        if (result.error) {
-            setError(result.error);
-            return;
-        }
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
 
-        if (result.data) {
-            setGenerationId(result.data.generation_id);
-            setFlashcards(
-                result.data.flashcards_proposals.map((proposal) => ({
-                    ...proposal,
-                    accepted: false,
-                    edited: false,
-                    source: "ai-full" as const,
-                }))
-            );
-        }
-    }, [generateFlashcards]);
-
-    const handleFlashcardAccept = useCallback((index: number) => {
-        setFlashcards((prev) =>
-            prev.map((card, i) => (i === index ? { ...card, accepted: true } : card))
+      if (result.data) {
+        setGenerationId(result.data.generation_id);
+        setFlashcards(
+          result.data.flashcards_proposals.map((proposal) => ({
+            ...proposal,
+            accepted: false,
+            edited: false,
+            source: "ai-full" as const,
+          }))
         );
-    }, []);
+      }
+    },
+    [generateFlashcards]
+  );
 
-    const handleFlashcardReject = useCallback((index: number) => {
-        setFlashcards((prev) =>
-            prev.map((card, i) => (i === index ? { ...card, accepted: false } : card))
-        );
-    }, []);
+  const handleFlashcardAccept = useCallback((index: number) => {
+    setFlashcards((prev) => prev.map((card, i) => (i === index ? { ...card, accepted: true } : card)));
+  }, []);
 
-    const handleFlashcardEdit = useCallback((index: number, front: string, back: string) => {
-        setFlashcards((prev) =>
-            prev.map((card, i) =>
-                i === index
-                    ? { ...card, front, back, edited: true, source: "ai-edited" as const }
-                    : card
-            )
-        );
-    }, []);
+  const handleFlashcardReject = useCallback((index: number) => {
+    setFlashcards((prev) => prev.map((card, i) => (i === index ? { ...card, accepted: false } : card)));
+  }, []);
 
-    const handleSaveFlashcards = useCallback(async (onlyAccepted: boolean = true) => {
-        if (!generationId) {
-            setError("No generation ID available");
-            return { success: false };
-        }
+  const handleFlashcardEdit = useCallback((index: number, front: string, back: string) => {
+    setFlashcards((prev) =>
+      prev.map((card, i) => (i === index ? { ...card, front, back, edited: true, source: "ai-edited" as const } : card))
+    );
+  }, []);
 
-        const flashcardsToSave: FlashcardCreateDto[] = flashcards
-            .filter((card) => !onlyAccepted || card.accepted)
-            .map((card) => ({
-                front: card.front,
-                back: card.back,
-                source: card.source,
-                generation_id: generationId,
-            }));
+  const handleSaveFlashcards = useCallback(
+    async (onlyAccepted = true) => {
+      if (!generationId) {
+        setError("No generation ID available");
+        return { success: false };
+      }
 
-        const result = await saveFlashcards(flashcardsToSave);
+      const flashcardsToSave: FlashcardCreateDto[] = flashcards
+        .filter((card) => !onlyAccepted || card.accepted)
+        .map((card) => ({
+          front: card.front,
+          back: card.back,
+          source: card.source,
+          generation_id: generationId,
+        }));
 
-        if (result.success) {
-            // Reset state after successful save
-            setFlashcards([]);
-            setGenerationId(null);
-            setError(null);
+      const result = await saveFlashcards(flashcardsToSave);
 
-            // Call onSuccess callback if provided
-            onSaveSuccess?.();
-        } else if (result.error) {
-            setError(result.error);
-        }
-
-        return result;
-    }, [flashcards, generationId, saveFlashcards, onSaveSuccess]);
-
-    const handleSaveAcceptedFlashcards = useCallback(async () => {
-        await handleSaveFlashcards(true);
-    }, [handleSaveFlashcards]);
-
-    const handleSaveAllFlashcards = useCallback(async () => {
-        await handleSaveFlashcards(false);
-    }, [handleSaveFlashcards]);
-
-    const resetGeneration = useCallback(() => {
+      if (result.success) {
+        // Reset state after successful save
         setFlashcards([]);
         setGenerationId(null);
         setError(null);
-    }, []);
 
-    return {
-        generationId,
-        flashcards,
-        error,
-        isLoading,
-        handleGenerateFlashcards,
-        handleFlashcardAccept,
-        handleFlashcardReject,
-        handleFlashcardEdit,
-        handleSaveFlashcards,
-        handleSaveAcceptedFlashcards,
-        handleSaveAllFlashcards,
-        resetGeneration,
-    };
+        // Call onSuccess callback if provided
+        onSaveSuccess?.();
+      } else if (result.error) {
+        setError(result.error);
+      }
+
+      return result;
+    },
+    [flashcards, generationId, saveFlashcards, onSaveSuccess]
+  );
+
+  const handleSaveAcceptedFlashcards = useCallback(async () => {
+    await handleSaveFlashcards(true);
+  }, [handleSaveFlashcards]);
+
+  const handleSaveAllFlashcards = useCallback(async () => {
+    await handleSaveFlashcards(false);
+  }, [handleSaveFlashcards]);
+
+  const resetGeneration = useCallback(() => {
+    setFlashcards([]);
+    setGenerationId(null);
+    setError(null);
+  }, []);
+
+  return {
+    generationId,
+    flashcards,
+    error,
+    isLoading,
+    handleGenerateFlashcards,
+    handleFlashcardAccept,
+    handleFlashcardReject,
+    handleFlashcardEdit,
+    handleSaveFlashcards,
+    handleSaveAcceptedFlashcards,
+    handleSaveAllFlashcards,
+    resetGeneration,
+  };
 }

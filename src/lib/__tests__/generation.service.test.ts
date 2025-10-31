@@ -32,6 +32,7 @@ type MockSupabaseClient = ReturnType<typeof createMockSupabaseClient>;
 describe("GenerationService", () => {
   let mockSupabase: MockSupabaseClient;
   let generationService: GenerationService;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockOpenRouter: any;
 
   const mockUserId = "user-123";
@@ -43,12 +44,14 @@ describe("GenerationService", () => {
     mockSupabase = createMockSupabaseClient();
 
     // Get the mocked OpenRouterService
-    const { OpenRouterService } = await import("../openrouter.service");
+    await import("../openrouter.service");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     generationService = new GenerationService(mockSupabase as any, {
       apiKey: "test-api-key",
     });
 
     // Get the mock instance
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockOpenRouter = (generationService as any).openRouter;
   });
 
@@ -56,6 +59,7 @@ describe("GenerationService", () => {
     it("should throw error when API key is missing", () => {
       // Act & Assert
       expect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         new GenerationService(mockSupabase as any, { apiKey: "" });
       }).toThrow("OpenRouter API key is required");
     });
@@ -63,6 +67,7 @@ describe("GenerationService", () => {
     it("should initialize with valid API key", () => {
       // Act & Assert
       expect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         new GenerationService(mockSupabase as any, { apiKey: "valid-key" });
       }).not.toThrow();
     });

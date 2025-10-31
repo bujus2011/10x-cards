@@ -19,7 +19,7 @@ export function StudySessionView() {
 
   const loadDueCards = useCallback(async () => {
     const result = await fetchDueCards(20);
-    
+
     if (result.data) {
       setCards(result.data);
       setSessionComplete(result.data.length === 0);
@@ -30,21 +30,24 @@ export function StudySessionView() {
     setShowBack(true);
   }, []);
 
-  const handleRating = useCallback(async (rating: Rating) => {
-    if (isSubmitting || !cards[currentIndex]) return;
+  const handleRating = useCallback(
+    async (rating: Rating) => {
+      if (isSubmitting || !cards[currentIndex]) return;
 
-    const result = await submitReview(cards[currentIndex].flashcard.id, rating);
-    
-    if (result.success) {
-      // Move to next card
-      if (currentIndex < cards.length - 1) {
-        setCurrentIndex(currentIndex + 1);
-        setShowBack(false);
-      } else {
-        setSessionComplete(true);
+      const result = await submitReview(cards[currentIndex].flashcard.id, rating);
+
+      if (result.success) {
+        // Move to next card
+        if (currentIndex < cards.length - 1) {
+          setCurrentIndex(currentIndex + 1);
+          setShowBack(false);
+        } else {
+          setSessionComplete(true);
+        }
       }
-    }
-  }, [isSubmitting, cards, currentIndex, submitReview]);
+    },
+    [isSubmitting, cards, currentIndex, submitReview]
+  );
 
   const handleRestart = useCallback(() => {
     setSessionComplete(false);

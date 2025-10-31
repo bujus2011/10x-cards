@@ -44,6 +44,7 @@ describe("OpenRouterService", () => {
     it("should throw error for missing API key", () => {
       // Act & Assert
       expect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         new OpenRouterService({ apiKey: undefined as any });
       }).toThrow();
     });

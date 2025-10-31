@@ -96,7 +96,7 @@ const ROUTE_CONFIG = {
  * Check if a path requires authentication
  */
 function isProtectedPath(pathname: string): boolean {
-  return !ROUTE_CONFIG.public.includes(pathname as any);
+  return !ROUTE_CONFIG.public.includes(pathname);
 }
 
 /**

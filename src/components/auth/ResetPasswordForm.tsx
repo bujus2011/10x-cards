@@ -15,7 +15,7 @@ interface ResetPasswordFormProps {
 export function ResetPasswordForm({ isLoading = false }: ResetPasswordFormProps) {
   const [success, setSuccess] = useState(false);
   const { resetPassword, isLoading: isAuthLoading } = useAuth();
-  
+
   const {
     register,
     handleSubmit,
@@ -31,7 +31,7 @@ export function ResetPasswordForm({ isLoading = false }: ResetPasswordFormProps)
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     const result = await resetPassword(data);
-    
+
     if (result.success) {
       setSuccess(true);
       reset();
@@ -49,10 +49,11 @@ export function ResetPasswordForm({ isLoading = false }: ResetPasswordFormProps)
         <div className="bg-green-50 text-green-900 text-sm p-4 rounded-md border border-green-200">
           <p className="font-semibold mb-2">Check your email</p>
           <p className="text-sm">
-            We've sent a password reset link to your email. Please follow the link in the email to set a new password.
+            We&apos;ve sent a password reset link to your email. Please follow the link in the email to set a new
+            password.
           </p>
           <p className="text-sm mt-3 text-green-800">
-            Note: You'll be able to set your new password and confirm it on the next page.
+            Note: You&apos;ll be able to set your new password and confirm it on the next page.
           </p>
         </div>
 
@@ -82,9 +83,7 @@ export function ResetPasswordForm({ isLoading = false }: ResetPasswordFormProps)
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {errors.root && (
-        <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">
-          {errors.root.message}
-        </div>
+        <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">{errors.root.message}</div>
       )}
 
       <div className="space-y-2">
@@ -102,11 +101,7 @@ export function ResetPasswordForm({ isLoading = false }: ResetPasswordFormProps)
             {...register("email")}
           />
         </div>
-        {errors.email && (
-          <p className="text-sm text-destructive">
-            {errors.email.message}
-          </p>
-        )}
+        {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
       </div>
 
       <Button type="submit" className="w-full" disabled={isFormLoading}>

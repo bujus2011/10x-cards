@@ -39,71 +39,77 @@ export function useFlashcards() {
     }
   }, []);
 
-  const createFlashcard = useCallback(async (data: ManualFlashcardFormData): Promise<{ data?: FlashcardDto; error?: string }> => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/flashcards", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          flashcards: [
-            {
-              front: data.front,
-              back: data.back,
-              source: "manual",
-              generation_id: null,
-            },
-          ],
-        }),
-      });
+  const createFlashcard = useCallback(
+    async (data: ManualFlashcardFormData): Promise<{ data?: FlashcardDto; error?: string }> => {
+      setIsLoading(true);
+      try {
+        const response = await fetch("/api/flashcards", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            flashcards: [
+              {
+                front: data.front,
+                back: data.back,
+                source: "manual",
+                generation_id: null,
+              },
+            ],
+          }),
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to create flashcard");
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to create flashcard");
+        }
+
+        const result: FlashcardsResponse = await response.json();
+        const flashcard = result.flashcards[0];
+
+        toast.success("Flashcard created successfully");
+        return { data: flashcard };
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Unknown error occurred";
+        console.error("Create flashcard error:", error);
+        toast.error(message);
+        return { error: message };
+      } finally {
+        setIsLoading(false);
       }
+    },
+    []
+  );
 
-      const result: FlashcardsResponse = await response.json();
-      const flashcard = result.flashcards[0];
-      
-      toast.success("Flashcard created successfully");
-      return { data: flashcard };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unknown error occurred";
-      console.error("Create flashcard error:", error);
-      toast.error(message);
-      return { error: message };
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const updateFlashcard = useCallback(
+    async (id: number, updates: FlashcardUpdateDto): Promise<{ data?: FlashcardDto; error?: string }> => {
+      setIsLoading(true);
+      try {
+        const response = await fetch("/api/flashcards", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id, ...updates }),
+        });
 
-  const updateFlashcard = useCallback(async (id: number, updates: FlashcardUpdateDto): Promise<{ data?: FlashcardDto; error?: string }> => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/flashcards", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, ...updates }),
-      });
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to update flashcard");
+        }
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to update flashcard");
+        const result: FlashcardResponse = await response.json();
+
+        toast.success("Flashcard updated successfully");
+        return { data: result.flashcard };
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Unknown error occurred";
+        console.error("Update flashcard error:", error);
+        toast.error(message);
+        return { error: message };
+      } finally {
+        setIsLoading(false);
       }
-
-      const result: FlashcardResponse = await response.json();
-      
-      toast.success("Flashcard updated successfully");
-      return { data: result.flashcard };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unknown error occurred";
-      console.error("Update flashcard error:", error);
-      toast.error(message);
-      return { error: message };
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   const deleteFlashcard = useCallback(async (id: number): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);

@@ -3,16 +3,8 @@ import type { Source } from "@/types";
 
 // Flashcard content validation
 const flashcardContentSchema = z.object({
-  front: z
-    .string()
-    .min(1, "Front side is required")
-    .max(200, "Front side must be less than 200 characters")
-    .trim(),
-  back: z
-    .string()
-    .min(1, "Back side is required")
-    .max(500, "Back side must be less than 500 characters")
-    .trim(),
+  front: z.string().min(1, "Front side is required").max(200, "Front side must be less than 200 characters").trim(),
+  back: z.string().min(1, "Back side is required").max(500, "Back side must be less than 500 characters").trim(),
 });
 
 // Source validation

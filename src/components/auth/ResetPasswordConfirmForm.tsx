@@ -74,7 +74,7 @@ export function ResetPasswordConfirmForm({ isLoading = false }: ResetPasswordCon
       setTimeout(() => {
         window.location.href = "/auth/login";
       }, 2000);
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -114,7 +114,7 @@ export function ResetPasswordConfirmForm({ isLoading = false }: ResetPasswordCon
             <p className="font-semibold">Password Reset Successfully</p>
           </div>
           <p className="text-sm">
-            Your password has been reset successfully. You'll be redirected to the login page in a moment.
+            Your password has been reset successfully. You&apos;ll be redirected to the login page in a moment.
           </p>
         </div>
 

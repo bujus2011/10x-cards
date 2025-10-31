@@ -12,7 +12,7 @@
  * - E2E_USERNAME_ID: User ID to clean up (from auth state)
  */
 
-import { test, expect } from "@playwright/test";
+import { test } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 import fs from "fs/promises";
 import path from "path";
@@ -35,9 +35,7 @@ test.describe("Cleanup", () => {
     if (supabaseUrl && supabaseKey && e2eUserId) {
       await cleanupDatabase(supabaseUrl, supabaseKey, e2eUserId);
     } else {
-      console.warn(
-        "⚠️  Database cleanup skipped - missing environment variables:",
-      );
+      console.warn("⚠️  Database cleanup skipped - missing environment variables:");
       if (!supabaseUrl) console.warn("   - SUPABASE_URL");
       if (!supabaseKey) console.warn("   - SUPABASE_KEY");
       if (!e2eUserId) console.warn("   - E2E_USERNAME_ID");
@@ -54,11 +52,7 @@ test.describe("Cleanup", () => {
  * Clean up all test data from Supabase database
  * Deletes entries from: flashcards, generations, review_logs
  */
-async function cleanupDatabase(
-  supabaseUrl: string,
-  supabaseKey: string,
-  userId: string,
-) {
+async function cleanupDatabase(supabaseUrl: string, supabaseKey: string, userId: string) {
   console.log("📊 Cleaning up Supabase database...\n");
 
   try {
@@ -92,31 +86,20 @@ async function cleanupDatabase(
           .select("id", { count: "exact", head: true });
 
         if (error) {
-          console.error(
-            `  ❌ Error deleting from ${table.name}:`,
-            error.message,
-          );
+          console.error(`  ❌ Error deleting from ${table.name}:`, error.message);
           throw error;
         }
 
-        console.log(
-          `  ✓ Deleted ${count} ${table.description} record(s)`,
-        );
+        console.log(`  ✓ Deleted ${count} ${table.description} record(s)`);
       } catch (error) {
-        console.error(
-          `  ❌ Failed to clean ${table.name}:`,
-          error instanceof Error ? error.message : String(error),
-        );
+        console.error(`  ❌ Failed to clean ${table.name}:`, error instanceof Error ? error.message : String(error));
         throw error;
       }
     }
 
     console.log("\n✓ Database cleanup completed successfully\n");
   } catch (error) {
-    console.error(
-      "❌ Database cleanup failed:",
-      error instanceof Error ? error.message : String(error),
-    );
+    console.error("❌ Database cleanup failed:", error instanceof Error ? error.message : String(error));
     throw error;
   }
 }
@@ -143,10 +126,7 @@ async function clearAuthenticationState() {
     console.log("  ✓ Authentication state cleared");
     console.log(`  ✓ File: ${authFile}\n`);
   } catch (error) {
-    console.error(
-      "❌ Failed to clear authentication state:",
-      error instanceof Error ? error.message : String(error),
-    );
+    console.error("❌ Failed to clear authentication state:", error instanceof Error ? error.message : String(error));
     throw error;
   }
 }

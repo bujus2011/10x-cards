@@ -39,7 +39,7 @@ describe("cn utility function", () => {
   describe("conditional classes", () => {
     it("should handle conditional classes with boolean true", () => {
       // Act
-      const result = cn("base-class", true && "conditional-class");
+      const result = cn("base-class", true ? "conditional-class" : "");
 
       // Assert
       expect(result).toBe("base-class conditional-class");
@@ -47,7 +47,7 @@ describe("cn utility function", () => {
 
     it("should handle conditional classes with boolean false", () => {
       // Act
-      const result = cn("base-class", false && "conditional-class");
+      const result = cn("base-class", false ? "conditional-class" : "");
 
       // Assert
       expect(result).toBe("base-class");

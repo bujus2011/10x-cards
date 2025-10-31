@@ -93,7 +93,13 @@ export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit, itemT
               >
                 <Check className="h-4 w-4" />
               </Button>
-              <Button size="icon" variant="outline" onClick={() => setIsEditing(true)} type="button" data-testid="edit-button">
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={() => setIsEditing(true)}
+                type="button"
+                data-testid="edit-button"
+              >
                 <Edit2 className="h-4 w-4" />
               </Button>
               <Button size="icon" variant="outline" onClick={onReject} type="button" data-testid="reject-button">

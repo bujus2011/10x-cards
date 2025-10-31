@@ -30,7 +30,10 @@ export const TextInputArea = forwardRef<HTMLTextAreaElement, TextInputAreaProps>
           onBlur={onBlur}
           disabled={disabled}
           placeholder="Paste your text here (1000-10000 characters)"
-          className={cn("min-h-[200px] max-h-[200px] resize-y", showError && "border-red-500 focus-visible:ring-red-500")}
+          className={cn(
+            "min-h-[200px] max-h-[200px] resize-y",
+            showError && "border-red-500 focus-visible:ring-red-500"
+          )}
           data-testid="source-text-textarea"
         />
 

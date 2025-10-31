@@ -199,7 +199,7 @@ describe("CreateFlashcardForm", () => {
     it("should show error toast when submitting with empty fields", async () => {
       // Arrange
       const user = userEvent.setup();
-      const { toast } = await import("sonner");
+      await import("sonner");
       render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
@@ -444,7 +444,7 @@ describe("CreateFlashcardForm", () => {
     it("should show error toast when front exceeds 200 characters", async () => {
       // Arrange
       const user = userEvent.setup();
-      const { toast } = await import("sonner");
+      await import("sonner");
       render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 

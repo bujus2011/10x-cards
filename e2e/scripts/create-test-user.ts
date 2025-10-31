@@ -72,9 +72,7 @@ async function createTestUser() {
         console.log("✅ Test user already exists and credentials are valid!");
         if (data.user?.id) {
           console.log(`   User ID: ${data.user.id}`);
-          console.log(
-            "💡 Add this to your .env.test as E2E_USERNAME_ID for database cleanup",
-          );
+          console.log("💡 Add this to your .env.test as E2E_USERNAME_ID for database cleanup");
         }
         console.log("\n✨ You can now run E2E tests:");
         console.log("   npm run test:e2e\n");
@@ -87,9 +85,7 @@ async function createTestUser() {
     if (data.user) {
       console.log("✅ Test user created successfully!");
       console.log(`   User ID: ${data.user.id}`);
-      console.log(
-        "💡 Add this to your .env.test as E2E_USERNAME_ID for database cleanup",
-      );
+      console.log("💡 Add this to your .env.test as E2E_USERNAME_ID for database cleanup");
 
       if (data.user.confirmed_at) {
         console.log("   Status: Email confirmed ✓");

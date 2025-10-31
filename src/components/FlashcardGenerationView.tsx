@@ -34,7 +34,6 @@ export function FlashcardGenerationView() {
     handleFlashcardEdit,
     handleSaveAcceptedFlashcards,
     handleSaveAllFlashcards,
-    resetGeneration,
   } = useFlashcardGeneration(() => reset());
 
   const textValue = watch("source_text");
@@ -50,16 +49,8 @@ export function FlashcardGenerationView() {
       {error && <ErrorNotification message={error} />}
 
       <div className="space-y-2">
-        <TextInputArea
-          {...register("source_text")}
-          value={textValue}
-          disabled={isLoading}
-        />
-        {errors.source_text && (
-          <p className="text-sm text-destructive">
-            {errors.source_text.message}
-          </p>
-        )}
+        <TextInputArea {...register("source_text")} value={textValue} disabled={isLoading} />
+        {errors.source_text && <p className="text-sm text-destructive">{errors.source_text.message}</p>}
       </div>
 
       <GenerateButton

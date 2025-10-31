@@ -20,7 +20,7 @@ export function Navbar({ user }: NavbarProps) {
 
       // Reload the page to update server-side session
       window.location.href = "/";
-    } catch (error) {
+    } catch {
       toast.error("Failed to logout. Please try again.");
     }
   };

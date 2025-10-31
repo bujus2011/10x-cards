@@ -24,12 +24,12 @@ dotenv.config({ path: envPath });
  * Environment variables interface for type safety
  */
 export interface E2EEnvironment {
-    supabaseUrl: string;
-    supabaseKey: string;
-    e2eUsername: string;
-    e2ePassword: string;
-    e2eUserId: string | undefined;
-    baseUrl: string;
+  supabaseUrl: string;
+  supabaseKey: string;
+  e2eUsername: string;
+  e2ePassword: string;
+  e2eUserId: string | undefined;
+  baseUrl: string;
 }
 
 /**
@@ -43,21 +43,21 @@ export interface E2EEnvironment {
  * const supabase = createClient(env.supabaseUrl, env.supabaseKey);
  */
 export function loadE2EEnvironment(): E2EEnvironment {
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_KEY;
-    const e2eUsername = process.env.E2E_USERNAME || "test@example.com";
-    const e2ePassword = process.env.E2E_PASSWORD || "Test123456!";
-    const e2eUserId = process.env.E2E_USERNAME_ID;
-    const baseUrl = process.env.BASE_URL || "http://localhost:3000";
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_KEY;
+  const e2eUsername = process.env.E2E_USERNAME || "test@example.com";
+  const e2ePassword = process.env.E2E_PASSWORD || "Test123456!";
+  const e2eUserId = process.env.E2E_USERNAME_ID;
+  const baseUrl = process.env.BASE_URL || "http://localhost:3000";
 
-    return {
-        supabaseUrl: supabaseUrl || "",
-        supabaseKey: supabaseKey || "",
-        e2eUsername,
-        e2ePassword,
-        e2eUserId,
-        baseUrl,
-    };
+  return {
+    supabaseUrl: supabaseUrl || "",
+    supabaseKey: supabaseKey || "",
+    e2eUsername,
+    e2ePassword,
+    e2eUserId,
+    baseUrl,
+  };
 }
 
 /**
@@ -71,19 +71,19 @@ export function loadE2EEnvironment(): E2EEnvironment {
  * validateE2EEnvironment(env);
  */
 export function validateE2EEnvironment(env: E2EEnvironment): void {
-    const missing: string[] = [];
+  const missing: string[] = [];
 
-    if (!env.supabaseUrl) missing.push("SUPABASE_URL");
-    if (!env.supabaseKey) missing.push("SUPABASE_KEY");
-    if (!env.e2eUsername) missing.push("E2E_USERNAME");
-    if (!env.e2ePassword) missing.push("E2E_PASSWORD");
+  if (!env.supabaseUrl) missing.push("SUPABASE_URL");
+  if (!env.supabaseKey) missing.push("SUPABASE_KEY");
+  if (!env.e2eUsername) missing.push("E2E_USERNAME");
+  if (!env.e2ePassword) missing.push("E2E_PASSWORD");
 
-    if (missing.length > 0) {
-        throw new Error(
-            `Missing required environment variables: ${missing.join(", ")}\n` +
-            "Please create a .env.test file with the required variables.",
-        );
-    }
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing required environment variables: ${missing.join(", ")}\n` +
+        "Please create a .env.test file with the required variables."
+    );
+  }
 }
 
 /**
@@ -94,7 +94,7 @@ export function validateE2EEnvironment(env: E2EEnvironment): void {
  * @returns Environment variable value or fallback
  */
 export function getEnvVariable(key: string, fallback = ""): string {
-    return process.env[key] || fallback;
+  return process.env[key] || fallback;
 }
 
 /**
@@ -104,5 +104,5 @@ export function getEnvVariable(key: string, fallback = ""): string {
  * @returns true if variable is set and not empty
  */
 export function isEnvVariableSet(key: string): boolean {
-    return !!process.env[key];
+  return !!process.env[key];
 }

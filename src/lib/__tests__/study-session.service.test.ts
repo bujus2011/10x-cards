@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { StudySessionService } from "../study-session.service";
 import { DatabaseError } from "../flashcard.service";
-import type { Rating, State } from "../../types";
+import type { Rating } from "../../types";
 
 // Mock ts-fsrs module
 vi.mock("ts-fsrs", () => ({
@@ -106,13 +106,13 @@ describe("StudySessionService", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockSupabase = createMockSupabaseClient();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     studySessionService = new StudySessionService(mockSupabase as any);
   });
 
   describe("getDueCards", () => {
     it("should retrieve due cards with review data", async () => {
       // Arrange
-      const now = new Date().toISOString();
       const mockReviewLogs = [
         {
           id: 1,
