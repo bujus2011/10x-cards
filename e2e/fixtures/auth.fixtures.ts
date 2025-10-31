@@ -5,6 +5,8 @@
  * These fixtures ensure clean state between tests without localStorage errors.
  */
 
+/* eslint-disable react-hooks/rules-of-hooks */
+
 import { test as base } from "@playwright/test";
 
 /**
@@ -15,7 +17,6 @@ export const test = base.extend({
    * Provides a page with cleared authentication state
    * This fixture automatically clears cookies before each test
    */
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   authenticatedPage: async ({ page, context }, use) => {
     // Clear cookies before test
     await context.clearCookies();
