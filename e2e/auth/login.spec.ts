@@ -38,7 +38,7 @@ test.describe("Login Page", () => {
   });
 
   test.describe("Form Interactions", () => {
-    test("should allow filling email and password fields", async ({ page }) => {
+    test("should allow filling email and password fields", async () => {
       await loginPage.fillEmail("test@example.com");
       await loginPage.fillPassword("password123");
 
@@ -53,7 +53,7 @@ test.describe("Login Page", () => {
 
     // Skip: This test is too timing-sensitive and can be flaky
     // The behavior is tested in integration tests
-    test.skip("should disable submit button while submitting", async ({ page }) => {
+    test.skip("should disable submit button while submitting", async () => {
       // Fill form with valid format credentials that will trigger API call
       await loginPage.fillEmail("test@example.com");
       await loginPage.fillPassword("validpassword123");

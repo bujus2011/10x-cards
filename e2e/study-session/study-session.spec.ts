@@ -43,7 +43,7 @@ test.describe("Study Session", () => {
   }
 
   test.describe("Page Load and Navigation", () => {
-    test("should load study session page successfully", async ({ page }) => {
+    test("should load study session page successfully", async () => {
       await studyPage.goto();
 
       // Verify page header
@@ -51,7 +51,7 @@ test.describe("Study Session", () => {
       await expect(studyPage.pageTitle).toBeVisible();
     });
 
-    test("should show loading state initially", async ({ page }) => {
+    test("should show loading state initially", async () => {
       await studyPage.goto();
 
       // Check that loading appears (might be very quick)
@@ -92,7 +92,7 @@ test.describe("Study Session", () => {
   });
 
   test.describe("Flashcard Study Flow", () => {
-    test("should display question initially", async ({ page }) => {
+    test("should display question initially", async () => {
       await studyPage.goto();
 
       // Skip if no cards available
@@ -108,7 +108,7 @@ test.describe("Study Session", () => {
       await expect(studyPage.showAnswerButton).toBeVisible();
     });
 
-    test("should reveal answer when clicking Show Answer", async ({ page }) => {
+    test("should reveal answer when clicking Show Answer", async () => {
       await studyPage.goto();
       await skipIfNoCards();
       await studyPage.waitForActiveSession();
@@ -121,7 +121,7 @@ test.describe("Study Session", () => {
       await expect(studyPage.ratingButtonsContainer).toBeVisible();
     });
 
-    test("should display all rating buttons after showing answer", async ({ page }) => {
+    test("should display all rating buttons after showing answer", async () => {
       await studyPage.goto();
       await skipIfNoCards();
       await studyPage.waitForActiveSession();
@@ -136,7 +136,7 @@ test.describe("Study Session", () => {
       await expect(studyPage.ratingButtonEasy).toHaveText("Easy");
     });
 
-    test("should complete one flashcard successfully", async ({ page }) => {
+    test("should complete one flashcard successfully", async () => {
       await studyPage.goto();
       await skipIfNoCards();
       await studyPage.waitForActiveSession();
@@ -149,7 +149,7 @@ test.describe("Study Session", () => {
       expect(["active", "complete"]).toContain(state);
     });
 
-    test("should study multiple flashcards in sequence", async ({ page }) => {
+    test("should study multiple flashcards in sequence", async () => {
       await studyPage.goto();
       await skipIfNoCards();
       await studyPage.waitForActiveSession();
@@ -162,7 +162,7 @@ test.describe("Study Session", () => {
       expect(["active", "complete"]).toContain(state);
     });
 
-    test("should handle different ratings correctly", async ({ page }) => {
+    test("should handle different ratings correctly", async () => {
       await studyPage.goto();
       await skipIfNoCards();
       await studyPage.waitForActiveSession();
@@ -178,7 +178,7 @@ test.describe("Study Session", () => {
   });
 
   test.describe("Progress Tracking", () => {
-    test("should show initial progress correctly", async ({ page }) => {
+    test("should show initial progress correctly", async () => {
       await studyPage.goto();
       await skipIfNoCards();
       await studyPage.waitForActiveSession();
@@ -188,7 +188,7 @@ test.describe("Study Session", () => {
       await expect(studyPage.progressPercentage).toBeVisible();
     });
 
-    test("should update progress after completing flashcards", async ({ page }) => {
+    test("should update progress after completing flashcards", async () => {
       await studyPage.goto();
       await skipIfNoCards();
       await studyPage.waitForActiveSession();
@@ -218,7 +218,7 @@ test.describe("Study Session", () => {
       }
     });
 
-    test("should show percentage progress", async ({ page }) => {
+    test("should show percentage progress", async () => {
       await studyPage.goto();
       await skipIfNoCards();
       await studyPage.waitForActiveSession();
@@ -231,7 +231,7 @@ test.describe("Study Session", () => {
   });
 
   test.describe("Session Completion", () => {
-    test("should show completion message when all cards are done", async ({ page }) => {
+    test("should show completion message when all cards are done", async () => {
       await studyPage.goto();
       await skipIfNoCards();
       await studyPage.waitForActiveSession();
@@ -252,7 +252,7 @@ test.describe("Study Session", () => {
       }
     });
 
-    test("should allow starting new session from completion screen", async ({ page }) => {
+    test("should allow starting new session from completion screen", async () => {
       await studyPage.goto();
 
       // Wait for initial load
@@ -269,7 +269,7 @@ test.describe("Study Session", () => {
           if (state !== "active") break;
 
           await studyPage.studyFlashcard("good");
-          await page.waitForTimeout(300);
+          await studyPage.page.waitForTimeout(300);
         }
       }
 
@@ -290,7 +290,7 @@ test.describe("Study Session", () => {
   });
 
   test.describe("Empty State", () => {
-    test("should handle empty state gracefully", async ({ page }) => {
+    test("should handle empty state gracefully", async () => {
       await studyPage.goto();
       await studyPage.waitForInitialLoad();
 
@@ -324,7 +324,7 @@ test.describe("Study Session", () => {
   });
 
   test.describe("Metadata Display", () => {
-    test("should display flashcard state", async ({ page }) => {
+    test("should display flashcard state", async () => {
       await studyPage.goto();
       await skipIfNoCards();
       await studyPage.waitForActiveSession();
@@ -336,7 +336,7 @@ test.describe("Study Session", () => {
       }
     });
 
-    test("should show review count for reviewed cards", async ({ page }) => {
+    test("should show review count for reviewed cards", async () => {
       await studyPage.goto();
       await skipIfNoCards();
       await studyPage.waitForActiveSession();
@@ -350,7 +350,7 @@ test.describe("Study Session", () => {
   });
 
   test.describe("User Scenario: Complete 6 Flashcards", () => {
-    test("should complete user journey of 6 flashcards", async ({ page }) => {
+    test("should complete user journey of 6 flashcards", async () => {
       await studyPage.goto();
 
       // Handle completion screen if present
@@ -398,7 +398,7 @@ test.describe("Study Session", () => {
   });
 
   test.describe("Content Verification", () => {
-    test("should display question and answer text", async ({ page }) => {
+    test("should display question and answer text", async () => {
       await studyPage.goto();
       await skipIfNoCards();
       await studyPage.waitForActiveSession();
@@ -416,7 +416,7 @@ test.describe("Study Session", () => {
       expect(questionText).not.toBe(answerText);
     });
 
-    test("should show both question and answer on back side", async ({ page }) => {
+    test("should show both question and answer on back side", async () => {
       await studyPage.goto();
       await skipIfNoCards();
       await studyPage.waitForActiveSession();

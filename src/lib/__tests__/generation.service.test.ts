@@ -265,7 +265,7 @@ describe("GenerationService", () => {
       // Act
       try {
         await generationService.generateFlashcards(mockUserId, mockSourceText);
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 
