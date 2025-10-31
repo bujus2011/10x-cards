@@ -1,0 +1,173 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+    branches:
+      - master
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  # Job 1: Lintowanie kodu
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+  # Job 2: Testy jednostkowe (równolegle z e2e-test)
+  unit-test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests with coverage
+        run: npm run test:coverage
+
+      - name: Upload unit test coverage
+        uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: unit-test-coverage
+          path: coverage/
+          retention-days: 30
+
+  # Job 3: Testy E2E (równolegle z unit-test)
+  e2e-test:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    environment: integration
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests with coverage
+        env:
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          E2E_USERNAME_ID: ${{ secrets.E2E_USERNAME_ID }}
+          E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+          BASE_URL: ${{ secrets.BASE_URL }}
+        run: npm run test:e2e
+
+      - name: Upload E2E test results
+        uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload E2E test coverage
+        uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: e2e-test-coverage
+          path: test-results/
+          retention-days: 30
+
+  # Job 4: Komentarz z podsumowaniem statusu (uruchamia się tylko po sukcesie wszystkich poprzednich)
+  status-comment:
+    name: Post Status Comment
+    runs-on: ubuntu-latest
+    needs: [lint, unit-test, e2e-test]
+    if: always()
+
+    steps:
+      - name: Comment PR - Success
+        if: needs.lint.result == 'success' && needs.unit-test.result == 'success' && needs.e2e-test.result == 'success'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ✅ CI/CD Pipeline - Success
+
+            All checks passed successfully! 🎉
+
+            | Job | Status |
+            |-----|--------|
+            | 🔍 Lint | ✅ Passed |
+            | 🧪 Unit Tests | ✅ Passed |
+            | 🎭 E2E Tests | ✅ Passed |
+
+            **Build:** [#${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            **Commit:** ${{ github.event.pull_request.head.sha }}
+            `
+            })
+
+      - name: Comment PR - Failure
+        if: needs.lint.result != 'success' || needs.unit-test.result != 'success' || needs.e2e-test.result != 'success'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const lintStatus = '${{ needs.lint.result }}' === 'success' ? '✅ Passed' : '❌ Failed';
+            const unitStatus = '${{ needs.unit-test.result }}' === 'success' ? '✅ Passed' : '❌ Failed';
+            const e2eStatus = '${{ needs.e2e-test.result }}' === 'success' ? '✅ Passed' : '❌ Failed';
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ❌ CI/CD Pipeline - Failed
+
+            Some checks failed. Please review the logs and fix the issues.
+
+            | Job | Status |
+            |-----|--------|
+            | 🔍 Lint | ${lintStatus} |
+            | 🧪 Unit Tests | ${unitStatus} |
+            | 🎭 E2E Tests | ${e2eStatus} |
+
+            **Build:** [#${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            **Commit:** ${{ github.event.pull_request.head.sha }}
+            `
+            })
