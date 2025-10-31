@@ -61,7 +61,11 @@ const nodeE2EScriptsConfig = {
   languageOptions: {
     globals: {
       process: "readonly",
+      console: "readonly",
     },
+  },
+  rules: {
+    "no-console": "off",
   },
 };
 
