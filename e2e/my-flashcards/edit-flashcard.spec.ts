@@ -99,7 +99,7 @@ test.describe("My Flashcards - Edit Flashcard", () => {
     const { error: cleanupError } = await supabaseClient.from("flashcards").delete().in("id", seededFlashcardIds);
 
     if (cleanupError) {
-      console.error(`Failed to clean up seeded flashcards: ${cleanupError.message}`);
+      throw new Error(`Failed to clean up seeded flashcards: ${cleanupError.message}`);
     }
   });
 
@@ -112,7 +112,7 @@ test.describe("My Flashcards - Edit Flashcard", () => {
 
     const apiResponse = await page.request.get("/api/flashcards");
     const responseStatus = apiResponse.status();
-    const responseBody = await apiResponse.text();
+    await apiResponse.text();
     test.info().annotations.push({
       type: "debug",
       description: `GET /api/flashcards -> status ${responseStatus}`,
