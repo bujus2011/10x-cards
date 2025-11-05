@@ -29,16 +29,28 @@ const SEED_PREFIX = "E2E My Flashcards Seed";
 const seededFlashcardIds: number[] = [];
 let supabaseClient: SupabaseClient<Database> | null = null;
 
+const requireEnvVar = (value: string | undefined, name: string): string => {
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+
+  return value;
+};
+
 test.describe("My Flashcards - Edit Flashcard", () => {
   test.skip(!supabaseUrl || !supabaseKey || !testUserId, "Supabase credentials or E2E user ID missing");
 
   test.beforeAll(async () => {
-    supabaseClient = createClient<Database>(supabaseUrl!, supabaseKey!);
+    const supabaseUrlValue = requireEnvVar(supabaseUrl, "SUPABASE_URL");
+    const supabaseKeyValue = requireEnvVar(supabaseKey, "SUPABASE_KEY");
+    const testUserIdValue = requireEnvVar(testUserId, "E2E_USERNAME_ID");
+
+    supabaseClient = createClient<Database>(supabaseUrlValue, supabaseKeyValue);
 
     const { data: existingFlashcards, error: fetchError } = await supabaseClient
       .from("flashcards")
       .select("id")
-      .eq("user_id", testUserId!);
+      .eq("user_id", testUserIdValue);
 
     if (fetchError) {
       throw new Error(`Failed to fetch existing flashcards: ${fetchError.message}`);
@@ -59,7 +71,7 @@ test.describe("My Flashcards - Edit Flashcard", () => {
         Array.from({ length: cardsToCreate }, (_, index) => {
           const timestamp = new Date(now.getTime() + index).toISOString();
           return {
-            user_id: testUserId!,
+            user_id: testUserIdValue,
             front: `${SEED_PREFIX} Front ${currentCount + index + 1}`,
             back: `${SEED_PREFIX} Back ${currentCount + index + 1}`,
             source: "manual",
@@ -101,7 +113,6 @@ test.describe("My Flashcards - Edit Flashcard", () => {
     const apiResponse = await page.request.get("/api/flashcards");
     const responseStatus = apiResponse.status();
     const responseBody = await apiResponse.text();
-    console.log(`[E2E DEBUG] GET /api/flashcards -> status ${responseStatus}, body: ${responseBody}`);
     test.info().annotations.push({
       type: "debug",
       description: `GET /api/flashcards -> status ${responseStatus}`,
