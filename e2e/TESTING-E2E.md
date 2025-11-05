@@ -3,6 +3,7 @@
 ## Wymagania wstępne
 
 1. **Plik `.env.test` musi istnieć** z następującymi zmiennymi:
+
    ```env
    SUPABASE_URL=https://your-project.supabase.co
    SUPABASE_KEY=your-anon-key
@@ -66,6 +67,7 @@ Testy są uruchamiane w następującej kolejności:
 2. **flashcard-generation** - Testy generowania fiszek (używa zapisanego stanu)
 3. **my-flashcards** - Testy zarządzania fiszkami (używa zapisanego stanu)
 4. **study-session** - Testy sesji nauki (używa zapisanego stanu)
+   - `00-setup-study-data.spec.ts` usuwa logi powtórek i zasiewa minimum 80 fiszek dla użytkownika testowego, dzięki czemu wszystkie scenariusze mają świeże dane
 5. **cleanup** - Czyszczenie stanu autentykacji
 
 **Ważne:** Testy używają **1 workera** (skonfigurowane w `playwright.config.ts`), aby zapobiec wzajemnemu zakłócaniu się testów poprzez sekwencyjne uruchamianie. Dzięki temu każdy test działa w izolacji bez konfliktów dotyczących stanu aplikacji czy bazy danych.
@@ -77,6 +79,7 @@ Testy są uruchamiane w następującej kolejności:
 **Objawy:** Test kończy się błędem połączenia do `http://localhost:3000`
 
 **Rozwiązanie:** Upewnij się, że serwer deweloperski jest uruchomiony:
+
 ```bash
 npm run dev:e2e
 ```
@@ -85,7 +88,8 @@ npm run dev:e2e
 
 **Objawy:** Test logowania kończy się błędem nieprawidłowych poświadczeń
 
-**Rozwiązanie:** 
+**Rozwiązanie:**
+
 1. Sprawdź czy użytkownik z `.env.test` istnieje w bazie danych
 2. Upewnij się, że email i hasło są prawidłowe
 3. Utwórz użytkownika testowego: `npm run test:e2e:create-user`
@@ -95,6 +99,7 @@ npm run dev:e2e
 **Objawy:** Testy przekraczają limit czasu
 
 **Rozwiązanie:**
+
 1. Sprawdź czy API OpenRouter działa (dla testów generowania)
 2. Zwiększ timeout w `playwright.config.ts`
 3. Sprawdź połączenie z Supabase
@@ -105,4 +110,3 @@ npm run dev:e2e
 - **Nie commituj `.env.test`** z rzeczywistymi danymi do repozytorium
 - **Stan autentykacji** jest zapisywany w `.auth/user.json` i używany przez większość testów
 - **Cleanup test** czyści stan autentykacji na końcu, aby nie commitować wrażliwych danych
-
