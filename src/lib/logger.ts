@@ -50,11 +50,7 @@ export class Logger {
     errorOrMetadata?: unknown | Record<string, unknown>,
     metadataOrUndefined?: Record<string, unknown>
   ) {
-    const { message, error, metadata } = this.normalizeArguments(
-      messageOrError,
-      errorOrMetadata,
-      metadataOrUndefined
-    );
+    const { message, error, metadata } = this.normalizeArguments(messageOrError, errorOrMetadata, metadataOrUndefined);
 
     const sanitizedMetadata = this.sanitizeMetadata(metadata);
     const normalizedError = this.normalizeError(error);

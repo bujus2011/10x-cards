@@ -314,10 +314,12 @@ test.describe("Study Session", () => {
       if (message?.toLowerCase().includes("no flashcards")) {
         // This is the empty state - no flashcards available
         expect(message.toLowerCase()).toContain("no flashcards");
-        console.log("✓ Empty state verified - no flashcards available");
+        test
+          .info()
+          .annotations.push({ type: "info", description: "Empty state verified - no flashcards available" });
       } else {
         // This is a completed session - skip as this isn't the empty state test
-        console.log("⊘ Skipping - this is a completed session, not empty state");
+        test.info().annotations.push({ type: "skip", description: "Completed session detected, not empty state" });
         test.skip();
       }
     });

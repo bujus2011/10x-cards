@@ -15,7 +15,7 @@ export function StudySessionView() {
 
   useEffect(() => {
     loadDueCards();
-  }, []);
+  }, [loadDueCards]);
 
   const loadDueCards = useCallback(async () => {
     const result = await fetchDueCards(20);

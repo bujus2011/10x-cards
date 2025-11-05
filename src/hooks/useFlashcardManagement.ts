@@ -12,7 +12,7 @@ export function useFlashcardManagement() {
   // Load flashcards on mount
   useEffect(() => {
     loadFlashcards();
-  }, []);
+  }, [loadFlashcards]);
 
   const loadFlashcards = useCallback(async () => {
     setError(null);

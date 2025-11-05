@@ -40,7 +40,7 @@ test.describe("My Flashcards - Edit Flashcard", () => {
 
     // Get original content for comparison
     const originalFront = await flashcard.getFrontText();
-    console.log(`Original front text: "${originalFront}"`);
+    test.info().annotations.push({ type: "debug", description: `Original front text: "${originalFront}"` });
 
     // Step 2: Click edit button
     await flashcard.clickEdit();
@@ -52,7 +52,9 @@ test.describe("My Flashcards - Edit Flashcard", () => {
     const editFrontValue = await flashcard.getEditFrontValue();
 
     expect(editFrontValue).toBe(originalFront);
-    console.log(`Edit form loaded with front: "${editFrontValue}"`);
+    test
+      .info()
+      .annotations.push({ type: "debug", description: `Edit form loaded with front: "${editFrontValue}"` });
 
     // Step 4: Change both front and back fields
     const newFront = `Edited Front ${Date.now()}`;
