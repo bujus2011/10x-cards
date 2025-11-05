@@ -21,7 +21,10 @@ test.describe("Flashcard Generation Workflow", () => {
     await generatePage.goto();
   });
 
-  test("should complete full workflow: generate, edit, accept, and save flashcards", async () => {
+  test("should complete full workflow: generate, edit, accept, and save flashcards", async (_context, testInfo) => {
+    const log = (message: string) => {
+      testInfo.annotations.push({ type: "log", description: message });
+    };
     // Krok 1: Wypełnij pole artykułem
     await test.step("Fill source text with article", async () => {
       await generatePage.fillSourceText(SAMPLE_ARTICLE);
@@ -50,7 +53,7 @@ test.describe("Flashcard Generation Workflow", () => {
       // Verify flashcards are visible
       const count = await generatePage.getFlashcardCount();
       expect(count).toBeGreaterThan(0);
-      console.log(`Generated ${count} flashcards`);
+      log(`Generated ${count} flashcards`);
     });
 
     // Krok 4: Zaakceptuj 3 fiszki bez edycji
@@ -75,7 +78,7 @@ test.describe("Flashcard Generation Workflow", () => {
 
       // Get original content for comparison
       const originalFront = await card3.getFrontText();
-      console.log(`Original card 3 - Front: ${originalFront.substring(0, 50)}...`);
+      log(`Original card 3 - Front: ${originalFront.substring(0, 50)}...`);
 
       // Edit the flashcard
       const newFront = "Co to jest typ wartości w C#?";
@@ -137,25 +140,28 @@ test.describe("Flashcard Generation Workflow", () => {
     await expect(generatePage.generateButton).toBeEnabled({ timeout: 10000 });
   });
 
-  test("should save all flashcards without accepting", async () => {
+  test("should save all flashcards without accepting", async (_context, testInfo) => {
+    const log = (message: string) => {
+      testInfo.annotations.push({ type: "log", description: message });
+    };
     // Generate flashcards
     //await generatePage.generateFlashcardsFromText(SAMPLE_ARTICLE);
 
     // KROK 1: Wypełnij pole artykułem o C#
     await test.step("1. Fill source text field with C# article", async () => {
-      console.log("📝 Filling source text with C# article...");
+      log("📝 Filling source text with C# article...");
       await generatePage.fillSourceText(SAMPLE_ARTICLE);
 
       // Verify text was filled
       const charCount = await generatePage.getCharacterCount();
-      console.log(`   Character count: ${charCount}`);
+      log(`   Character count: ${charCount}`);
       expect(charCount).toBeGreaterThanOrEqual(1000);
       expect(charCount).toBeLessThanOrEqual(10000);
     });
 
     // KROK 2: Naciśnij przycisk Generate
     await test.step("2. Click Generate button", async () => {
-      console.log("🔄 Clicking Generate button...");
+      log("🔄 Clicking Generate button...");
       await generatePage.clickGenerate();
 
       // Verify button shows loading state
@@ -164,17 +170,17 @@ test.describe("Flashcard Generation Workflow", () => {
 
     // KROK 3: Poczekaj do 70 sekund na wynik kolekcję fiszek
     await test.step("3. Wait up to 70 seconds for flashcard collection", async () => {
-      console.log("⏳ Waiting for flashcards to be generated (max 70 seconds)...");
+      log("⏳ Waiting for flashcards to be generated (max 70 seconds)...");
       const startTime = Date.now();
 
       await generatePage.waitForFlashcards(70000);
 
       const endTime = Date.now();
       const duration = Math.round((endTime - startTime) / 1000);
-      console.log(`   ✅ Flashcards generated in ${duration} seconds`);
+      log(`   ✅ Flashcards generated in ${duration} seconds`);
 
       const count = await generatePage.getFlashcardCount();
-      console.log(`   📚 Total flashcards: ${count}`);
+      log(`   📚 Total flashcards: ${count}`);
       expect(count).toBeGreaterThan(0);
     });
 

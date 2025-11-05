@@ -10,7 +10,7 @@ import fs from "fs/promises";
 import path from "path";
 
 async function globalSetup() {
-  console.log("🚀 Setting up E2E test environment...");
+  process.stdout.write("🚀 Setting up E2E test environment...\n");
 
   const authDir = path.resolve(process.cwd(), "10x-cards", ".auth");
   const authFile = path.join(authDir, "user.json");
@@ -33,13 +33,11 @@ async function globalSetup() {
     // Write empty state to file
     await fs.writeFile(authFile, JSON.stringify(emptyAuthState, null, 2), "utf-8");
 
-    console.log("✓ Authentication state cleared before test run");
-    console.log(`✓ File: ${authFile}`);
+    process.stdout.write("✓ Authentication state cleared before test run\n");
+    process.stdout.write(`✓ File: ${authFile}\n`);
   } catch (error) {
-    console.error(
-      "❌ Failed to clear authentication state in global setup:",
-      error instanceof Error ? error.message : String(error)
-    );
+    const message = error instanceof Error ? error.message : String(error);
+    process.stderr.write(`❌ Failed to clear authentication state in global setup: ${message}\n`);
     throw error;
   }
 }

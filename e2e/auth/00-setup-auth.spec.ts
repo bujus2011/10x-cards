@@ -13,9 +13,12 @@ import { LoginPage } from "../pages";
 import { TEST_USERS } from "../helpers";
 
 test.describe("Setup - Authentication State", () => {
-  test("authenticate and save state", async ({ page, context }) => {
+  test("authenticate and save state", async ({ page, context }, testInfo) => {
     // Increase timeout for this critical setup test
     test.setTimeout(60000);
+    const log = (message: string) => {
+      testInfo.annotations.push({ type: "log", description: message });
+    };
 
     // Clear cookies to ensure clean state
     await context.clearCookies();
@@ -50,6 +53,6 @@ test.describe("Setup - Authentication State", () => {
     // Save the authenticated state to file
     await context.storageState({ path: authFile });
 
-    console.log("✓ Authentication state saved successfully to", authFile);
+    log(`✓ Authentication state saved successfully to ${authFile}`);
   });
 });
