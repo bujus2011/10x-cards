@@ -16,8 +16,11 @@ import type { Database } from "../../src/db/database.types";
 const MIN_FLASHCARDS = 80;
 
 test.describe("Setup - Study Session Data", () => {
-  test("ensure minimum flashcards exist", async () => {
+  test("ensure minimum flashcards exist", async ({}, testInfo) => {
     test.setTimeout(60000);
+    const log = (message: string) => {
+      testInfo.annotations.push({ type: "log", description: message });
+    };
 
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_KEY;
@@ -48,7 +51,7 @@ test.describe("Setup - Study Session Data", () => {
     const currentTotal = existingCount ?? 0;
 
     if (currentTotal >= MIN_FLASHCARDS) {
-      console.log(
+      log(
         `✓ Study session seed skipped (already have ${currentTotal} flashcards). Review logs reset to fetch fresh cards.`
       );
       expect(currentTotal).toBeGreaterThanOrEqual(MIN_FLASHCARDS);
@@ -77,7 +80,7 @@ test.describe("Setup - Study Session Data", () => {
       throw new Error(`Failed to insert study session flashcards: ${insertError.message}`);
     }
 
-    console.log(`✓ Seeded ${cardsToCreate} flashcards for study session tests (total now ${MIN_FLASHCARDS})`);
+    log(`✓ Seeded ${cardsToCreate} flashcards for study session tests (total now ${MIN_FLASHCARDS})`);
 
     const { count: finalCount, error: finalCountError } = await supabase
       .from("flashcards")
