@@ -44,8 +44,25 @@ export class FlashcardService {
 
       return data as FlashcardDto[];
     } catch (error) {
-      flashcardServiceLogger.error("Database error", error, { operation: "createBatch" });
-      throw new DatabaseError("Failed to create flashcards", "DATABASE_ERROR", error);
+      const fallbackMessage = (() => {
+        if (error instanceof Error) return error.message;
+        if (typeof error === "string") return error;
+        try {
+          return JSON.stringify(error);
+        } catch {
+          return String(error);
+        }
+      })();
+
+      const normalizedError = error instanceof Error ? error : new Error(fallbackMessage);
+
+      flashcardServiceLogger.error("Database error", normalizedError, { operation: "createBatch" });
+
+      if (error instanceof DatabaseError) {
+        throw error;
+      }
+
+      throw new DatabaseError("Failed to create flashcards", "DATABASE_ERROR", normalizedError.message);
     }
   }
 

@@ -3,7 +3,7 @@
  * Logger utility for consistent error logging across the application
  */
 export class Logger {
-  private constructor(private readonly context: string) {}
+  constructor(private readonly context: string) {}
 
   static forContext(context: string) {
     return new Logger(context);
@@ -43,14 +43,26 @@ export class Logger {
    * Logs an error with context, message, optional error and metadata
    * Ensures sensitive data is never logged
    */
-  error(message: string, error?: unknown, metadata?: Record<string, unknown>) {
+  error(message: string, error?: unknown, metadata?: Record<string, unknown>): void;
+  error(error: unknown, metadata?: Record<string, unknown>): void;
+  error(
+    messageOrError: string | unknown,
+    errorOrMetadata?: unknown | Record<string, unknown>,
+    metadataOrUndefined?: Record<string, unknown>
+  ) {
+    const { message, error, metadata } = this.normalizeArguments(
+      messageOrError,
+      errorOrMetadata,
+      metadataOrUndefined
+    );
+
     const sanitizedMetadata = this.sanitizeMetadata(metadata);
     const normalizedError = this.normalizeError(error);
 
     console.error({
       level: "error",
       context: this.context,
-      message,
+      ...(message ? { message } : {}),
       ...(normalizedError ? { error: normalizedError } : {}),
       ...(sanitizedMetadata ? { metadata: sanitizedMetadata } : {}),
       timestamp: new Date().toISOString(),
@@ -91,6 +103,46 @@ export class Logger {
     }
 
     return { name: "Error", message: JSON.stringify(error) };
+  }
+
+  private normalizeArguments(
+    messageOrError: string | unknown,
+    errorOrMetadata?: unknown | Record<string, unknown>,
+    metadataOrUndefined?: Record<string, unknown>
+  ) {
+    if (typeof messageOrError === "string") {
+      if (metadataOrUndefined !== undefined) {
+        return {
+          message: messageOrError,
+          error: errorOrMetadata,
+          metadata: metadataOrUndefined,
+        };
+      }
+
+      if (this.isPlainObject(errorOrMetadata) && !(errorOrMetadata instanceof Error)) {
+        return {
+          message: messageOrError,
+          error: undefined,
+          metadata: errorOrMetadata as Record<string, unknown>,
+        };
+      }
+
+      return {
+        message: messageOrError,
+        error: errorOrMetadata,
+        metadata: undefined,
+      };
+    }
+
+    return {
+      message: undefined,
+      error: messageOrError,
+      metadata: errorOrMetadata as Record<string, unknown> | undefined,
+    };
+  }
+
+  private isPlainObject(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
   }
 }
 
