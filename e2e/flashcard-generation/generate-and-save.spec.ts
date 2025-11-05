@@ -21,8 +21,7 @@ test.describe("Flashcard Generation Workflow", () => {
     await generatePage.goto();
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-pattern
-  test("should complete full workflow: generate, edit, accept, and save flashcards", async ({}, testInfo) => {
+  test("should complete full workflow: generate, edit, accept, and save flashcards", async ({ page: _page }, testInfo) => {
     const log = (message: string) => {
       testInfo.annotations.push({ type: "log", description: message });
     };
@@ -141,8 +140,7 @@ test.describe("Flashcard Generation Workflow", () => {
     await expect(generatePage.generateButton).toBeEnabled({ timeout: 10000 });
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-pattern
-  test("should save all flashcards without accepting", async ({}, testInfo) => {
+  test("should save all flashcards without accepting", async ({ page: _page }, testInfo) => {
     const log = (message: string) => {
       testInfo.annotations.push({ type: "log", description: message });
     };
