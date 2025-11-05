@@ -16,8 +16,9 @@ import type { Database } from "../../src/db/database.types";
 const MIN_FLASHCARDS = 80;
 
 test.describe("Setup - Study Session Data", () => {
-  test("ensure minimum flashcards exist", async ({ page: _page }, testInfo) => {
+  test("ensure minimum flashcards exist", async ({ page }, testInfo) => {
     test.setTimeout(60000);
+    void page;
     const log = (message: string) => {
       testInfo.annotations.push({ type: "log", description: message });
     };

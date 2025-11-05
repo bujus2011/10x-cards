@@ -21,7 +21,8 @@ test.describe("Flashcard Generation Workflow", () => {
     await generatePage.goto();
   });
 
-  test("should complete full workflow: generate, edit, accept, and save flashcards", async ({ page: _page }, testInfo) => {
+  test("should complete full workflow: generate, edit, accept, and save flashcards", async ({ page }, testInfo) => {
+    void page;
     const log = (message: string) => {
       testInfo.annotations.push({ type: "log", description: message });
     };
@@ -140,7 +141,8 @@ test.describe("Flashcard Generation Workflow", () => {
     await expect(generatePage.generateButton).toBeEnabled({ timeout: 10000 });
   });
 
-  test("should save all flashcards without accepting", async ({ page: _page }, testInfo) => {
+  test("should save all flashcards without accepting", async ({ page }, testInfo) => {
+    void page;
     const log = (message: string) => {
       testInfo.annotations.push({ type: "log", description: message });
     };
