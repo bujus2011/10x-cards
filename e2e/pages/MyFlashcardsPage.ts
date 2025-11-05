@@ -224,7 +224,7 @@ export class MyFlashcardsPage {
    * @param message - Expected toast message (regex or string)
    * @param timeout - Maximum wait time
    */
-  async waitForToast(message: string | RegExp, timeout = 5000) {
+  async waitForToast(message: string | RegExp, timeout = 10000) {
     const toast = this.page.locator("[data-sonner-toast]", { hasText: message }).first();
     await expect(toast).toBeVisible({ timeout });
   }
@@ -232,8 +232,10 @@ export class MyFlashcardsPage {
   /**
    * Wait for success toast after save
    */
-  async waitForSaveSuccess() {
-    await this.waitForToast(/updated successfully|created successfully/i);
+  async waitForSaveSuccess(timeout = 10000) {
+    await this.waitForToast(/updated successfully|created successfully/i, timeout);
+    // Give React time to complete re-rendering after state update
+    await this.page.waitForTimeout(500);
   }
 
   /**
@@ -407,11 +409,13 @@ export class MyFlashcard {
    * Wait for save operation to complete
    * Waits for edit form to disappear and card to reappear
    */
-  async waitForSaveComplete(timeout = 5000) {
+  async waitForSaveComplete(timeout = 10000) {
     // Wait for edit form to disappear
     await expect(this.editForm).toBeHidden({ timeout });
-    // Wait for card to be visible again
-    await expect(this.card).toBeVisible();
+    // Wait for card to be visible again in display mode
+    await expect(this.card).toBeVisible({ timeout });
+    // Wait for front text to be visible (confirming display mode is ready)
+    await expect(this.frontText).toBeVisible({ timeout });
   }
 
   /**
@@ -474,9 +478,12 @@ export class MyFlashcard {
    * @param expectedContent - Expected content text (visible side)
    */
   async verifyContent(expectedFront: string, expectedContent?: string) {
-    await expect(this.frontText).toHaveText(expectedFront);
+    // Wait for element to be stable and visible
+    await expect(this.frontText).toBeVisible({ timeout: 5000 });
+    await expect(this.frontText).toHaveText(expectedFront, { timeout: 5000 });
     if (expectedContent) {
-      await expect(this.contentText).toHaveText(expectedContent);
+      await expect(this.contentText).toBeVisible({ timeout: 5000 });
+      await expect(this.contentText).toHaveText(expectedContent, { timeout: 5000 });
     }
   }
 

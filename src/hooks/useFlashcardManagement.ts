@@ -9,11 +9,6 @@ export function useFlashcardManagement() {
 
   const { fetchFlashcards, createFlashcard, updateFlashcard, deleteFlashcard, isLoading } = useFlashcards();
 
-  // Load flashcards on mount
-  useEffect(() => {
-    loadFlashcards();
-  }, [loadFlashcards]);
-
   const loadFlashcards = useCallback(async () => {
     setError(null);
     const result = await fetchFlashcards();
@@ -24,6 +19,11 @@ export function useFlashcardManagement() {
       setFlashcards(result.data);
     }
   }, [fetchFlashcards]);
+
+  // Load flashcards on mount
+  useEffect(() => {
+    loadFlashcards();
+  }, [loadFlashcards]);
 
   const handleCreateFlashcard = useCallback(
     async (data: ManualFlashcardFormData) => {

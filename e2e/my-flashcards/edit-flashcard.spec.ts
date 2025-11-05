@@ -12,18 +12,100 @@
  */
 
 import { test, expect } from "@playwright/test";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "../../src/db/database.types";
 import { MyFlashcardsPage } from "../pages/MyFlashcardsPage";
 
 // Use authenticated user storage state
 test.use({ storageState: ".auth/user.json" });
 
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+const testUserId = process.env.E2E_USERNAME_ID;
+
+const MIN_SEEDED_FLASHCARDS = 5;
+const SEED_PREFIX = "E2E My Flashcards Seed";
+
+const seededFlashcardIds: number[] = [];
+let supabaseClient: SupabaseClient<Database> | null = null;
+
 test.describe("My Flashcards - Edit Flashcard", () => {
+  test.skip(!supabaseUrl || !supabaseKey || !testUserId, "Supabase credentials or E2E user ID missing");
+
+  test.beforeAll(async () => {
+    supabaseClient = createClient<Database>(supabaseUrl!, supabaseKey!);
+
+    const { data: existingFlashcards, error: fetchError } = await supabaseClient
+      .from("flashcards")
+      .select("id")
+      .eq("user_id", testUserId!);
+
+    if (fetchError) {
+      throw new Error(`Failed to fetch existing flashcards: ${fetchError.message}`);
+    }
+
+    const currentCount = existingFlashcards?.length ?? 0;
+
+    if (currentCount >= MIN_SEEDED_FLASHCARDS) {
+      return;
+    }
+
+    const cardsToCreate = MIN_SEEDED_FLASHCARDS - currentCount;
+    const now = new Date();
+
+    const { data: insertedFlashcards, error: insertError } = await supabaseClient
+      .from("flashcards")
+      .insert(
+        Array.from({ length: cardsToCreate }, (_, index) => {
+          const timestamp = new Date(now.getTime() + index).toISOString();
+          return {
+            user_id: testUserId!,
+            front: `${SEED_PREFIX} Front ${currentCount + index + 1}`,
+            back: `${SEED_PREFIX} Back ${currentCount + index + 1}`,
+            source: "manual",
+            generation_id: null,
+            created_at: timestamp,
+            updated_at: timestamp,
+          } satisfies Database["public"]["Tables"]["flashcards"]["Insert"];
+        })
+      )
+      .select("id");
+
+    if (insertError) {
+      throw new Error(`Failed to seed flashcards: ${insertError.message}`);
+    }
+
+    const insertedIds = insertedFlashcards?.map((flashcard) => flashcard.id) ?? [];
+    seededFlashcardIds.push(...insertedIds);
+  });
+
+  test.afterAll(async () => {
+    if (!supabaseClient || seededFlashcardIds.length === 0) {
+      return;
+    }
+
+    const { error: cleanupError } = await supabaseClient.from("flashcards").delete().in("id", seededFlashcardIds);
+
+    if (cleanupError) {
+      console.error(`Failed to clean up seeded flashcards: ${cleanupError.message}`);
+    }
+  });
+
   test("should successfully edit a flashcard", async ({ page }) => {
     const myFlashcardsPage = new MyFlashcardsPage(page);
 
     // Step 1: Navigate and wait for flashcards to load from database
     await myFlashcardsPage.goto();
     await myFlashcardsPage.waitForFlashcardsLoaded();
+
+    const apiResponse = await page.request.get("/api/flashcards");
+    const responseStatus = apiResponse.status();
+    const responseBody = await apiResponse.text();
+    console.log(`[E2E DEBUG] GET /api/flashcards -> status ${responseStatus}, body: ${responseBody}`);
+    test.info().annotations.push({
+      type: "debug",
+      description: `GET /api/flashcards -> status ${responseStatus}`,
+    });
 
     // Verify grid is visible
     await myFlashcardsPage.verifyGridVisible();
