@@ -1,5 +1,8 @@
 import { useState } from "react";
 import type { LoginFormData, RegisterFormData, ResetPasswordFormData } from "@/lib/validations";
+import { Logger } from "@/lib/logger";
+
+const authLogger = Logger.forContext("useAuth");
 
 interface AuthResponse {
   user?: {
@@ -39,7 +42,7 @@ export function useAuth() {
       window.location.href = "/generate";
       return { success: true };
     } catch (error) {
-      console.error("Login error:", error);
+      authLogger.error("Login error", error, { email: data.email });
       return { success: false, error: "An unexpected error occurred. Please try again." };
     } finally {
       setIsLoading(false);
@@ -70,7 +73,7 @@ export function useAuth() {
       window.location.href = "/";
       return { success: true };
     } catch (error) {
-      console.error("Register error:", error);
+      authLogger.error("Register error", error, { email: data.email });
       return { success: false, error: "An unexpected error occurred. Please try again." };
     } finally {
       setIsLoading(false);
@@ -96,7 +99,7 @@ export function useAuth() {
 
       return { success: true };
     } catch (error) {
-      console.error("Reset password error:", error);
+      authLogger.error("Reset password error", error, { email: data.email });
       return { success: false, error: "An unexpected error occurred. Please try again." };
     } finally {
       setIsLoading(false);
@@ -122,7 +125,7 @@ export function useAuth() {
       window.location.href = "/auth/login";
       return { success: true };
     } catch (error) {
-      console.error("Logout error:", error);
+      authLogger.error("Logout error", error);
       return { success: false, error: "An unexpected error occurred. Please try again." };
     } finally {
       setIsLoading(false);

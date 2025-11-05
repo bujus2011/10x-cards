@@ -1,5 +1,8 @@
 import type { APIRoute } from "astro";
 import { StudySessionService } from "../../lib/study-session.service";
+import { Logger } from "../../lib/logger";
+
+const studyStatsLogger = Logger.forContext("api/study-stats");
 
 export const prerender = false;
 
@@ -34,7 +37,7 @@ export const GET: APIRoute = async ({ locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error fetching study stats:", error);
+    studyStatsLogger.error("Error fetching study stats", error, { userId: locals.user?.id });
     return new Response(JSON.stringify({ error: "Failed to fetch study statistics" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

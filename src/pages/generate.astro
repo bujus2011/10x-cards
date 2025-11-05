@@ -1,6 +1,9 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { FlashcardGenerationView } from "@/components/FlashcardGenerationView";
+import { Logger } from "@/lib/logger";
+
+const pageLogger = Logger.forContext("page/generate");
 
 /**
  * Protected Route: Generate Flashcards
@@ -29,13 +32,13 @@ const user = Astro.locals.user;
 // but provides defense-in-depth security
 if (!user) {
   // Log security event (in production, log to monitoring service)
-  console.warn("[SECURITY] Unauthorized access attempt to /generate detected");
+  pageLogger.warn("[SECURITY] Unauthorized access attempt to /generate detected");
   return Astro.redirect("/auth/login");
 }
 
 // Validate user object has required properties
 if (!user.id || !user.email) {
-  console.error("[SECURITY] User object is malformed in locals");
+  pageLogger.error("[SECURITY] User object is malformed in locals", undefined, { user });
   return Astro.redirect("/auth/login");
 }
 ---

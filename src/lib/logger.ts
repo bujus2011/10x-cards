@@ -1,23 +1,24 @@
+/* eslint-disable no-console */
 /**
  * Logger utility for consistent error logging across the application
  */
 export class Logger {
-  constructor(private readonly context: string) {}
+  private constructor(private readonly context: string) {}
+
+  static forContext(context: string) {
+    return new Logger(context);
+  }
 
   /**
-   * Logs an error with context and optional metadata
-   * Ensures sensitive data is never logged
+   * Logs an informational message with optional metadata
    */
-  error(error: Error, metadata?: Record<string, unknown>) {
+  info(message: string, metadata?: Record<string, unknown>) {
     const sanitizedMetadata = this.sanitizeMetadata(metadata);
 
-    console.error({
+    console.info({
+      level: "info",
       context: this.context,
-      error: {
-        name: error.name,
-        message: error.message,
-        ...(error instanceof Error && error.stack ? { stack: error.stack } : {}),
-      },
+      message,
       ...(sanitizedMetadata ? { metadata: sanitizedMetadata } : {}),
       timestamp: new Date().toISOString(),
     });
@@ -30,8 +31,27 @@ export class Logger {
     const sanitizedMetadata = this.sanitizeMetadata(metadata);
 
     console.warn({
+      level: "warn",
       context: this.context,
       message,
+      ...(sanitizedMetadata ? { metadata: sanitizedMetadata } : {}),
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  /**
+   * Logs an error with context, message, optional error and metadata
+   * Ensures sensitive data is never logged
+   */
+  error(message: string, error?: unknown, metadata?: Record<string, unknown>) {
+    const sanitizedMetadata = this.sanitizeMetadata(metadata);
+    const normalizedError = this.normalizeError(error);
+
+    console.error({
+      level: "error",
+      context: this.context,
+      message,
+      ...(normalizedError ? { error: normalizedError } : {}),
       ...(sanitizedMetadata ? { metadata: sanitizedMetadata } : {}),
       timestamp: new Date().toISOString(),
     });
@@ -54,4 +74,24 @@ export class Logger {
 
     return sanitized;
   }
+
+  private normalizeError(error?: unknown): Record<string, unknown> | undefined {
+    if (!error) return undefined;
+
+    if (error instanceof Error) {
+      return {
+        name: error.name,
+        message: error.message,
+        ...(error.stack ? { stack: error.stack } : {}),
+      };
+    }
+
+    if (typeof error === "string") {
+      return { name: "Error", message: error };
+    }
+
+    return { name: "Error", message: JSON.stringify(error) };
+  }
 }
+
+export const logger = Logger.forContext("app");

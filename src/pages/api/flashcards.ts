@@ -2,6 +2,9 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 import type { FlashcardsCreateCommand, FlashcardUpdateDto } from "../../types";
 import { DatabaseError, FlashcardService } from "../../lib/flashcard.service";
+import { Logger } from "../../lib/logger";
+
+const flashcardsApiLogger = Logger.forContext("api/flashcards");
 
 export const prerender = false;
 
@@ -65,7 +68,7 @@ export const GET: APIRoute = async ({ locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error retrieving flashcards:", error);
+    flashcardsApiLogger.error("Error retrieving flashcards", error, { userId: locals.user?.id });
 
     if (error instanceof DatabaseError) {
       return new Response(
@@ -150,7 +153,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error creating flashcards:", error);
+    flashcardsApiLogger.error("Error creating flashcards", error, { userId: locals.user?.id });
 
     if (error instanceof DatabaseError) {
       return new Response(
@@ -225,7 +228,7 @@ export const PUT: APIRoute = async ({ request, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error updating flashcard:", error);
+    flashcardsApiLogger.error("Error updating flashcard", error, { userId: locals.user?.id });
 
     if (error instanceof DatabaseError) {
       return new Response(
@@ -284,7 +287,7 @@ export const DELETE: APIRoute = async ({ request, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error deleting flashcard:", error);
+    flashcardsApiLogger.error("Error deleting flashcard", error, { userId: locals.user?.id });
 
     if (error instanceof DatabaseError) {
       return new Response(

@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import type { FlashcardDto, FlashcardUpdateDto } from "@/types";
 import type { ManualFlashcardFormData } from "@/lib/validations";
+import { Logger } from "@/lib/logger";
 
 interface FlashcardsResponse {
   flashcards: FlashcardDto[];
@@ -11,6 +12,8 @@ interface FlashcardResponse {
   flashcard: FlashcardDto;
   error?: string;
 }
+
+const flashcardsLogger = Logger.forContext("useFlashcards");
 
 export function useFlashcards() {
   const [isLoading, setIsLoading] = useState(false);
@@ -31,7 +34,7 @@ export function useFlashcards() {
       return { data: data.flashcards || [] };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error occurred";
-      console.error("Fetch flashcards error:", error);
+      flashcardsLogger.error("Fetch flashcards error", error);
       return { data: [], error: message };
     } finally {
       setIsLoading(false);
@@ -68,7 +71,10 @@ export function useFlashcards() {
         return { data: flashcard };
       } catch (error) {
         const message = error instanceof Error ? error.message : "Unknown error occurred";
-        console.error("Create flashcard error:", error);
+        flashcardsLogger.error("Create flashcard error", error, {
+          frontLength: data.front.length,
+          backLength: data.back.length,
+        });
         return { error: message };
       } finally {
         setIsLoading(false);
@@ -97,7 +103,7 @@ export function useFlashcards() {
         return { data: result.flashcard };
       } catch (error) {
         const message = error instanceof Error ? error.message : "Unknown error occurred";
-        console.error("Update flashcard error:", error);
+        flashcardsLogger.error("Update flashcard error", error, { id });
         return { error: message };
       } finally {
         setIsLoading(false);
@@ -123,7 +129,7 @@ export function useFlashcards() {
       return { success: true };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error occurred";
-      console.error("Delete flashcard error:", error);
+      flashcardsLogger.error("Delete flashcard error", error, { id });
       return { success: false, error: message };
     } finally {
       setIsLoading(false);

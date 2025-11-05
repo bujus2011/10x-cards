@@ -4,6 +4,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, X } from "lucide-react";
 import { toast } from "sonner";
+import { Logger } from "@/lib/logger";
+
+const createFlashcardLogger = Logger.forContext("CreateFlashcardForm");
 
 interface CreateFlashcardFormProps {
   onSubmit: (front: string, back: string) => Promise<void>;
@@ -43,7 +46,10 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
       toast.success("Flashcard created successfully");
     } catch (error) {
       toast.error("Failed to create flashcard");
-      console.error(error);
+      createFlashcardLogger.error("Failed to create flashcard", error, {
+        frontLength: front.length,
+        backLength: back.length,
+      });
     } finally {
       setIsSubmitting(false);
     }

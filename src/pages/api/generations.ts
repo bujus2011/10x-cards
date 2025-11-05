@@ -2,6 +2,9 @@ import { z } from "zod";
 import type { APIRoute } from "astro";
 import type { GenerateFlashcardsCommand } from "../../types";
 import { GenerationService } from "../../lib/generation.service";
+import { Logger } from "../../lib/logger";
+
+const generationsApiLogger = Logger.forContext("api/generations");
 
 export const prerender = false;
 
@@ -49,7 +52,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error processing generation request:", error);
+    generationsApiLogger.error("Error processing generation request", error, { userId: locals.user?.id });
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

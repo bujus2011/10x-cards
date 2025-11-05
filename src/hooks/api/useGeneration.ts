@@ -2,6 +2,9 @@ import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import type { GenerationCreateResponseDto, FlashcardCreateDto } from "@/types";
 import type { GenerateFlashcardsFormData } from "@/lib/validations";
+import { Logger } from "@/lib/logger";
+
+const generationLogger = Logger.forContext("useGeneration");
 
 interface BulkSaveRequest {
   flashcards: FlashcardCreateDto[];
@@ -35,7 +38,7 @@ export function useGeneration() {
         return { data: result };
       } catch (error) {
         const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        console.error("Generate flashcards error:", error);
+        generationLogger.error("Generate flashcards error", error, { textLength: data.source_text.length });
         toast.error(message);
         return { error: message };
       } finally {
@@ -71,7 +74,7 @@ export function useGeneration() {
         return { success: true, savedCount: result.saved_count };
       } catch (error) {
         const message = error instanceof Error ? error.message : "Unknown error occurred";
-        console.error("Save flashcards error:", error);
+        generationLogger.error("Save flashcards error", error, { draftCount: flashcards.length });
         toast.error(message);
         return { success: false, error: message };
       } finally {

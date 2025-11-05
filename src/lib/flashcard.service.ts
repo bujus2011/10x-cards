@@ -1,6 +1,9 @@
 import type { SupabaseClient } from "../db/supabase.client";
 import type { FlashcardCreateDto, FlashcardDto, FlashcardUpdateDto } from "../types";
 import type { PostgrestError } from "@supabase/supabase-js";
+import { Logger } from "./logger";
+
+const flashcardServiceLogger = Logger.forContext("FlashcardService");
 
 export class DatabaseError extends Error {
   constructor(
@@ -29,16 +32,21 @@ export class FlashcardService {
       user_id: userId,
     }));
 
-    const { data, error } = await this.supabase
-      .from("flashcards")
-      .insert(flashcardsWithUserId)
-      .select("id, front, back, source, generation_id, created_at, updated_at");
+    try {
+      const { data, error } = await this.supabase
+        .from("flashcards")
+        .insert(flashcardsWithUserId)
+        .select("id, front, back, source, generation_id, created_at, updated_at");
 
-    if (error) {
-      this.handleDatabaseError(error);
+      if (error) {
+        this.handleDatabaseError(error);
+      }
+
+      return data as FlashcardDto[];
+    } catch (error) {
+      flashcardServiceLogger.error("Database error", error, { operation: "createBatch" });
+      throw new DatabaseError("Failed to create flashcards", "DATABASE_ERROR", error);
     }
-
-    return data as FlashcardDto[];
   }
 
   /**
@@ -130,7 +138,7 @@ export class FlashcardService {
    * @throws {DatabaseError} With appropriate error message and details
    */
   private handleDatabaseError(error: PostgrestError): never {
-    console.error("Database error:", error);
+    flashcardServiceLogger.error("Database error", error, { operation: "handleDatabaseError" });
 
     switch (error.code) {
       case "23503": // foreign key violation

@@ -1,6 +1,9 @@
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import type { StudyCardDto, Rating, SubmitReviewResponseDto } from "@/types";
+import { Logger } from "@/lib/logger";
+
+const studySessionLogger = Logger.forContext("useStudySession");
 
 interface StudySessionResponse {
   cards: StudyCardDto[];
@@ -23,7 +26,7 @@ export function useStudySession() {
       return { data: result.cards || [] };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to fetch flashcards for study";
-      console.error("Fetch due cards error:", error);
+      studySessionLogger.error("Fetch due cards error", error, { limit });
       toast.error(message);
       return { data: [], error: message };
     } finally {
@@ -57,7 +60,7 @@ export function useStudySession() {
         return { success: true, data: result };
       } catch (error) {
         const message = error instanceof Error ? error.message : "Failed to submit review";
-        console.error("Submit review error:", error);
+        studySessionLogger.error("Submit review error", error, { flashcardId: flashcardId, rating });
         toast.error(message);
         return { success: false, error: message };
       } finally {

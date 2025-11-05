@@ -1,6 +1,9 @@
 import type { APIRoute } from "astro";
 import { StudySessionService } from "../../lib/study-session.service";
 import { z } from "astro/zod";
+import { Logger } from "../../lib/logger";
+
+const studySessionApiLogger = Logger.forContext("api/study-session");
 
 export const prerender = false;
 
@@ -45,7 +48,7 @@ export const GET: APIRoute = async ({ locals, url }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error fetching due cards:", error);
+    studySessionApiLogger.error("Error fetching due cards", error, { userId: locals.user?.id });
     return new Response(JSON.stringify({ error: "Failed to fetch due cards" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
@@ -130,7 +133,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
     );
   } catch (error) {
-    console.error("Error submitting review:", error);
+    studySessionApiLogger.error("Error submitting review", error, { userId: locals.user?.id });
     return new Response(JSON.stringify({ error: "Failed to submit review" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

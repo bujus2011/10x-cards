@@ -5,6 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Edit2, Trash2, Save, X, Copy } from "lucide-react";
 import { toast } from "sonner";
 import type { FlashcardDto, FlashcardUpdateDto } from "@/types";
+import { Logger } from "@/lib/logger";
+
+const flashcardLogger = Logger.forContext("FlashcardCard");
 
 interface FlashcardCardProps {
   flashcard: FlashcardDto;
@@ -52,7 +55,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
       setIsEditing(false);
       toast.success("Flashcard updated successfully");
     } catch (error) {
-      console.error("Error updating flashcard:", error);
+      flashcardLogger.error("Error updating flashcard", error, { flashcardId: flashcard.id });
       toast.error("Failed to update flashcard");
     } finally {
       setIsSaving(false);
@@ -65,7 +68,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
       await onDelete(flashcard.id);
       toast.success("Flashcard deleted successfully");
     } catch (error) {
-      console.error("Error deleting flashcard:", error);
+      flashcardLogger.error("Error deleting flashcard", error, { flashcardId: flashcard.id });
       toast.error("Failed to delete flashcard");
     } finally {
       setIsDeleting(false);
