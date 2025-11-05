@@ -52,9 +52,7 @@ test.describe("My Flashcards - Edit Flashcard", () => {
     const editFrontValue = await flashcard.getEditFrontValue();
 
     expect(editFrontValue).toBe(originalFront);
-    test
-      .info()
-      .annotations.push({ type: "debug", description: `Edit form loaded with front: "${editFrontValue}"` });
+    test.info().annotations.push({ type: "debug", description: `Edit form loaded with front: "${editFrontValue}"` });
 
     // Step 4: Change both front and back fields
     const newFront = `Edited Front ${Date.now()}`;
