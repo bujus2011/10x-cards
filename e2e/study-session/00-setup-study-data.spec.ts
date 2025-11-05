@@ -16,7 +16,8 @@ import type { Database } from "../../src/db/database.types";
 const MIN_FLASHCARDS = 80;
 
 test.describe("Setup - Study Session Data", () => {
-  test("ensure minimum flashcards exist", async (_context, testInfo) => {
+  // eslint-disable-next-line @typescript-eslint/no-empty-pattern
+  test("ensure minimum flashcards exist", async ({}, testInfo) => {
     test.setTimeout(60000);
     const log = (message: string) => {
       testInfo.annotations.push({ type: "log", description: message });
