@@ -41,9 +41,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
+    // Get OpenRouter API key from runtime env (Cloudflare) or build-time env (local dev)
+    // @ts-expect-error - runtime.env is available in Cloudflare adapter but not typed
+    const runtimeEnv = locals.runtime?.env;
+    const openRouterApiKey =
+      import.meta.env.PROD && runtimeEnv ? runtimeEnv.OPENROUTER_API_KEY : import.meta.env.OPENROUTER_API_KEY;
+
     // Initialize service and generate flashcards
     const generationService = new GenerationService(locals.supabase, {
-      apiKey: import.meta.env.OPENROUTER_API_KEY,
+      apiKey: openRouterApiKey,
     });
     const result = await generationService.generateFlashcards(locals.user.id, body.source_text);
 

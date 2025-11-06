@@ -106,6 +106,10 @@ function isProtectedPath(pathname: string): boolean {
  * Runs on every request and validates user sessions
  */
 export const onRequest = defineMiddleware(async ({ locals, cookies, url, request, redirect }, next) => {
+  // Access Cloudflare runtime environment variables
+  // @ts-expect-error - runtime.env is available in Cloudflare adapter but not typed
+  const runtimeEnv = locals.runtime?.env;
+
   // Skip authentication check for public paths first
   if (!isProtectedPath(url.pathname)) {
     // For public paths, try to create Supabase instance but don't fail if env vars are missing
@@ -113,6 +117,7 @@ export const onRequest = defineMiddleware(async ({ locals, cookies, url, request
       const supabase = createSupabaseServerInstance({
         cookies,
         headers: request.headers,
+        runtimeEnv,
       });
       locals.supabase = supabase;
     } catch (error) {
@@ -128,6 +133,7 @@ export const onRequest = defineMiddleware(async ({ locals, cookies, url, request
     supabase = createSupabaseServerInstance({
       cookies,
       headers: request.headers,
+      runtimeEnv,
     });
     locals.supabase = supabase;
   } catch (error) {
