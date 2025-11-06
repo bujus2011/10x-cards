@@ -10,6 +10,7 @@
 - [Stack technologiczny](#stack-technologiczny)
 - [Rozpoczęcie pracy lokalnie](#rozpoczęcie-pracy-lokalnie)
 - [Dostępne skrypty](#dostępne-skrypty)
+- [Wdrożenie](#wdrożenie)
 - [Zakres projektu](#zakres-projektu)
 - [Status projektu](#status-projektu)
 - [Licencja](#licencja)
@@ -50,7 +51,8 @@
 **CI/CD / Wdrożenie:**
 
 - GitHub Actions dla ciągłej integracji i wdrażania
-- DigitalOcean dla hostingu z użyciem obrazów Docker
+- Cloudflare Pages dla hostingu aplikacji z globalnym CDN
+- @astrojs/cloudflare adapter dla server-side rendering na Cloudflare Workers
 
 ## Rozpoczęcie pracy lokalnie
 
@@ -112,6 +114,36 @@
 **Uwaga:** Testy E2E używają 1 workera, aby zapobiec wzajemnemu zakłócaniu się testów.
 
 Aby uzyskać szczegółową dokumentację testową, zobacz [TESTING-E2E.md](./TESTING-E2E.md).
+
+## Wdrożenie
+
+Aplikacja jest wdrażana automatycznie na Cloudflare Pages przy każdym pushu do gałęzi `master`.
+
+### Automatyczne wdrażanie
+
+1. Push zmian do gałęzi `master`
+2. GitHub Actions automatycznie:
+   - Uruchomi linting i testy jednostkowe
+   - Zbuduje projekt z adapterem Cloudflare
+   - Wdroży na Cloudflare Pages
+
+### Wymagane sekrety GitHub
+
+Skonfiguruj następujące sekrety w środowisku `production`:
+
+**Aplikacja:**
+- `SUPABASE_URL` - URL projektu Supabase
+- `SUPABASE_KEY` - Supabase anon key
+- `OPENROUTER_API_KEY` - OpenRouter API key
+
+**Cloudflare:**
+- `CLOUDFLARE_API_TOKEN` - Token API z uprawnieniami Cloudflare Pages
+- `CLOUDFLARE_ACCOUNT_ID` - ID konta Cloudflare
+- `CLOUDFLARE_PROJECT_NAME` - Nazwa projektu w Cloudflare Pages
+
+### Szczegółowa dokumentacja
+
+Pełny przewodnik wdrażania znajduje się w [DEPLOYMENT-CLOUDFLARE.md](./DEPLOYMENT-CLOUDFLARE.md).
 
 ## Zakres projektu
 
