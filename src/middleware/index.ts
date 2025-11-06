@@ -72,6 +72,8 @@ const ROUTE_CONFIG = {
     "/api/auth/register",
     "/api/auth/reset-password",
     "/api/auth/reset-password-confirm",
+    // Health check endpoints
+    "/api/checkEnvs",
     // Landing page
     "/",
   ] as const,
@@ -104,18 +106,36 @@ function isProtectedPath(pathname: string): boolean {
  * Runs on every request and validates user sessions
  */
 export const onRequest = defineMiddleware(async ({ locals, cookies, url, request, redirect }, next) => {
-  // Create Supabase server instance for this request
-  const supabase = createSupabaseServerInstance({
-    cookies,
-    headers: request.headers,
-  });
-
-  // Store supabase instance in locals for use in API routes
-  locals.supabase = supabase;
-
-  // Skip authentication check for public paths
+  // Skip authentication check for public paths first
   if (!isProtectedPath(url.pathname)) {
+    // For public paths, try to create Supabase instance but don't fail if env vars are missing
+    try {
+      const supabase = createSupabaseServerInstance({
+        cookies,
+        headers: request.headers,
+      });
+      locals.supabase = supabase;
+    } catch (error) {
+      // If Supabase client creation fails (e.g., missing env vars), continue anyway for public paths
+      console.warn("Failed to create Supabase client:", error);
+    }
     return next();
+  }
+
+  // For protected paths, Supabase client is required
+  let supabase;
+  try {
+    supabase = createSupabaseServerInstance({
+      cookies,
+      headers: request.headers,
+    });
+    locals.supabase = supabase;
+  } catch (error) {
+    console.error("Failed to create Supabase client for protected route:", error);
+    return new Response("Service temporarily unavailable. Please check environment configuration.", {
+      status: 503,
+      headers: { "Content-Type": "text/plain" },
+    });
   }
 
   // IMPORTANT: Always get user session before any other operations
