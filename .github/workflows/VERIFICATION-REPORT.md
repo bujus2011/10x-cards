@@ -143,7 +143,7 @@ curl -s https://api.github.com/repos/cloudflare/pages-action/releases/latest
 
 ## 🔄 Wykonane zmiany
 
-### Aktualizacja wersji
+### 1. Aktualizacja wersji akcji
 
 **Przed:**
 ```yaml
@@ -156,6 +156,23 @@ uses: actions/download-artifact@v6
 ```
 
 **Uzasadnienie:** Najnowsza wersja MAJOR to v6, zgodnie z regułą używania tylko MAJOR version number.
+
+### 2. Uproszczenie workflow
+
+**Zmiana:** Połączono job `build` i `deploy` w jeden job
+
+**Przed:**
+- Job `build` - buduje projekt i tworzy artefakt `dist`
+- Job `deploy` - pobiera artefakt i wdraża na Cloudflare
+
+**Po:**
+- Job `deploy` - buduje projekt i od razu wdraża na Cloudflare (bez artefaktów)
+
+**Korzyści:**
+- Szybsze wykonanie (brak uploadowania/downloadowania artefaktów)
+- Prostsze zarządzanie
+- Mniej kroków = mniej potencjalnych błędów
+- Zgodne z best practices dla Cloudflare Pages
 
 ---
 

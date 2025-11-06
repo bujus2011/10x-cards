@@ -28,11 +28,10 @@ permissions:
 
 ## 🔄 Jobs Pipeline
 
-Pipeline składa się z 5 jobów wykonywanych sekwencyjnie:
+Pipeline składa się z 3 jobów wykonywanych sekwencyjnie:
 
 ```
-lint → unit-test → build → deploy → deployment-summary
-      ↓
+lint → unit-test → deploy (build + deploy)
 ```
 
 ### 1️⃣ **Lint** - Sprawdzanie jakości kodu
@@ -50,47 +49,26 @@ lint → unit-test → build → deploy → deployment-summary
 - **Uruchamia się:** Po sukcesie Lint
 - **Wymaga:** `needs: lint`
 - **Funkcje:**
-  - Uruchomienie testów z pokryciem kodu
-  - Upload artefaktów pokrycia kodu
-  - Zachowanie wyników przez 30 dni
-- **Polecenie:** `npm run test:coverage`
-- **Artefakt:** `unit-test-coverage` (katalog `coverage/`)
+  - Uruchomienie testów jednostkowych
+  - Weryfikacja poprawności kodu
+- **Polecenie:** `npm run test`
 
-### 3️⃣ **Build** - Budowanie projektu
+### 3️⃣ **Deploy** - Build i wdrożenie na Cloudflare Pages
 
 - **Uruchamia się:** Po sukcesie Lint i Unit Tests
 - **Wymaga:** `needs: [lint, unit-test]`
 - **Środowisko:** `production`
 - **Funkcje:**
+  - Setup Node.js i instalacja zależności
   - Budowanie projektu Astro z konfiguracją produkcyjną
   - Wykorzystanie zmiennych środowiskowych z secrets
-  - Upload artefaktów buildu
-  - Zachowanie buildu przez 7 dni
-- **Polecenie:** `npm run build`
-- **Katalog wyjściowy:** `dist/`
-- **Artefakt:** `dist`
-
-### 4️⃣ **Deploy** - Wdrożenie na Cloudflare Pages
-
-- **Uruchamia się:** Po sukcesie Build
-- **Wymaga:** `needs: build`
-- **Środowisko:** `production`
-- **Funkcje:**
-  - Pobranie artefaktów buildu
   - Wdrożenie na Cloudflare Pages
   - Integracja z GitHub Deployments
+- **Polecenia:** 
+  - `npm ci` - instalacja zależności
+  - `npm run build` - budowanie projektu
 - **Action:** `cloudflare/pages-action@v1`
 - **Katalog:** `dist/`
-
-### 5️⃣ **Deployment Summary** - Podsumowanie
-
-- **Uruchamia się:** Zawsze po wszystkich poprzednich (`if: always()`)
-- **Wymaga:** `needs: [lint, unit-test, build, deploy]`
-- **Funkcje:**
-  - Generowanie podsumowania deployment w GitHub Actions Summary
-  - Tabela z wynikami wszystkich jobów
-  - Link do szczegółów buildu i commit SHA
-  - Różne komunikaty dla sukcesu i błędu
 
 ## 🔐 Wymagane Sekrety
 
@@ -208,12 +186,7 @@ Po każdym uruchomieniu workflow, podsumowanie jest dostępne w zakładce **Summ
 
 ### Artefakty
 
-Workflow generuje następujące artefakty:
-
-| Artefakt | Zawartość | Retencja | Job |
-|----------|-----------|----------|-----|
-| `unit-test-coverage` | Pokrycie kodu testami jednostkowymi | 30 dni | unit-test |
-| `dist` | Zbudowana aplikacja | 7 dni | build |
+Workflow NIE generuje artefaktów - build jest wykonywany bezpośrednio w job deploy i od razu wdrażany na Cloudflare Pages.
 
 ### Logi
 
@@ -223,13 +196,14 @@ Szczegółowe logi są dostępne w zakładce **Actions** → wybrany workflow ru
 
 | Aspekt | master.yml | pull-request.yml |
 |--------|------------|------------------|
-| **Trigger** | push do master | push i PR do master |
+| **Trigger** | Workflow dispatch (manual) | push i PR do master |
 | **E2E Tests** | ❌ Nie wykonuje | ✅ Wykonuje |
-| **Build** | ✅ Tak | ❌ Nie |
+| **Build** | ✅ Tak (w job deploy) | ❌ Nie |
 | **Deploy** | ✅ Cloudflare Pages | ❌ Nie |
 | **Środowisko** | production | integration |
 | **Komentarze PR** | ❌ Nie | ✅ Tak |
-| **Summary** | GitHub Actions Summary | PR Comment |
+| **Jobs** | 3 (lint, test, deploy) | 4 (lint, test, e2e, summary) |
+| **Artefakty** | ❌ Nie | ✅ Coverage i reports |
 
 ## 🚨 Troubleshooting
 

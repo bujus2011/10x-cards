@@ -12,9 +12,10 @@
 ### 2. ✅ Utworzono GitHub Actions workflow
 
 - [x] Utworzono `.github/workflows/master.yml`
-- [x] Skonfigurowano pipeline: Lint → Unit Tests → Build → Deploy → Summary
+- [x] Skonfigurowano pipeline: Lint → Unit Tests → Deploy (build + deploy)
 - [x] Zweryfikowano najnowsze wersje akcji GitHub (listopad 2024)
 - [x] Utworzono dokumentację workflow: `.github/workflows/README-MASTER.md`
+- [x] Uproszczono workflow - build i deploy w jednym job
 
 ### 3. ✅ Przygotowano dokumentację
 
