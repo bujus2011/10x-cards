@@ -9,12 +9,16 @@ const registerSchema = z.object({
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async ({ request, cookies, locals }) => {
   try {
     const body = await request.json();
     const { email, password } = registerSchema.parse(body);
 
-    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
+    // Access Cloudflare runtime environment variables
+    // @ts-expect-error - runtime.env is available in Cloudflare adapter but not typed
+    const runtimeEnv = locals.runtime?.env;
+
+    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers, runtimeEnv });
 
     const { data, error } = await supabase.auth.signUp({
       email,

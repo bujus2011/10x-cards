@@ -8,12 +8,16 @@ const resetPasswordSchema = z.object({
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async ({ request, cookies, locals }) => {
   try {
     const body = await request.json();
     const { email } = resetPasswordSchema.parse(body);
 
-    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
+    // Access Cloudflare runtime environment variables
+    // @ts-expect-error - runtime.env is available in Cloudflare adapter but not typed
+    const runtimeEnv = locals.runtime?.env;
+
+    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers, runtimeEnv });
 
     // Send password reset link to user's email
     // Supabase will handle sending the email with reset link
