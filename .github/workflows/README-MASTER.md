@@ -88,7 +88,7 @@ Workflow wymaga następujących sekretów w GitHub (Settings → Secrets and var
 |--------|------|--------------|-------------|
 | `CLOUDFLARE_API_TOKEN` | Token API z uprawnieniami do Cloudflare Pages | Deploy | [Instrukcje](#jak-uzyskać-cloudflare-api-token) |
 | `CLOUDFLARE_ACCOUNT_ID` | ID konta Cloudflare | Deploy | [Instrukcje](#jak-uzyskać-cloudflare-account-id) |
-| `CLOUDFLARE_PROJECT_NAME` | Nazwa projektu w Cloudflare Pages | Deploy | Nazwa z dashboardu Cloudflare Pages |
+| ~~`CLOUDFLARE_PROJECT_NAME`~~ | ~~Nazwa projektu~~ | ~~Deploy~~ | **Nie jest potrzebny** - hardcoded w workflow jako `10x-cards` |
 
 ### Jak Uzyskać Cloudflare API Token
 

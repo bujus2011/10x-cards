@@ -94,7 +94,7 @@ W środowisku `production` dodaj następujące sekrety:
 **Sekrety Cloudflare:**
 - [ ] `CLOUDFLARE_API_TOKEN`
 - [ ] `CLOUDFLARE_ACCOUNT_ID`
-- [ ] `CLOUDFLARE_PROJECT_NAME`
+- [ ] ~~`CLOUDFLARE_PROJECT_NAME`~~ - Nie jest potrzebny (hardcoded w workflow jako `10x-cards`)
 
 Ścieżka: Settings → Environments → production → **Add secret**
 

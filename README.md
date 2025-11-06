@@ -139,7 +139,6 @@ Skonfiguruj następujące sekrety w środowisku `production`:
 **Cloudflare:**
 - `CLOUDFLARE_API_TOKEN` - Token API z uprawnieniami Cloudflare Pages
 - `CLOUDFLARE_ACCOUNT_ID` - ID konta Cloudflare
-- `CLOUDFLARE_PROJECT_NAME` - Nazwa projektu w Cloudflare Pages
 
 ### Szczegółowa dokumentacja
 
