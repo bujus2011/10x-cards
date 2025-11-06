@@ -7,8 +7,27 @@ const supabaseUrl = import.meta.env.SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
 
 // Client instance (for client-side components)
-export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
-export type SupabaseClient = typeof supabaseClient;
+// Lazy initialization to avoid errors when env vars are missing
+let _supabaseClient: ReturnType<typeof createClient<Database>> | null = null;
+
+export const getSupabaseClient = () => {
+  if (!_supabaseClient) {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error("Supabase URL and Key are required. Please check your environment variables.");
+    }
+    _supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
+  }
+  return _supabaseClient;
+};
+
+// For backward compatibility and type exports
+export const supabaseClient = new Proxy({} as ReturnType<typeof createClient<Database>>, {
+  get(_target, prop) {
+    return getSupabaseClient()[prop as keyof ReturnType<typeof createClient<Database>>];
+  },
+});
+
+export type SupabaseClient = ReturnType<typeof getSupabaseClient>;
 
 // Cookie options for server-side auth
 // Note: In local dev/tests over HTTP, cookies cannot be set with `Secure`
@@ -30,6 +49,11 @@ function parseCookieHeader(cookieHeader: string): { name: string; value: string 
 
 // Server instance creator (for API routes and server-side auth)
 export const createSupabaseServerInstance = (context: { headers: Headers; cookies: AstroCookies }) => {
+  // Check if environment variables are available
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error("Supabase URL and Key are required. Please check your environment variables.");
+  }
+
   const supabase = createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
     cookieOptions,
     cookies: {
