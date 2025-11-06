@@ -13,15 +13,17 @@ vi.mock("../openrouter.service", () => ({
   })),
 }));
 
-// Mock crypto module
-vi.mock("crypto", () => ({
-  default: {
-    createHash: vi.fn(() => ({
-      update: vi.fn().mockReturnThis(),
-      digest: vi.fn(() => "mock-hash-123"),
-    })),
+// Mock Web Crypto API digest function
+const mockDigest = vi.fn(async () => {
+  // Return a mock ArrayBuffer (32 bytes for SHA-256)
+  return new Uint8Array(32).fill(0x12).buffer;
+});
+
+vi.stubGlobal("crypto", {
+  subtle: {
+    digest: mockDigest,
   },
-}));
+});
 
 const createMockSupabaseClient = () => ({
   from: vi.fn(),
@@ -107,9 +109,8 @@ describe("GenerationService", () => {
       expect(result.flashcards_proposals[0].front).toBe("What is TypeScript?");
     });
 
-    it("should calculate source text hash", async () => {
+    it("should calculate source text hash using SHA-256", async () => {
       // Arrange
-      const crypto = (await import("crypto")).default;
       const mockAIResponse = JSON.stringify({
         flashcards: [{ front: "Q", back: "A" }],
       });
@@ -132,8 +133,13 @@ describe("GenerationService", () => {
       // Act
       await generationService.generateFlashcards(mockUserId, mockSourceText);
 
-      // Assert
-      expect(crypto.createHash).toHaveBeenCalledWith("md5");
+      // Assert - verify Web Crypto API was called with SHA-256
+      expect(mockDigest).toHaveBeenCalled();
+      const digestCall = mockDigest.mock.calls[0];
+      expect(digestCall[0]).toBe("SHA-256");
+      // Verify second argument is a buffer (Uint8Array or similar)
+      expect(digestCall[1]).toBeDefined();
+      expect(digestCall[1].length).toBeGreaterThan(0);
     });
 
     it("should save generation metadata with correct fields", async () => {
@@ -168,7 +174,7 @@ describe("GenerationService", () => {
       expect(mockInsert).toHaveBeenCalledWith(
         expect.objectContaining({
           user_id: mockUserId,
-          source_text_hash: "mock-hash-123",
+          source_text_hash: expect.any(String), // SHA-256 hash
           source_text_length: mockSourceText.length,
           generated_count: 2,
           model: "openai/gpt-4o-mini",
@@ -277,7 +283,7 @@ describe("GenerationService", () => {
           error_code: "Error",
           error_message: "Test error",
           model: "openai/gpt-4o-mini",
-          source_text_hash: "mock-hash-123",
+          source_text_hash: expect.any(String), // SHA-256 hash
           source_text_length: mockSourceText.length,
         })
       );

@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import type { FlashcardProposalDto, GenerationCreateResponseDto } from "../types";
 import type { SupabaseClient } from "../db/supabase.client";
 import { OpenRouterService } from "./openrouter.service";
@@ -89,7 +88,12 @@ Focus on important facts, definitions, concepts, and relationships.`);
   }
 
   private async calculateHash(text: string): Promise<string> {
-    return crypto.createHash("md5").update(text).digest("hex");
+    // Use Web Crypto API (available in Cloudflare Workers)
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
   }
 
   private async callAIService(text: string): Promise<FlashcardProposalDto[]> {
