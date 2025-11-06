@@ -26,9 +26,9 @@
 ### 4. ✅ Zoptymalizowano workflow
 
 - [x] Usunięto testy E2E z master workflow (tylko w PR)
-- [x] Dodano job build osobno od deploy
-- [x] Skonfigurowano artefakty dla coverage i buildu
-- [x] Dodano deployment summary w GitHub Actions
+- [x] Połączono build i deploy w jeden job (bez artefaktów)
+- [x] Zaktualizowano na `cloudflare/wrangler-action@v3` (najnowsza wersja)
+- [x] Uproszczono konfigurację - nazwa projektu w poleceniu Wrangler
 
 ## Co musisz zrobić
 

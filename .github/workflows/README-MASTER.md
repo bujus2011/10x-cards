@@ -67,7 +67,8 @@ lint → unit-test → deploy (build + deploy)
 - **Polecenia:** 
   - `npm ci` - instalacja zależności
   - `npm run build` - budowanie projektu
-- **Action:** `cloudflare/pages-action@v1`
+  - `pages deploy dist --project-name=10x-cards` - wdrożenie przez Wrangler
+- **Action:** `cloudflare/wrangler-action@v3`
 - **Katalog:** `dist/`
 
 ## 🔐 Wymagane Sekrety
@@ -151,11 +152,11 @@ Workflow używa najnowszych wersji akcji (zweryfikowanych w listopadzie 2024):
 |--------|--------|-------------------|------|
 | `actions/checkout` | v5 | v5.0.0 | Checkout kodu z repozytorium |
 | `actions/setup-node` | v6 | v6.0.0 | Instalacja Node.js |
-| `actions/upload-artifact` | v5 | v5.0.0 | Upload artefaktów buildu i coverage |
-| `actions/download-artifact` | v6 | v6.0.0 | Download artefaktów buildu przed deploymentem |
-| `cloudflare/pages-action` | v1 | v1.5.0 | Deployment na Cloudflare Pages |
+| `cloudflare/wrangler-action` | v3 | v3.14.1 | Deployment na Cloudflare Pages przez Wrangler CLI |
 
-**Uwaga:** Zgodnie z best practices, używamy tylko MAJOR version number (np. `v5`, `v6`) aby automatycznie otrzymywać aktualizacje patch i minor.
+**Uwaga:** Zgodnie z best practices, używamy tylko MAJOR version number (np. `v5`, `v6`, `v3`) aby automatycznie otrzymywać aktualizacje patch i minor.
+
+**Zmiana:** Zaktualizowano z `cloudflare/pages-action@v1` na `cloudflare/wrangler-action@v3` - nowsza, bardziej funkcjonalna akcja z pełnym wsparciem Wrangler CLI.
 
 ### Adapter Astro
 

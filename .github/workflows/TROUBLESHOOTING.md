@@ -4,7 +4,7 @@
 
 ### 🔍 Przyczyna
 
-Akcja `cloudflare/pages-action@v1` wymaga parametru `projectName`, ale:
+Akcja deploymentu wymaga nazwy projektu, ale:
 1. Sekret `CLOUDFLARE_PROJECT_NAME` nie jest ustawiony w środowisku `production`
 2. Lub środowisko `production` nie jest poprawnie skonfigurowane w GitHub
 
@@ -12,17 +12,15 @@ Akcja `cloudflare/pages-action@v1` wymaga parametru `projectName`, ale:
 
 **Status:** ✅ Zaimplementowane
 
-Ustawiono nazwę projektu bezpośrednio w workflow:
+Ustawiono nazwę projektu bezpośrednio w poleceniu Wrangler:
 
 ```yaml
-- name: Publish to Cloudflare Pages
-  uses: cloudflare/pages-action@v1
+- name: Deploy to Cloudflare Pages
+  uses: cloudflare/wrangler-action@v3
   with:
     apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-    projectName: 10x-cards  # ← Hardcoded
-    directory: dist
-    gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+    command: pages deploy dist --project-name=10x-cards  # ← Hardcoded
 ```
 
 **Zalety:**

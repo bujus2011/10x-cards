@@ -61,22 +61,22 @@ uses: actions/download-artifact@v6
 - **Weryfikacja:** `curl -s https://api.github.com/repos/actions/download-artifact/releases/latest`
 - **Zmiana:** v5 → v6 (zgodnie z regułą MAJOR version)
 
-### 5. cloudflare/pages-action
+### 5. cloudflare/wrangler-action
 
 ```yaml
-uses: cloudflare/pages-action@v1
+uses: cloudflare/wrangler-action@v3
 ```
 
-- **Wersja użyta:** v1
-- **Najnowsza dostępna:** v1.5.0
+- **Wersja użyta:** v3 (zaktualizowana z pages-action@v1)
+- **Najnowsza dostępna:** v3.14.1
 - **Status:** ✅ Aktualna
-- **Weryfikacja:** `curl -s https://api.github.com/repos/cloudflare/pages-action/releases/latest`
+- **Weryfikacja:** `curl -s https://api.github.com/repos/cloudflare/wrangler-action/releases/latest`
 - **Konfiguracja:**
   - ✅ `apiToken` - z secrets
   - ✅ `accountId` - z secrets
-  - ✅ `projectName` - z secrets
-  - ✅ `directory` - dist
-  - ✅ `gitHubToken` - z GITHUB_TOKEN
+  - ✅ `command` - pages deploy dist --project-name=10x-cards
+
+**Zmiana:** Zaktualizowano z `pages-action` na `wrangler-action` dla lepszej kompatybilności i funkcjonalności.
 
 ---
 
@@ -97,14 +97,8 @@ curl -s https://api.github.com/repos/actions/checkout/releases/latest
 # actions/setup-node
 curl -s https://api.github.com/repos/actions/setup-node/releases/latest
 
-# actions/upload-artifact
-curl -s https://api.github.com/repos/actions/upload-artifact/releases/latest
-
-# actions/download-artifact
-curl -s https://api.github.com/repos/actions/download-artifact/releases/latest
-
-# cloudflare/pages-action
-curl -s https://api.github.com/repos/cloudflare/pages-action/releases/latest
+# cloudflare/wrangler-action
+curl -s https://api.github.com/repos/cloudflare/wrangler-action/releases/latest
 ```
 
 ### ✅ Installing Dependencies
@@ -143,19 +137,35 @@ curl -s https://api.github.com/repos/cloudflare/pages-action/releases/latest
 
 ## 🔄 Wykonane zmiany
 
-### 1. Aktualizacja wersji akcji
+### 1. Aktualizacja akcji Cloudflare
 
 **Przed:**
 ```yaml
-uses: actions/download-artifact@v5
+- name: Publish to Cloudflare Pages
+  uses: cloudflare/pages-action@v1
+  with:
+    apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    projectName: 10x-cards
+    directory: dist
+    gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 **Po:**
 ```yaml
-uses: actions/download-artifact@v6
+- name: Deploy to Cloudflare Pages
+  uses: cloudflare/wrangler-action@v3
+  with:
+    apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    command: pages deploy dist --project-name=10x-cards
 ```
 
-**Uzasadnienie:** Najnowsza wersja MAJOR to v6, zgodnie z regułą używania tylko MAJOR version number.
+**Uzasadnienie:** 
+- `wrangler-action@v3` (v3.14.1) jest nowszą, bardziej funkcjonalną akcją
+- Pełne wsparcie dla Wrangler CLI i wszystkich jego komend
+- Lepsza kompatybilność z nowymi funkcjami Cloudflare
+- Zgodnie z regułą używania MAJOR version number
 
 ### 2. Uproszczenie workflow
 
