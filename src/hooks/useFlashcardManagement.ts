@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import type { FlashcardDto, FlashcardUpdateDto } from "@/types";
-import type { ManualFlashcardFormData } from "@/lib/validations";
 import { useFlashcards } from "@/hooks/api";
 
 export function useFlashcardManagement() {
@@ -26,8 +25,8 @@ export function useFlashcardManagement() {
   }, [loadFlashcards]);
 
   const handleCreateFlashcard = useCallback(
-    async (data: ManualFlashcardFormData) => {
-      const result = await createFlashcard(data);
+    async (front: string, back: string) => {
+      const result = await createFlashcard({ front, back });
 
       if (result.error) {
         throw new Error(result.error);

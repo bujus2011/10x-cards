@@ -120,9 +120,9 @@ export const onRequest = defineMiddleware(async ({ locals, cookies, url, request
         runtimeEnv,
       });
       locals.supabase = supabase;
-    } catch (error) {
+    } catch {
       // If Supabase client creation fails (e.g., missing env vars), continue anyway for public paths
-      console.warn("Failed to create Supabase client:", error);
+      // Silently ignore the error for public paths
     }
     return next();
   }
@@ -136,8 +136,7 @@ export const onRequest = defineMiddleware(async ({ locals, cookies, url, request
       runtimeEnv,
     });
     locals.supabase = supabase;
-  } catch (error) {
-    console.error("Failed to create Supabase client for protected route:", error);
+  } catch {
     return new Response("Service temporarily unavailable. Please check environment configuration.", {
       status: 503,
       headers: { "Content-Type": "text/plain" },
