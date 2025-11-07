@@ -3,6 +3,7 @@ import type { APIRoute } from "astro";
 import type { GenerateFlashcardsCommand } from "../../types";
 import { GenerationService } from "../../lib/generation.service";
 import { Logger } from "../../lib/logger";
+import { jsonResponse, unauthorizedResponse, validationErrorResponse, handleApiError } from "../../lib/api-response";
 
 const generationsApiLogger = Logger.forContext("api/generations");
 
@@ -17,28 +18,17 @@ const generateFlashcardsSchema = z.object({
 });
 
 export const POST: APIRoute = async ({ request, locals }) => {
+  if (!locals.user) {
+    return unauthorizedResponse();
+  }
+
   try {
-    if (!locals.user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
     // Parse and validate request body
     const body = (await request.json()) as GenerateFlashcardsCommand;
     const validationResult = generateFlashcardsSchema.safeParse(body);
 
     if (!validationResult.success) {
-      return new Response(
-        JSON.stringify({
-          error: "Invalid request data",
-          details: validationResult.error.errors,
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return validationErrorResponse(validationResult.error.errors, "Invalid request data");
     }
 
     // Get OpenRouter API key from runtime env (Cloudflare) or build-time env (local dev)
@@ -53,15 +43,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
     const result = await generationService.generateFlashcards(locals.user.id, body.source_text);
 
-    return new Response(JSON.stringify(result), {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse(result, 201);
   } catch (error) {
-    generationsApiLogger.error("Error processing generation request", error, { userId: locals.user?.id });
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return handleApiError(error, generationsApiLogger, { userId: locals.user?.id });
   }
 };
