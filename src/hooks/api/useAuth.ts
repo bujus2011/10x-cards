@@ -26,6 +26,7 @@ export function useAuth() {
     }
 
     // Reload the page to update server-side session and go to app home
+    // eslint-disable-next-line react-compiler/react-compiler -- Intentional navigation side effect after successful login
     window.location.href = "/generate";
     return { success: true };
   };
