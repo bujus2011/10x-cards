@@ -1,6 +1,6 @@
-import { useState } from "react";
 import type { LoginFormData, RegisterFormData, ResetPasswordFormData } from "@/lib/validations";
 import { Logger } from "@/lib/logger";
+import { useApiRequest } from "./useApiRequest";
 
 const authLogger = Logger.forContext("useAuth");
 
@@ -14,122 +14,65 @@ interface AuthResponse {
 }
 
 export function useAuth() {
-  const [isLoading, setIsLoading] = useState(false);
+  const { request, isLoading } = useApiRequest();
 
   const login = async (data: LoginFormData): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+    const result = await request<AuthResponse>("/api/auth/login", { method: "POST", body: data }, authLogger, {
+      email: data.email,
+    });
 
-      let result: AuthResponse;
-      try {
-        result = await response.json();
-      } catch {
-        return { success: false, error: "Failed to process server response" };
-      }
-
-      if (!response.ok || result.status === "error") {
-        return { success: false, error: result.error || "An error occurred during login" };
-      }
-
-      // Reload the page to update server-side session and go to app home
-      window.location.href = "/generate";
-      return { success: true };
-    } catch (error) {
-      authLogger.error("Login error", error, { email: data.email });
-      return { success: false, error: "An unexpected error occurred. Please try again." };
-    } finally {
-      setIsLoading(false);
+    if (result.error || result.data?.status === "error") {
+      return { success: false, error: result.error || result.data?.error || "An error occurred during login" };
     }
+
+    // Reload the page to update server-side session and go to app home
+    // eslint-disable-next-line react-compiler/react-compiler -- Intentional navigation side effect after successful login
+    window.location.href = "/generate";
+    return { success: true };
   };
 
   const register = async (data: RegisterFormData): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/auth/register", {
+    const result = await request<AuthResponse>(
+      "/api/auth/register",
+      {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
-      });
+        body: { email: data.email, password: data.password },
+      },
+      authLogger,
+      { email: data.email }
+    );
 
-      const result: AuthResponse = await response.json();
-
-      if (result.status === "error") {
-        return { success: false, error: result.error };
-      }
-
-      // Reload the page to update server-side session
-      window.location.href = "/";
-      return { success: true };
-    } catch (error) {
-      authLogger.error("Register error", error, { email: data.email });
-      return { success: false, error: "An unexpected error occurred. Please try again." };
-    } finally {
-      setIsLoading(false);
+    if (result.error || result.data?.status === "error") {
+      return { success: false, error: result.error || result.data?.error };
     }
+
+    // Reload the page to update server-side session
+    window.location.href = "/";
+    return { success: true };
   };
 
   const resetPassword = async (data: ResetPasswordFormData): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+    const result = await request<AuthResponse>("/api/auth/reset-password", { method: "POST", body: data }, authLogger, {
+      email: data.email,
+    });
 
-      const result: AuthResponse = await response.json();
-
-      if (result.status === "error") {
-        return { success: false, error: result.error };
-      }
-
-      return { success: true };
-    } catch (error) {
-      authLogger.error("Reset password error", error, { email: data.email });
-      return { success: false, error: "An unexpected error occurred. Please try again." };
-    } finally {
-      setIsLoading(false);
+    if (result.error || result.data?.status === "error") {
+      return { success: false, error: result.error || result.data?.error };
     }
+
+    return { success: true };
   };
 
   const logout = async (): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+    const result = await request<AuthResponse>("/api/auth/logout", { method: "POST" }, authLogger);
 
-      if (!response.ok) {
-        const result = await response.json();
-        return { success: false, error: result.error || "Failed to logout" };
-      }
-
-      // Reload the page to update server-side session
-      window.location.href = "/auth/login";
-      return { success: true };
-    } catch (error) {
-      authLogger.error("Logout error", error);
-      return { success: false, error: "An unexpected error occurred. Please try again." };
-    } finally {
-      setIsLoading(false);
+    if (result.error) {
+      return { success: false, error: result.error || "Failed to logout" };
     }
+
+    // Reload the page to update server-side session
+    window.location.href = "/auth/login";
+    return { success: true };
   };
 
   return {

@@ -1,14 +1,90 @@
-# 🚀 Cloudflare Pages Deployment Guide
+# 🚀 Cloudflare Pages Deployment
 
 ## Przegląd
 
-Ten dokument zawiera pełną dokumentację techniczną procesu konfiguracji i wdrażania aplikacji 10xCards na Cloudflare Pages.
+Ten dokument zawiera kompletny przewodnik wdrażania aplikacji 10xCards na Cloudflare Pages - od szybkiego startu po szczegółową konfigurację i troubleshooting.
 
-> 💡 **Quick Start**: Jeśli preferujesz zwięzły checklist, zobacz [CLOUDFLARE-SETUP-CHECKLIST.md](./CLOUDFLARE-SETUP-CHECKLIST.md)
+---
 
-## ✅ Co zostało skonfigurowane
+## ⚡ Quick Start Checklist
 
-### 1. Adapter Cloudflare
+### ✅ Krok po kroku
+
+#### 1️⃣ Utwórz projekt w Cloudflare Pages
+
+- [ ] Zaloguj się do [Cloudflare Dashboard](https://dash.cloudflare.com/)
+- [ ] Workers & Pages → **Create application** → **Pages**
+- [ ] Połącz z GitHub lub użyj Direct Upload
+- [ ] Skonfiguruj projekt:
+  - Production branch: `master`
+  - Build command: `npm run build`
+  - Build output: `dist`
+- [ ] Zapisz nazwę projektu (używamy: `10x-cards`)
+
+#### 2️⃣ Skonfiguruj zmienne środowiskowe w Cloudflare
+
+W dashboardzie projektu: **Settings** → **Environment variables** → **Production**
+
+- [ ] `SUPABASE_URL`
+- [ ] `SUPABASE_KEY`
+- [ ] `OPENROUTER_API_KEY`
+
+#### 3️⃣ Wygeneruj Cloudflare API Token
+
+- [ ] Dashboard → **My Profile** → **API Tokens**
+- [ ] **Create Token** → wybierz template **Edit Cloudflare Pages**
+- [ ] Skopiuj token (pojawi się tylko raz!)
+
+#### 4️⃣ Znajdź Cloudflare Account ID
+
+- [ ] W dashboardzie projektu Cloudflare Pages
+- [ ] Sekcja **Overview** (po prawej stronie)
+- [ ] Skopiuj **Account ID**
+
+#### 5️⃣ Utwórz środowisko "production" w GitHub
+
+- [ ] GitHub repo → **Settings** → **Environments**
+- [ ] **New environment** → nazwa: `production`
+- [ ] (Opcjonalnie) Skonfiguruj protection rules
+
+#### 6️⃣ Dodaj sekrety do środowiska "production" w GitHub
+
+**Sekrety aplikacji:**
+- [ ] `SUPABASE_URL`
+- [ ] `SUPABASE_KEY`
+- [ ] `OPENROUTER_API_KEY`
+
+**Sekrety Cloudflare:**
+- [ ] `CLOUDFLARE_API_TOKEN`
+- [ ] `CLOUDFLARE_ACCOUNT_ID`
+
+#### 7️⃣ Uruchom deployment
+
+**Opcja A: Automatycznie (zalecane)**
+- [ ] Push zmian do gałęzi `master`
+- [ ] Sprawdź status w **Actions** w GitHub
+
+**Opcja B: Manualnie**
+- [ ] GitHub → **Actions** → **Deploy to Cloudflare Pages**
+- [ ] **Run workflow** → wybierz `master` → **Run workflow**
+
+#### 8️⃣ Weryfikacja
+
+- [ ] Cloudflare Dashboard → **Deployments** → status "Success"
+- [ ] Otwórz URL: `https://10x-cards.pages.dev`
+- [ ] Przetestuj kluczowe funkcje:
+  - [ ] Logowanie
+  - [ ] Generowanie fiszek
+  - [ ] Zarządzanie fiszkami
+  - [ ] Sesja nauki
+
+---
+
+## 📋 Szczegółowa Konfiguracja
+
+### Co zostało skonfigurowane
+
+#### 1. Adapter Cloudflare
 
 Projekt został skonfigurowany do używania `@astrojs/cloudflare` adaptera:
 
@@ -26,7 +102,7 @@ export default defineConfig({
 });
 ```
 
-### 2. GitHub Actions Workflow
+#### 2. GitHub Actions Workflow
 
 Utworzono workflow `master.yml` dla automatycznego wdrażania na Cloudflare Pages:
 
@@ -34,9 +110,9 @@ Utworzono workflow `master.yml` dla automatycznego wdrażania na Cloudflare Page
 - **Trigger**: Push do gałęzi `master` lub manualne uruchomienie
 - **Pipeline**: Lint → Unit Tests → Build → Deploy → Summary
 
-Szczegółowa dokumentacja: `.github/workflows/README-MASTER.md`
+Szczegółowa dokumentacja: [docs/deployment/ci-cd.md](./ci-cd.md)
 
-### 3. Zależności
+#### 3. Zależności
 
 Dodano niezbędne pakiety:
 
@@ -48,21 +124,11 @@ Dodano niezbędne pakiety:
 }
 ```
 
-## 📋 Wymagania przed wdrożeniem
+---
 
-### 1. Utworzenie projektu w Cloudflare Pages
+## 🔧 Konfiguracja Zmiennych Środowiskowych
 
-1. Zaloguj się do [Cloudflare Dashboard](https://dash.cloudflare.com/)
-2. Przejdź do **Workers & Pages**
-3. Kliknij **Create application** → **Pages** → **Connect to Git**
-4. Wybierz swoje repozytorium GitHub (lub użyj Direct Upload)
-5. Skonfiguruj projekt:
-   - **Project name**: Twoja unikalna nazwa (zapisz jako `CLOUDFLARE_PROJECT_NAME`)
-   - **Production branch**: `master`
-   - **Build command**: `npm run build`
-   - **Build output directory**: `dist`
-
-### 2. Konfiguracja zmiennych środowiskowych w Cloudflare
+### W Cloudflare Pages
 
 W ustawieniach projektu Cloudflare Pages:
 
@@ -75,7 +141,7 @@ W ustawieniach projektu Cloudflare Pages:
 | `SUPABASE_KEY` | your-anon-key | Supabase anon key |
 | `OPENROUTER_API_KEY` | your-api-key | OpenRouter API key dla AI |
 
-### 3. Konfiguracja sekretów GitHub
+### W GitHub Secrets
 
 Dla automatycznego wdrażania przez GitHub Actions:
 
@@ -90,21 +156,31 @@ Dla automatycznego wdrażania przez GitHub Actions:
 #### Sekrety Cloudflare:
 - `CLOUDFLARE_API_TOKEN` - Token API z uprawnieniami Cloudflare Pages Edit
 - `CLOUDFLARE_ACCOUNT_ID` - ID konta Cloudflare
-- `CLOUDFLARE_PROJECT_NAME` - Nazwa projektu w Cloudflare Pages
 
-#### Jak uzyskać Cloudflare API Token:
+---
+
+## 🔑 Uzyskiwanie Danych Cloudflare
+
+### Cloudflare API Token
 
 1. Dashboard → **My Profile** → **API Tokens**
 2. **Create Token** → **Edit Cloudflare Pages** template
 3. Skopiuj wygenerowany token
+4. Dodaj jako secret `CLOUDFLARE_API_TOKEN` w GitHub
 
-#### Jak uzyskać Cloudflare Account ID:
+**Wymagane uprawnienia:**
+- Cloudflare Pages - Edit
+
+### Cloudflare Account ID
 
 1. Dashboard → wybierz projekt Cloudflare Pages
 2. Account ID znajdziesz w sekcji **Overview** po prawej stronie
 3. Format: `1234567890abcdef1234567890abcdef`
+4. Dodaj jako secret `CLOUDFLARE_ACCOUNT_ID` w GitHub
 
-## 🔧 Proces wdrażania
+---
+
+## 🚀 Proces Wdrażania
 
 ### Automatyczne wdrażanie (zalecane)
 
@@ -139,7 +215,9 @@ npm run build
 npx wrangler pages deploy dist
 ```
 
-## 🏗️ Struktura buildu
+---
+
+## 🏗️ Struktura Buildu
 
 Po uruchomieniu `npm run build`, Cloudflare adapter generuje:
 
@@ -151,7 +229,9 @@ dist/
 └── [inne statyczne pliki]
 ```
 
-## 🔍 Weryfikacja wdrożenia
+---
+
+## 🔍 Weryfikacja Wdrożenia
 
 ### Po wdrożeniu sprawdź:
 
@@ -168,21 +248,24 @@ dist/
    - Otwórz aplikację w przeglądarce
    - Sprawdź czy logowanie działa
    - Przetestuj generowanie fiszek
+   - Sprawdź sesję nauki
 
-## ⚠️ Znane problemy i rozwiązania
+---
+
+## ⚠️ Troubleshooting
 
 ### Problem 1: "Missing secrets" w GitHub Actions
 
-**Objawy**:
+**Objawy:**
 - Workflow kończy się błędem "Secret not found"
 - Build nie może się rozpocząć
 
-**Możliwe przyczyny**:
+**Możliwe przyczyny:**
 1. Sekrety nie zostały dodane w środowisku `production`
 2. Błędna pisownia nazw sekretów
 3. Workflow nie używa środowiska `production`
 
-**Rozwiązanie**:
+**Rozwiązanie:**
 1. GitHub → Settings → Environments → `production`
 2. Sprawdź czy wszystkie sekrety są dodane:
    - `SUPABASE_URL`
@@ -195,32 +278,32 @@ dist/
 
 ### Problem 2: Build kończy się błędem
 
-**Objawy**:
+**Objawy:**
 - GitHub Actions workflow kończy się na etapie buildu
 - Komunikaty o brakujących zależnościach lub błędach TypeScript
 
-**Możliwe przyczyny**:
+**Możliwe przyczyny:**
 1. Brakujące zmienne środowiskowe podczas buildu
 2. Błędy TypeScript w kodzie
 3. Brakujące zależności
 
-**Rozwiązanie**:
+**Rozwiązanie:**
 1. Sprawdź logi GitHub Actions dla szczegółów błędu
 2. Zweryfikuj czy wszystkie zmienne środowiskowe są ustawione jako sekrety
 3. Przetestuj build lokalnie: `npm run build`
 4. Sprawdź czy wszystkie zależności są zainstalowane: `npm ci`
 
-### Problem 3: Deployment kończy się błędem "Invalid API token"
+### Problem 3: "Invalid API token"
 
-**Objawy**:
+**Objawy:**
 - Build się udaje
 - Deployment kończy się błędem: "Invalid API token" lub "Authentication failed"
 
-**Przyczyna**:
+**Przyczyna:**
 - Nieprawidłowy lub wygasły Cloudflare API Token
 - Token nie ma wymaganych uprawnień
 
-**Rozwiązanie**:
+**Rozwiązanie:**
 1. Wygeneruj nowy Cloudflare API Token:
    - Dashboard → My Profile → API Tokens
    - Create Token → **Edit Cloudflare Pages** template
@@ -228,18 +311,18 @@ dist/
 3. Zaktualizuj sekret `CLOUDFLARE_API_TOKEN` w GitHub (Settings → Environments → production)
 4. Ponownie uruchom workflow
 
-### Problem 4: "Project not found" w Cloudflare
+### Problem 4: "Project not found"
 
-**Objawy**:
+**Objawy:**
 - Build się udaje
 - Deployment kończy się błędem: "Project not found" lub "404"
 
-**Możliwe przyczyny**:
+**Możliwe przyczyny:**
 1. Projekt nie istnieje w Cloudflare Pages
 2. Nieprawidłowa nazwa projektu w workflow
 3. Nieprawidłowy Account ID
 
-**Rozwiązanie**:
+**Rozwiązanie:**
 1. Sprawdź czy projekt istnieje w Cloudflare Pages:
    - Dashboard → Workers & Pages → Sprawdź listę projektów
 2. Zweryfikuj nazwę projektu w workflow (`.github/workflows/master.yml`):
@@ -247,45 +330,45 @@ dist/
 3. Sprawdź czy `CLOUDFLARE_ACCOUNT_ID` jest poprawny:
    - Dashboard → Workers & Pages → Twój projekt → Overview → Account ID
 
-### Problem 5: Build kończy się sukcesem, ale aplikacja nie działa
+### Problem 5: Aplikacja nie działa po wdrożeniu
 
-**Objawy**:
+**Objawy:**
 - Build i deployment się udaje
 - Strona wyświetla błędy 500 lub nie ładuje się
 
-**Możliwe przyczyny**:
+**Możliwe przyczyny:**
 1. Brakujące zmienne środowiskowe w Cloudflare Pages
 2. Niezgodność runtime Cloudflare z kodem Node.js
 3. Użycie niekompatybilnych modułów Node.js
 
-**Rozwiązanie**:
+**Rozwiązanie:**
 1. Sprawdź zmienne środowiskowe w Cloudflare Dashboard (Settings → Environment variables)
 2. Sprawdź logi Cloudflare Functions (Dashboard → Logs)
 3. Zweryfikuj czy używasz tylko kompatybilnych z Cloudflare API:
    - Używaj Web Crypto API zamiast Node.js `crypto`
    - Unikaj modułów `fs`, `path`, `os`
-4. Zobacz sekcję "Cloudflare Workers Constraints" w `CLAUDE.md`
+4. Zobacz sekcję "Cloudflare Workers Constraints" w [CLAUDE.md](../../CLAUDE.md)
 
 ### Problem 6: "Invalid binding `SESSION`"
 
-**Objawy**:
+**Objawy:**
 - Ostrzeżenie podczas buildu o brakującym bindingu `SESSION`
 
-**Przyczyna**:
+**Przyczyna:**
 - Cloudflare adapter domyślnie włącza sesje z KV
 
-**Rozwiązanie**:
+**Rozwiązanie:**
 Jeśli nie używasz sesji Cloudflare KV (używasz Supabase Auth), możesz zignorować to ostrzeżenie lub skonfigurować KV binding w `wrangler.toml`.
 
 ### Problem 7: Obrazy nie działają
 
-**Objawy**:
+**Objawy:**
 - Ostrzeżenie: "Cloudflare does not support sharp at runtime"
 
-**Przyczyna**:
+**Przyczyna:**
 - Cloudflare nie wspiera biblioteki Sharp do przetwarzania obrazów
 
-**Rozwiązanie**:
+**Rozwiązanie:**
 W `astro.config.mjs` dodaj:
 ```javascript
 export default defineConfig({
@@ -296,9 +379,11 @@ export default defineConfig({
 });
 ```
 
-## 📊 Monitoring i debugging
+---
 
-### Logi produkcyjne
+## 📊 Monitoring i Debugging
+
+### Logi Produkcyjne
 
 1. **Cloudflare Dashboard**:
    - Workers & Pages → Twój projekt → **Logs**
@@ -318,6 +403,8 @@ export default defineConfig({
    - `unit-test-coverage` - pokrycie kodu (30 dni retencji)
    - `dist` - zbudowana aplikacja (7 dni retencji)
 
+---
+
 ## 🔄 Rollback
 
 Jeśli wdrożenie zawiera błędy:
@@ -332,7 +419,9 @@ Jeśli wdrożenie zawiera błędy:
    - Push do gałęzi `master`
    - Automatyczne wdrożenie poprzedniej wersji
 
-## 🚀 Optymalizacja wydajności
+---
+
+## 🚀 Optymalizacja Wydajności
 
 ### Caching
 
@@ -359,12 +448,17 @@ Cloudflare automatycznie cachuje:
    - Statyczne assety z długim cache time
    - API responses z odpowiednimi Cache-Control headers
 
-## 📚 Dodatkowe zasoby
+---
+
+## 📚 Dodatkowe Zasoby
 
 - [Cloudflare Pages Documentation](https://developers.cloudflare.com/pages/)
 - [Astro Cloudflare Adapter](https://docs.astro.build/en/guides/integrations-guide/cloudflare/)
 - [Cloudflare Workers Runtime API](https://developers.cloudflare.com/workers/runtime-apis/)
 - [Wrangler CLI Documentation](https://developers.cloudflare.com/workers/wrangler/)
+- [GitHub Actions CI/CD](./ci-cd.md) - Szczegóły workflow
+
+---
 
 ## 🆘 Pomoc
 
@@ -373,5 +467,5 @@ Jeśli napotkasz problemy:
 1. Sprawdź logi w Cloudflare Dashboard
 2. Zweryfikuj zmienne środowiskowe
 3. Sprawdź GitHub Actions logs
-4. Przeczytaj [Troubleshooting guide](https://developers.cloudflare.com/pages/platform/known-issues/)
-
+4. Przeczytaj [Cloudflare Troubleshooting](https://developers.cloudflare.com/pages/platform/known-issues/)
+5. Zobacz [Troubleshooting Deployment](./troubleshooting.md) dla więcej rozwiązań

@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { StudySessionService } from "../../lib/study-session.service";
 import { Logger } from "../../lib/logger";
+import { jsonResponse, unauthorizedResponse } from "../../lib/api-response";
 
 const studyStatsLogger = Logger.forContext("api/study-stats");
 
@@ -11,36 +12,21 @@ export const prerender = false;
  * Get study session statistics for the current user
  */
 export const GET: APIRoute = async ({ locals }) => {
-  const user = locals.user;
-  const supabase = locals.supabase;
-
-  if (!user) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+  if (!locals.user) {
+    return unauthorizedResponse();
   }
 
-  if (!supabase) {
-    return new Response(JSON.stringify({ error: "Database connection failed" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+  if (!locals.supabase) {
+    return jsonResponse({ error: "Database connection failed" }, 500);
   }
 
   try {
-    const studySessionService = new StudySessionService(supabase);
-    const stats = await studySessionService.getStudyStats(user.id);
+    const studySessionService = new StudySessionService(locals.supabase);
+    const stats = await studySessionService.getStudyStats(locals.user.id);
 
-    return new Response(JSON.stringify(stats), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse(stats);
   } catch (error) {
     studyStatsLogger.error("Error fetching study stats", error, { userId: locals.user?.id });
-    return new Response(JSON.stringify({ error: "Failed to fetch study statistics" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse({ error: "Failed to fetch study statistics" }, 500);
   }
 };

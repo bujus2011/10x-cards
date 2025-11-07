@@ -2,6 +2,13 @@ import type { APIRoute } from "astro";
 import { StudySessionService } from "../../lib/study-session.service";
 import { z } from "astro/zod";
 import { Logger } from "../../lib/logger";
+import {
+  jsonResponse,
+  unauthorizedResponse,
+  validationErrorResponse,
+  badRequestResponse,
+  notFoundResponse,
+} from "../../lib/api-response";
 
 const studySessionApiLogger = Logger.forContext("api/study-session");
 
@@ -12,21 +19,12 @@ export const prerender = false;
  * Get flashcards due for review
  */
 export const GET: APIRoute = async ({ locals, url }) => {
-  const user = locals.user;
-  const supabase = locals.supabase;
-
-  if (!user) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+  if (!locals.user) {
+    return unauthorizedResponse();
   }
 
-  if (!supabase) {
-    return new Response(JSON.stringify({ error: "Database connection failed" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+  if (!locals.supabase) {
+    return jsonResponse({ error: "Database connection failed" }, 500);
   }
 
   try {
@@ -34,25 +32,16 @@ export const GET: APIRoute = async ({ locals, url }) => {
     const limit = limitParam ? parseInt(limitParam, 10) : 20;
 
     if (isNaN(limit) || limit < 1 || limit > 100) {
-      return new Response(JSON.stringify({ error: "Invalid limit parameter. Must be between 1 and 100" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+      return badRequestResponse("Invalid limit parameter. Must be between 1 and 100");
     }
 
-    const studySessionService = new StudySessionService(supabase);
-    const dueCards = await studySessionService.getDueCards(user.id, limit);
+    const studySessionService = new StudySessionService(locals.supabase);
+    const dueCards = await studySessionService.getDueCards(locals.user.id, limit);
 
-    return new Response(JSON.stringify({ cards: dueCards }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse({ cards: dueCards });
   } catch (error) {
     studySessionApiLogger.error("Error fetching due cards", error, { userId: locals.user?.id });
-    return new Response(JSON.stringify({ error: "Failed to fetch due cards" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse({ error: "Failed to fetch due cards" }, 500);
   }
 };
 
@@ -61,21 +50,12 @@ export const GET: APIRoute = async ({ locals, url }) => {
  * Submit a review for a flashcard
  */
 export const POST: APIRoute = async ({ request, locals }) => {
-  const user = locals.user;
-  const supabase = locals.supabase;
-
-  if (!user) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+  if (!locals.user) {
+    return unauthorizedResponse();
   }
 
-  if (!supabase) {
-    return new Response(JSON.stringify({ error: "Database connection failed" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+  if (!locals.supabase) {
+    return jsonResponse({ error: "Database connection failed" }, 500);
   }
 
   try {
@@ -90,53 +70,29 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const validationResult = reviewSchema.safeParse(body);
 
     if (!validationResult.success) {
-      return new Response(
-        JSON.stringify({
-          error: "Invalid request body",
-          details: validationResult.error.errors,
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return validationErrorResponse(validationResult.error.errors, "Invalid request body");
     }
 
     const { flashcard_id, rating } = validationResult.data;
 
     // Verify flashcard belongs to user
-    const { data: flashcard, error: flashcardError } = await supabase
+    const { data: flashcard, error: flashcardError } = await locals.supabase
       .from("flashcards")
       .select("id")
       .eq("id", flashcard_id)
-      .eq("user_id", user.id)
+      .eq("user_id", locals.user.id)
       .single();
 
     if (flashcardError || !flashcard) {
-      return new Response(JSON.stringify({ error: "Flashcard not found or unauthorized" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
+      return notFoundResponse("Flashcard not found or unauthorized");
     }
 
-    const studySessionService = new StudySessionService(supabase);
-    const result = await studySessionService.submitReview(user.id, flashcard_id, rating);
+    const studySessionService = new StudySessionService(locals.supabase);
+    const result = await studySessionService.submitReview(locals.user.id, flashcard_id, rating);
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        ...result,
-      }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return jsonResponse({ success: true, ...result });
   } catch (error) {
     studySessionApiLogger.error("Error submitting review", error, { userId: locals.user?.id });
-    return new Response(JSON.stringify({ error: "Failed to submit review" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse({ error: "Failed to submit review" }, 500);
   }
 };

@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { createSupabaseServerInstance } from "@/db/supabase.client";
 import { z } from "zod";
+import { jsonResponseWithoutHeaders, handleAuthError } from "@/lib/api-response";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email format"),
@@ -26,39 +27,23 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
     });
 
     if (error) {
-      return new Response(
-        JSON.stringify({
+      return jsonResponseWithoutHeaders(
+        {
           error: error.message,
           status: "error",
-        }),
-        { status: 400 }
+        },
+        400
       );
     }
 
-    return new Response(
-      JSON.stringify({
+    return jsonResponseWithoutHeaders(
+      {
         user: data.user,
         status: "success",
-      }),
-      { status: 200 }
+      },
+      200
     );
   } catch (err) {
-    if (err instanceof z.ZodError) {
-      return new Response(
-        JSON.stringify({
-          error: err.errors[0].message,
-          status: "error",
-        }),
-        { status: 400 }
-      );
-    }
-
-    return new Response(
-      JSON.stringify({
-        error: "An unexpected error occurred",
-        status: "error",
-      }),
-      { status: 500 }
-    );
+    return handleAuthError(err);
   }
 };

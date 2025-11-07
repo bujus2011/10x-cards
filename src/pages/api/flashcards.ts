@@ -1,8 +1,15 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
 import type { FlashcardsCreateCommand, FlashcardUpdateDto } from "../../types";
-import { DatabaseError, FlashcardService } from "../../lib/flashcard.service";
+import { FlashcardService } from "../../lib/flashcard.service";
 import { Logger } from "../../lib/logger";
+import {
+  jsonResponse,
+  unauthorizedResponse,
+  validationErrorResponse,
+  badRequestResponse,
+  handleApiError,
+} from "../../lib/api-response";
 
 const flashcardsApiLogger = Logger.forContext("api/flashcards");
 
@@ -53,41 +60,16 @@ const updateFlashcardSchema = z.object({
  */
 export const GET: APIRoute = async ({ locals }) => {
   if (!locals.user) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+    return unauthorizedResponse();
   }
 
   try {
     const flashcardService = new FlashcardService(locals.supabase);
     const flashcards = await flashcardService.getByUserId(locals.user.id);
 
-    return new Response(JSON.stringify({ flashcards }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse({ flashcards });
   } catch (error) {
-    flashcardsApiLogger.error("Error retrieving flashcards", error, { userId: locals.user?.id });
-
-    if (error instanceof DatabaseError) {
-      return new Response(
-        JSON.stringify({
-          error: error.message,
-          details: error.details,
-          code: error.code,
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return handleApiError(error, flashcardsApiLogger, { userId: locals.user?.id });
   }
 };
 
@@ -95,28 +77,17 @@ export const GET: APIRoute = async ({ locals }) => {
  * POST /api/flashcards - Create new flashcards
  */
 export const POST: APIRoute = async ({ request, locals }) => {
+  if (!locals.user) {
+    return unauthorizedResponse();
+  }
+
   try {
-    if (!locals.user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
     // Parse and validate request body
     const body = await request.json();
     const validationResult = createFlashcardsSchema.safeParse(body);
 
     if (!validationResult.success) {
-      return new Response(
-        JSON.stringify({
-          error: "Invalid input",
-          details: validationResult.error.errors,
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return validationErrorResponse(validationResult.error.errors);
     }
 
     const command = validationResult.data as FlashcardsCreateCommand;
@@ -130,49 +101,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
     try {
       await flashcardService.validateGenerationIds(generationIds);
     } catch (error) {
-      if (error instanceof DatabaseError) {
-        return new Response(
-          JSON.stringify({
-            error: error.message,
-            details: error.details,
-            code: error.code,
-          }),
-          {
-            status: 400,
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-      }
-      throw error;
+      return handleApiError(error, flashcardsApiLogger, { userId: locals.user.id });
     }
 
     const createdFlashcards = await flashcardService.createBatch(locals.user.id, command.flashcards);
 
-    return new Response(JSON.stringify({ flashcards: createdFlashcards, saved_count: createdFlashcards.length }), {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse({ flashcards: createdFlashcards, saved_count: createdFlashcards.length }, 201);
   } catch (error) {
-    flashcardsApiLogger.error("Error creating flashcards", error, { userId: locals.user?.id });
-
-    if (error instanceof DatabaseError) {
-      return new Response(
-        JSON.stringify({
-          error: error.message,
-          details: error.details,
-          code: error.code,
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return handleApiError(error, flashcardsApiLogger, { userId: locals.user?.id });
   }
 };
 
@@ -181,10 +117,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
  */
 export const PUT: APIRoute = async ({ request, locals }) => {
   if (!locals.user) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+    return unauthorizedResponse();
   }
 
   try {
@@ -192,62 +125,22 @@ export const PUT: APIRoute = async ({ request, locals }) => {
     const { id, ...updateData } = body;
 
     if (!id || typeof id !== "number") {
-      return new Response(
-        JSON.stringify({
-          error: "Invalid input",
-          details: "Flashcard ID is required",
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return badRequestResponse("Flashcard ID is required");
     }
 
     const validationResult = updateFlashcardSchema.safeParse(updateData);
 
     if (!validationResult.success) {
-      return new Response(
-        JSON.stringify({
-          error: "Invalid input",
-          details: validationResult.error.errors,
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return validationErrorResponse(validationResult.error.errors);
     }
 
     const flashcardService = new FlashcardService(locals.supabase);
     const updates = validationResult.data as FlashcardUpdateDto;
     const updatedFlashcard = await flashcardService.update(id, locals.user.id, updates);
 
-    return new Response(JSON.stringify({ flashcard: updatedFlashcard }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse({ flashcard: updatedFlashcard });
   } catch (error) {
-    flashcardsApiLogger.error("Error updating flashcard", error, { userId: locals.user?.id });
-
-    if (error instanceof DatabaseError) {
-      return new Response(
-        JSON.stringify({
-          error: error.message,
-          details: error.details,
-          code: error.code,
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return handleApiError(error, flashcardsApiLogger, { userId: locals.user?.id });
   }
 };
 
@@ -256,10 +149,7 @@ export const PUT: APIRoute = async ({ request, locals }) => {
  */
 export const DELETE: APIRoute = async ({ request, locals }) => {
   if (!locals.user) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+    return unauthorizedResponse();
   }
 
   try {
@@ -267,45 +157,14 @@ export const DELETE: APIRoute = async ({ request, locals }) => {
     const { id } = body;
 
     if (!id || typeof id !== "number") {
-      return new Response(
-        JSON.stringify({
-          error: "Invalid input",
-          details: "Flashcard ID is required",
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return badRequestResponse("Flashcard ID is required");
     }
 
     const flashcardService = new FlashcardService(locals.supabase);
     await flashcardService.delete(id, locals.user.id);
 
-    return new Response(JSON.stringify({ success: true }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse({ success: true });
   } catch (error) {
-    flashcardsApiLogger.error("Error deleting flashcard", error, { userId: locals.user?.id });
-
-    if (error instanceof DatabaseError) {
-      return new Response(
-        JSON.stringify({
-          error: error.message,
-          details: error.details,
-          code: error.code,
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return handleApiError(error, flashcardsApiLogger, { userId: locals.user?.id });
   }
 };

@@ -13,6 +13,10 @@ export function StudySessionView() {
 
   const { fetchDueCards, submitReview, isLoading, isSubmitting } = useStudySession();
 
+  useEffect(() => {
+    loadDueCards();
+  }, [loadDueCards]);
+
   const loadDueCards = useCallback(async () => {
     const result = await fetchDueCards(20);
 
@@ -21,10 +25,6 @@ export function StudySessionView() {
       setSessionComplete(result.data.length === 0);
     }
   }, [fetchDueCards]);
-
-  useEffect(() => {
-    loadDueCards();
-  }, [loadDueCards]);
 
   const handleShowBack = useCallback(() => {
     setShowBack(true);
