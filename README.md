@@ -10,6 +10,7 @@
 - [Stack technologiczny](#stack-technologiczny)
 - [Rozpoczęcie pracy lokalnie](#rozpoczęcie-pracy-lokalnie)
 - [Dostępne skrypty](#dostępne-skrypty)
+- [Dokumentacja](#dokumentacja)
 - [Wdrożenie](#wdrożenie)
 - [Zakres projektu](#zakres-projektu)
 - [Status projektu](#status-projektu)
@@ -113,7 +114,31 @@
 
 **Uwaga:** Testy E2E używają 1 workera, aby zapobiec wzajemnemu zakłócaniu się testów.
 
-Aby uzyskać szczegółową dokumentację testową, zobacz [TESTING-E2E.md](./TESTING-E2E.md).
+Aby uzyskać szczegółową dokumentację testową, zobacz [docs/development/testing.md](./docs/development/testing.md).
+
+## Dokumentacja
+
+Projekt posiada kompleksową dokumentację w katalogu `docs/`. Główne sekcje:
+
+### 🏗️ Architektura
+- [Authentication](./docs/architecture/authentication.md) - System autentykacji (JWT, Supabase, middleware)
+- [Database](./docs/architecture/database.md) - Schema PostgreSQL, migracje
+- [API Design](./docs/architecture/api-design.md) - Wzorce projektowe API
+
+### 📱 Funkcje
+- [My Flashcards](./docs/features/my-flashcards.md) - Zarządzanie fiszkami (CRUD, wyszukiwanie)
+
+### 👨‍💻 Development
+- [Testing](./docs/development/testing.md) - Testy jednostkowe (Vitest) i E2E (Playwright)
+
+### 🚀 Deployment
+- [Cloudflare](./docs/deployment/cloudflare.md) - Wdrażanie na Cloudflare Pages (kompletny przewodnik)
+- [CI/CD](./docs/deployment/ci-cd.md) - GitHub Actions workflows
+- [Troubleshooting](./docs/deployment/troubleshooting.md) - Rozwiązywanie problemów
+
+### 📚 Pełna Dokumentacja
+
+Zobacz [docs/README.md](./docs/README.md) dla kompletnego spisu treści wszystkich dokumentów.
 
 ## Wdrożenie
 
@@ -142,7 +167,7 @@ Skonfiguruj następujące sekrety w środowisku `production`:
 
 ### Szczegółowa dokumentacja
 
-Pełny przewodnik wdrażania znajduje się w [DEPLOYMENT-CLOUDFLARE.md](./DEPLOYMENT-CLOUDFLARE.md).
+Pełny przewodnik wdrażania znajduje się w [docs/deployment/cloudflare.md](./docs/deployment/cloudflare.md).
 
 ## Zakres projektu
 
