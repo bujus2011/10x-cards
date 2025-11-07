@@ -1,14 +1,11 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { toast } from "sonner";
 import type { GenerationCreateResponseDto, FlashcardCreateDto } from "@/types";
 import type { GenerateFlashcardsFormData } from "@/lib/validations";
 import { Logger } from "@/lib/logger";
+import { useApiRequest } from "./useApiRequest";
 
 const generationLogger = Logger.forContext("useGeneration");
-
-interface BulkSaveRequest {
-  flashcards: FlashcardCreateDto[];
-}
 
 interface BulkSaveResponse {
   flashcards: { id: number; front: string; back: string }[];
@@ -16,36 +13,29 @@ interface BulkSaveResponse {
 }
 
 export function useGeneration() {
-  const [isLoading, setIsLoading] = useState(false);
+  const { request, isLoading } = useApiRequest();
 
   const generateFlashcards = useCallback(
     async (data: GenerateFlashcardsFormData): Promise<{ data?: GenerationCreateResponseDto; error?: string }> => {
-      setIsLoading(true);
-      try {
-        const response = await fetch("/api/generations", {
+      const result = await request<GenerationCreateResponseDto>(
+        "/api/generations",
+        {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ source_text: data.source_text }),
-        });
+          body: { source_text: data.source_text },
+        },
+        generationLogger,
+        { textLength: data.source_text.length }
+      );
 
-        if (!response.ok) {
-          throw new Error("Failed to generate flashcards. Please try again.");
-        }
-
-        const result: GenerationCreateResponseDto = await response.json();
-
-        toast.success(`Generated ${result.generated_count} flashcards`);
-        return { data: result };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        generationLogger.error("Generate flashcards error", error, { textLength: data.source_text.length });
-        toast.error(message);
-        return { error: message };
-      } finally {
-        setIsLoading(false);
+      if (result.error) {
+        toast.error(result.error);
+        return { error: result.error };
       }
+
+      toast.success(`Generated ${result.data?.generated_count} flashcards`);
+      return { data: result.data };
     },
-    []
+    [request]
   );
 
   const saveFlashcards = useCallback(
@@ -55,33 +45,26 @@ export function useGeneration() {
         return { success: false, error: "No flashcards to save" };
       }
 
-      setIsLoading(true);
-      try {
-        const response = await fetch("/api/flashcards", {
+      const result = await request<BulkSaveResponse>(
+        "/api/flashcards",
+        {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ flashcards } as BulkSaveRequest),
-        });
+          body: { flashcards },
+        },
+        generationLogger,
+        { draftCount: flashcards.length }
+      );
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to save flashcards");
-        }
-
-        const result: BulkSaveResponse = await response.json();
-
-        toast.success(`Successfully saved ${result.saved_count} flashcard${result.saved_count !== 1 ? "s" : ""}`);
-        return { success: true, savedCount: result.saved_count };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "Unknown error occurred";
-        generationLogger.error("Save flashcards error", error, { draftCount: flashcards.length });
-        toast.error(message);
-        return { success: false, error: message };
-      } finally {
-        setIsLoading(false);
+      if (result.error) {
+        toast.error(result.error);
+        return { success: false, error: result.error };
       }
+
+      const savedCount = result.data?.saved_count || 0;
+      toast.success(`Successfully saved ${savedCount} flashcard${savedCount !== 1 ? "s" : ""}`);
+      return { success: true, savedCount };
     },
-    []
+    [request]
   );
 
   return {
