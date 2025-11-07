@@ -187,6 +187,53 @@ src/
 - Use `aria-label`/`aria-labelledby` for non-visible labels
 - Avoid redundant ARIA that duplicates native HTML semantics
 
+### Custom React Hooks
+
+The project follows a two-tier hook architecture:
+
+**API Hooks** (`src/hooks/api/`):
+- Low-level hooks for direct API communication
+- Handle HTTP requests, loading states, and error handling
+- Return raw data and status information
+- Available hooks:
+  - `useAuth` - Authentication operations (login, register, logout, reset password)
+  - `useFlashcards` - CRUD operations for flashcards (fetch, create, update, delete)
+  - `useGeneration` - AI flashcard generation and saving proposals
+  - `useStudySession` - Study session management with FSRS spaced repetition
+
+**Composite Hooks** (`src/hooks/`):
+- High-level hooks that combine API hooks with state management
+- Provide business logic and UI-ready state
+- Handle side effects (e.g., auto-loading data on mount)
+- Available hooks:
+  - `useFlashcardManagement` - Combines `useFlashcards` with state management for flashcard list (auto-loads on mount, provides handlers for CRUD operations)
+  - `useFlashcardGeneration` - Combines `useGeneration` with proposal state management (accept, reject, edit flashcard proposals before saving)
+  - `useFlashcardSearch` - Client-side search and filtering of flashcards (filters by front/back content, provides search stats)
+
+**Usage Pattern:**
+- Use **API hooks** when you need fine-grained control over API calls and state
+- Use **composite hooks** for common UI patterns and automatic state management
+- Import hooks from `@/hooks` (barrel export from `index.ts`)
+
+**Example:**
+```typescript
+// Using composite hook (recommended for most cases)
+import { useFlashcardManagement } from '@/hooks';
+
+function MyFlashcardsPage() {
+  const { flashcards, isLoading, handleCreateFlashcard } = useFlashcardManagement();
+  // flashcards are automatically loaded on mount
+}
+
+// Using API hook (for custom control)
+import { useFlashcards } from '@/hooks/api';
+
+function CustomFlashcardsComponent() {
+  const { fetchFlashcards, isLoading } = useFlashcards();
+  // Manual control over when to fetch
+}
+```
+
 ## Coding Standards
 
 ### Error Handling
@@ -203,26 +250,107 @@ src/
 
 ## Testing Guidelines
 
-**Unit Tests (Vitest):**
+### Unit Tests (Vitest)
+
+**Configuration:**
 - Test files: `**/*.{test,spec}.{ts,tsx}`
 - Setup file: `src/tests/setup.ts`
 - Use jsdom environment for React component tests
 - Test utilities: `src/tests/test-utils.tsx`
 
-**E2E Tests (Playwright):**
+**Commands:**
+```bash
+npm run test             # Run in watch mode
+npm run test:run         # Run once
+npm run test:ui          # Open Vitest UI
+npm run test:coverage    # Generate coverage report
+```
+
+### E2E Tests (Playwright)
+
+**Prerequisites:**
+
+1. **`.env.test` file is required** with the following variables:
+   ```env
+   SUPABASE_URL=https://your-project.supabase.co
+   SUPABASE_KEY=your-anon-key
+   OPENROUTER_API_KEY=your-openrouter-key
+   E2E_USERNAME=test-user@example.com
+   E2E_PASSWORD=test-password
+   E2E_USERNAME_ID=user-uuid-from-database
+   BASE_URL=http://localhost:3000
+   ```
+
+2. **Test user must exist in database**
+   - Email and password must match `.env.test`
+   - Create test user with: `npm run test:e2e:create-user`
+
+**Running E2E Tests:**
+
+**IMPORTANT:** E2E tests require TWO separate terminals:
+
+1. **Terminal 1 - Start dev server:**
+   ```bash
+   npm run dev:e2e
+   ```
+   Wait for server to start at `http://localhost:3000`
+
+2. **Terminal 2 - Run tests:**
+   ```bash
+   npm run test:e2e         # Run all E2E tests
+   npm run test:e2e:ui      # Playwright UI mode
+   npm run test:e2e:headed  # Run with visible browser
+   npm run test:e2e:debug   # Debug mode
+   npm run test:e2e:codegen # Record new tests
+   ```
+
+**Test Structure:**
+
 - Test directory: `e2e/`
 - Uses Page Object Model pattern (e.g., `e2e/pages/LoginPage.ts`)
 - Auth helpers in `e2e/helpers/auth.helpers.ts`
 - Runs in Chromium only (as per guidelines)
 - **Uses 1 worker** (configured in `playwright.config.ts`) to prevent tests from interfering with each other by running sequentially
-- Requires `.env.test` with E2E_USERNAME and E2E_PASSWORD
-- **Test Execution Order:** Tests run in dependency order:
-  1. `auth-tests` - First runs `00-setup-auth.spec.ts` (alphabetically first) which saves auth state to `.auth/user.json`, then validates login functionality
-  2. `flashcard-generation` - Uses saved auth state, tests AI generation
-  3. `my-flashcards` - Uses saved auth state, tests flashcard management (editing, deleting)
-  4. `study-session` - Uses saved auth state, tests spaced repetition
-  5. `cleanup` - Clears authentication state and database (must run last)
+
+**Test Execution Order:**
+
+Tests run in dependency order:
+
+1. **auth-tests** - First runs `00-setup-auth.spec.ts` (alphabetically first) which saves auth state to `.auth/user.json`, then validates login functionality
+2. **flashcard-generation** - Uses saved auth state, tests AI generation
+3. **my-flashcards** - Uses saved auth state, tests flashcard management (editing, deleting)
+4. **study-session** - Uses saved auth state, tests spaced repetition
+   - `00-setup-study-data.spec.ts` removes review logs and seeds minimum 80 flashcards for test user, ensuring fresh data for all scenarios
+5. **cleanup** - Clears authentication state and database (must run last)
+
+**Timeouts:**
 - Project-specific timeouts configured in `playwright.config.ts` (e.g., 180s for AI generation)
+
+**Troubleshooting:**
+
+**Issue: `ERR_CONNECTION_REFUSED`**
+- **Cause:** Dev server not running
+- **Fix:** Run `npm run dev:e2e` in separate terminal
+
+**Issue: "Invalid login credentials"**
+- **Cause:** Test user doesn't exist or credentials mismatch
+- **Fix:**
+  1. Verify user exists in database
+  2. Check email/password in `.env.test`
+  3. Create test user: `npm run test:e2e:create-user`
+
+**Issue: Test timeout**
+- **Cause:** API delays (OpenRouter, Supabase) or slow network
+- **Fix:**
+  1. Check OpenRouter API status (for generation tests)
+  2. Increase timeout in `playwright.config.ts`
+  3. Verify Supabase connection
+
+**Important Notes:**
+- Always run dev server before tests
+- Never commit `.env.test` with real credentials
+- Auth state saved in `.auth/user.json` is used by most tests
+- Cleanup test removes auth state to avoid committing sensitive data
 
 ## Environment Variables
 
@@ -244,6 +372,37 @@ Supabase migrations in `supabase/migrations/`:
 - Use `npm run supabase:push` to apply migrations
 - Use `npm run supabase:reset` to reset and re-run all migrations
 - Never modify existing migrations; create new ones instead
+
+## Cloudflare Workers Constraints
+
+The application is deployed to Cloudflare Pages (Workers runtime), which has specific limitations:
+
+**Runtime Restrictions:**
+- NO Node.js built-in modules (`crypto`, `fs`, `path`, `os`, etc.)
+- Use Web Crypto API instead of Node.js crypto
+- Use `crypto.subtle.digest()` instead of `crypto.createHash()`
+- Prefer SHA-256 over MD5 for hashing (better security and Web Crypto support)
+- Access runtime environment variables via `Astro.locals.runtime.env`
+
+**Key Differences from Node.js:**
+- Web standard APIs only (fetch, crypto.subtle, streams, etc.)
+- No filesystem access
+- No process.env (use runtime.env instead)
+- Limited CPU time per request
+
+**Example - Hashing:**
+```typescript
+// ❌ DON'T - Node.js crypto (not available in Workers)
+import crypto from 'crypto';
+const hash = crypto.createHash('md5').update(data).digest('hex');
+
+// ✅ DO - Web Crypto API
+const encoder = new TextEncoder();
+const data = encoder.encode(text);
+const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+const hashArray = Array.from(new Uint8Array(hashBuffer));
+const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+```
 
 ## Important Constraints
 
