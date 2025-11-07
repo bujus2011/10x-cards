@@ -2,7 +2,9 @@
 
 ## Przegląd
 
-Ten dokument opisuje proces konfiguracji i wdrażania aplikacji 10xCards na Cloudflare Pages.
+Ten dokument zawiera pełną dokumentację techniczną procesu konfiguracji i wdrażania aplikacji 10xCards na Cloudflare Pages.
+
+> 💡 **Quick Start**: Jeśli preferujesz zwięzły checklist, zobacz [CLOUDFLARE-SETUP-CHECKLIST.md](./CLOUDFLARE-SETUP-CHECKLIST.md)
 
 ## ✅ Co zostało skonfigurowane
 
@@ -169,22 +171,102 @@ dist/
 
 ## ⚠️ Znane problemy i rozwiązania
 
-### Problem 1: Build kończy się sukcesem, ale aplikacja nie działa
+### Problem 1: "Missing secrets" w GitHub Actions
 
-**Objawy**: 
+**Objawy**:
+- Workflow kończy się błędem "Secret not found"
+- Build nie może się rozpocząć
+
+**Możliwe przyczyny**:
+1. Sekrety nie zostały dodane w środowisku `production`
+2. Błędna pisownia nazw sekretów
+3. Workflow nie używa środowiska `production`
+
+**Rozwiązanie**:
+1. GitHub → Settings → Environments → `production`
+2. Sprawdź czy wszystkie sekrety są dodane:
+   - `SUPABASE_URL`
+   - `SUPABASE_KEY`
+   - `OPENROUTER_API_KEY`
+   - `CLOUDFLARE_API_TOKEN`
+   - `CLOUDFLARE_ACCOUNT_ID`
+3. Zweryfikuj pisownię nazw (dokładnie jak w workflow)
+4. Upewnij się że workflow ma `environment: production`
+
+### Problem 2: Build kończy się błędem
+
+**Objawy**:
+- GitHub Actions workflow kończy się na etapie buildu
+- Komunikaty o brakujących zależnościach lub błędach TypeScript
+
+**Możliwe przyczyny**:
+1. Brakujące zmienne środowiskowe podczas buildu
+2. Błędy TypeScript w kodzie
+3. Brakujące zależności
+
+**Rozwiązanie**:
+1. Sprawdź logi GitHub Actions dla szczegółów błędu
+2. Zweryfikuj czy wszystkie zmienne środowiskowe są ustawione jako sekrety
+3. Przetestuj build lokalnie: `npm run build`
+4. Sprawdź czy wszystkie zależności są zainstalowane: `npm ci`
+
+### Problem 3: Deployment kończy się błędem "Invalid API token"
+
+**Objawy**:
 - Build się udaje
+- Deployment kończy się błędem: "Invalid API token" lub "Authentication failed"
+
+**Przyczyna**:
+- Nieprawidłowy lub wygasły Cloudflare API Token
+- Token nie ma wymaganych uprawnień
+
+**Rozwiązanie**:
+1. Wygeneruj nowy Cloudflare API Token:
+   - Dashboard → My Profile → API Tokens
+   - Create Token → **Edit Cloudflare Pages** template
+2. Upewnij się że token ma uprawnienia "Cloudflare Pages - Edit"
+3. Zaktualizuj sekret `CLOUDFLARE_API_TOKEN` w GitHub (Settings → Environments → production)
+4. Ponownie uruchom workflow
+
+### Problem 4: "Project not found" w Cloudflare
+
+**Objawy**:
+- Build się udaje
+- Deployment kończy się błędem: "Project not found" lub "404"
+
+**Możliwe przyczyny**:
+1. Projekt nie istnieje w Cloudflare Pages
+2. Nieprawidłowa nazwa projektu w workflow
+3. Nieprawidłowy Account ID
+
+**Rozwiązanie**:
+1. Sprawdź czy projekt istnieje w Cloudflare Pages:
+   - Dashboard → Workers & Pages → Sprawdź listę projektów
+2. Zweryfikuj nazwę projektu w workflow (`.github/workflows/master.yml`):
+   - Powinno być: `--project-name=10x-cards`
+3. Sprawdź czy `CLOUDFLARE_ACCOUNT_ID` jest poprawny:
+   - Dashboard → Workers & Pages → Twój projekt → Overview → Account ID
+
+### Problem 5: Build kończy się sukcesem, ale aplikacja nie działa
+
+**Objawy**:
+- Build i deployment się udaje
 - Strona wyświetla błędy 500 lub nie ładuje się
 
 **Możliwe przyczyny**:
-1. Brakujące zmienne środowiskowe w Cloudflare
+1. Brakujące zmienne środowiskowe w Cloudflare Pages
 2. Niezgodność runtime Cloudflare z kodem Node.js
+3. Użycie niekompatybilnych modułów Node.js
 
 **Rozwiązanie**:
-1. Sprawdź zmienne środowiskowe w Cloudflare Dashboard
-2. Sprawdź logi Cloudflare Functions
-3. Zweryfikuj czy używasz tylko kompatybilnych z Cloudflare API
+1. Sprawdź zmienne środowiskowe w Cloudflare Dashboard (Settings → Environment variables)
+2. Sprawdź logi Cloudflare Functions (Dashboard → Logs)
+3. Zweryfikuj czy używasz tylko kompatybilnych z Cloudflare API:
+   - Używaj Web Crypto API zamiast Node.js `crypto`
+   - Unikaj modułów `fs`, `path`, `os`
+4. Zobacz sekcję "Cloudflare Workers Constraints" w `CLAUDE.md`
 
-### Problem 2: "Invalid binding `SESSION`"
+### Problem 6: "Invalid binding `SESSION`"
 
 **Objawy**:
 - Ostrzeżenie podczas buildu o brakującym bindingu `SESSION`
@@ -195,7 +277,7 @@ dist/
 **Rozwiązanie**:
 Jeśli nie używasz sesji Cloudflare KV (używasz Supabase Auth), możesz zignorować to ostrzeżenie lub skonfigurować KV binding w `wrangler.toml`.
 
-### Problem 3: Obrazy nie działają
+### Problem 7: Obrazy nie działają
 
 **Objawy**:
 - Ostrzeżenie: "Cloudflare does not support sharp at runtime"

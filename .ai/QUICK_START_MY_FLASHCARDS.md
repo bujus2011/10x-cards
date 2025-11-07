@@ -125,10 +125,9 @@ The interface features:
 
 ## 📞 Need Help?
 
-Check the documentation files:
+Check the documentation file:
 
-- `MY_FLASHCARDS_FEATURE.md` - Full feature documentation
-- `IMPLEMENTATION_SUMMARY.md` - Technical implementation details
+- `../docs/features/my-flashcards.md` - Complete feature documentation (user guide + technical details)
 
 ## 🎉 Enjoy!
 

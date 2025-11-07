@@ -1,90 +1,67 @@
-# ✅ Cloudflare Deployment - Checklist
+# ✅ Cloudflare Deployment - Quick Start Checklist
 
-## Co zostało zrobione
+## Przegląd
 
-### 1. ✅ Zainstalowano i skonfigurowano Cloudflare adapter
+Ten checklist pomoże Ci szybko skonfigurować deployment na Cloudflare Pages. Dla szczegółowych informacji technicznych i troubleshootingu zobacz [DEPLOYMENT-CLOUDFLARE.md](./DEPLOYMENT-CLOUDFLARE.md).
 
-- [x] Zainstalowano `@astrojs/cloudflare` package
-- [x] Zaktualizowano `astro.config.mjs` z adapterem Cloudflare
-- [x] Skonfigurowano `platformProxy` dla lokalnego developmentu
-- [x] Zweryfikowano build - działa poprawnie
+---
 
-### 2. ✅ Utworzono GitHub Actions workflow
-
-- [x] Utworzono `.github/workflows/master.yml`
-- [x] Skonfigurowano pipeline: Lint → Unit Tests → Deploy (build + deploy)
-- [x] Zweryfikowano najnowsze wersje akcji GitHub (listopad 2024)
-- [x] Utworzono dokumentację workflow: `.github/workflows/README-MASTER.md`
-- [x] Uproszczono workflow - build i deploy w jednym job
-
-### 3. ✅ Przygotowano dokumentację
-
-- [x] Utworzono `DEPLOYMENT-CLOUDFLARE.md` - pełny przewodnik wdrażania
-- [x] Zaktualizowano `README.md` z informacjami o deploymencie
-- [x] Opisano wymagane sekrety i zmienne środowiskowe
-
-### 4. ✅ Zoptymalizowano workflow
-
-- [x] Usunięto testy E2E z master workflow (tylko w PR)
-- [x] Połączono build i deploy w jeden job (bez artefaktów)
-- [x] Zaktualizowano na `cloudflare/wrangler-action@v3` (najnowsza wersja)
-- [x] Uproszczono konfigurację - nazwa projektu w poleceniu Wrangler
-
-## Co musisz zrobić
-
-### Krok 1: Utwórz projekt w Cloudflare Pages
+## 1️⃣ Utwórz projekt w Cloudflare Pages
 
 - [ ] Zaloguj się do [Cloudflare Dashboard](https://dash.cloudflare.com/)
-- [ ] Przejdź do **Workers & Pages**
-- [ ] Kliknij **Create application** → **Pages**
+- [ ] Workers & Pages → **Create application** → **Pages**
 - [ ] Połącz z GitHub lub użyj Direct Upload
-- [ ] Zapisz **Project Name** - będzie potrzebny jako `CLOUDFLARE_PROJECT_NAME`
+- [ ] Skonfiguruj projekt:
+  - Production branch: `master`
+  - Build command: `npm run build`
+  - Build output: `dist`
+- [ ] Zapisz nazwę projektu (używamy: `10x-cards`)
 
-**Konfiguracja projektu:**
-```
-Project name: [twoja-unikalna-nazwa]
-Production branch: master
-Build command: npm run build
-Build output directory: dist
-```
+---
 
-### Krok 2: Skonfiguruj zmienne środowiskowe w Cloudflare
+## 2️⃣ Skonfiguruj zmienne środowiskowe w Cloudflare
 
-W dashboardzie projektu Cloudflare Pages:
+W dashboardzie projektu: **Settings** → **Environment variables** → **Production**
 
-- [ ] Przejdź do **Settings** → **Environment variables**
-- [ ] Dodaj dla środowiska **Production**:
-  - [ ] `SUPABASE_URL` = https://your-project.supabase.co
-  - [ ] `SUPABASE_KEY` = your-supabase-anon-key
-  - [ ] `OPENROUTER_API_KEY` = your-openrouter-api-key
+- [ ] `SUPABASE_URL`
+- [ ] `SUPABASE_KEY`
+- [ ] `OPENROUTER_API_KEY`
 
-### Krok 3: Wygeneruj Cloudflare API Token
+📖 **Szczegóły**: [DEPLOYMENT-CLOUDFLARE.md - Sekcja "Konfiguracja zmiennych"](./DEPLOYMENT-CLOUDFLARE.md#2-konfiguracja-zmiennych-środowiskowych-w-cloudflare)
+
+---
+
+## 3️⃣ Wygeneruj Cloudflare API Token
 
 - [ ] Dashboard → **My Profile** → **API Tokens**
-- [ ] Kliknij **Create Token**
-- [ ] Wybierz template **Edit Cloudflare Pages**
-- [ ] Skopiuj wygenerowany token (pojawi się tylko raz!)
-- [ ] Zapisz jako `CLOUDFLARE_API_TOKEN`
+- [ ] **Create Token** → wybierz template **Edit Cloudflare Pages**
+- [ ] Skopiuj token (pojawi się tylko raz!)
 
-### Krok 4: Znajdź Cloudflare Account ID
+📖 **Szczegóły**: [DEPLOYMENT-CLOUDFLARE.md - Sekcja "Cloudflare API Token"](./DEPLOYMENT-CLOUDFLARE.md#jak-uzyskać-cloudflare-api-token)
+
+---
+
+## 4️⃣ Znajdź Cloudflare Account ID
 
 - [ ] W dashboardzie projektu Cloudflare Pages
-- [ ] Sekcja **Overview** po prawej stronie
-- [ ] Skopiuj **Account ID** (format: `1234567890abcdef...`)
-- [ ] Zapisz jako `CLOUDFLARE_ACCOUNT_ID`
+- [ ] Sekcja **Overview** (po prawej stronie)
+- [ ] Skopiuj **Account ID**
 
-### Krok 5: Utwórz środowisko "production" w GitHub
+📖 **Szczegóły**: [DEPLOYMENT-CLOUDFLARE.md - Sekcja "Cloudflare Account ID"](./DEPLOYMENT-CLOUDFLARE.md#jak-uzyskać-cloudflare-account-id)
 
-- [ ] Przejdź do Settings → Environments w repozytorium GitHub
-- [ ] Kliknij **New environment**
-- [ ] Nazwa: `production`
-- [ ] (Opcjonalnie) Skonfiguruj protection rules:
-  - [ ] Required reviewers (jeśli chcesz zatwierdzanie przed deploymentem)
-  - [ ] Deployment branches: tylko `master`
+---
 
-### Krok 6: Dodaj sekrety do środowiska "production" w GitHub
+## 5️⃣ Utwórz środowisko "production" w GitHub
 
-W środowisku `production` dodaj następujące sekrety:
+- [ ] GitHub repo → **Settings** → **Environments**
+- [ ] **New environment** → nazwa: `production`
+- [ ] (Opcjonalnie) Skonfiguruj protection rules
+
+---
+
+## 6️⃣ Dodaj sekrety do środowiska "production" w GitHub
+
+W środowisku `production` dodaj sekrety:
 
 **Sekrety aplikacji:**
 - [ ] `SUPABASE_URL`
@@ -94,95 +71,54 @@ W środowisku `production` dodaj następujące sekrety:
 **Sekrety Cloudflare:**
 - [ ] `CLOUDFLARE_API_TOKEN`
 - [ ] `CLOUDFLARE_ACCOUNT_ID`
-- [ ] ~~`CLOUDFLARE_PROJECT_NAME`~~ - Nie jest potrzebny (hardcoded w workflow jako `10x-cards`)
 
-Ścieżka: Settings → Environments → production → **Add secret**
+📖 **Szczegóły**: [DEPLOYMENT-CLOUDFLARE.md - Sekcja "Konfiguracja sekretów GitHub"](./DEPLOYMENT-CLOUDFLARE.md#3-konfiguracja-sekretów-github)
 
-### Krok 7: Przetestuj wdrożenie
+---
 
-#### Opcja A: Automatyczne wdrożenie
+## 7️⃣ Uruchom deployment
 
-- [ ] Commit i push do gałęzi `master`:
-```bash
-git add .
-git commit -m "feat: configure Cloudflare deployment"
-git push origin master
-```
+### Opcja A: Automatycznie (zalecane)
+- [ ] Push zmian do gałęzi `master`
+- [ ] Sprawdź status w **Actions** w GitHub
 
-- [ ] Sprawdź status w zakładce **Actions** w GitHub
-- [ ] Zweryfikuj deployment w Cloudflare Dashboard
+### Opcja B: Manualnie
+- [ ] GitHub → **Actions** → **Deploy to Cloudflare Pages**
+- [ ] **Run workflow** → wybierz `master` → **Run workflow**
 
-#### Opcja B: Manualne uruchomienie
+📖 **Szczegóły**: [DEPLOYMENT-CLOUDFLARE.md - Sekcja "Proces wdrażania"](./DEPLOYMENT-CLOUDFLARE.md#-proces-wdrażania)
 
-- [ ] GitHub → Actions → **Deploy to Cloudflare Pages**
-- [ ] Kliknij **Run workflow** → wybierz `master` → **Run workflow**
-- [ ] Śledź postęp w logach
+---
 
-### Krok 8: Weryfikacja
+## 8️⃣ Weryfikacja
 
 Po zakończeniu deploymentu:
 
-- [ ] Sprawdź status w Cloudflare Dashboard:
-  - Workers & Pages → Twój projekt → **Deployments**
-  - Status: "Success"
-  - URL: `https://your-project.pages.dev`
-
-- [ ] Otwórz aplikację w przeglądarce
+- [ ] Cloudflare Dashboard → **Deployments** → status "Success"
+- [ ] Otwórz URL: `https://10x-cards.pages.dev`
 - [ ] Przetestuj kluczowe funkcje:
-  - [ ] Logowanie działa
-  - [ ] Generowanie fiszek działa
-  - [ ] Zarządzanie fiszkami działa
-  - [ ] Sesja nauki działa
+  - [ ] Logowanie
+  - [ ] Generowanie fiszek
+  - [ ] Zarządzanie fiszkami
+  - [ ] Sesja nauki
 
-## Troubleshooting
+📖 **Szczegóły**: [DEPLOYMENT-CLOUDFLARE.md - Sekcja "Weryfikacja"](./DEPLOYMENT-CLOUDFLARE.md#-weryfikacja-wdrożenia)
 
-### Problem: "Missing secrets" w GitHub Actions
+---
 
-**Rozwiązanie:**
-1. Sprawdź czy wszystkie sekrety są dodane w środowisku `production`
-2. Zweryfikuj pisownię nazw sekretów (dokładnie jak w workflow)
-3. Upewnij się że workflow używa `environment: production`
+## ⚠️ Problemy?
 
-### Problem: Build kończy się błędem
+Jeśli coś nie działa:
+1. Sprawdź [DEPLOYMENT-CLOUDFLARE.md - Troubleshooting](./DEPLOYMENT-CLOUDFLARE.md#️-znane-problemy-i-rozwiązania)
+2. Przejrzyj logi GitHub Actions
+3. Sprawdź logi Cloudflare Dashboard
 
-**Rozwiązanie:**
-1. Sprawdź logi GitHub Actions
-2. Zweryfikuj czy wszystkie zmienne środowiskowe są ustawione
-3. Przetestuj build lokalnie: `npm run build`
+---
 
-### Problem: Deployment kończy się błędem "Invalid API token"
+## 📚 Pełna dokumentacja
 
-**Rozwiązanie:**
-1. Wygeneruj nowy Cloudflare API Token
-2. Upewnij się że token ma uprawnienia "Cloudflare Pages - Edit"
-3. Zaktualizuj sekret `CLOUDFLARE_API_TOKEN` w GitHub
-
-### Problem: "Project not found" w Cloudflare
-
-**Rozwiązanie:**
-1. Sprawdź czy projekt istnieje w Cloudflare Pages
-2. Zweryfikuj poprawność `CLOUDFLARE_PROJECT_NAME`
-3. Sprawdź czy `CLOUDFLARE_ACCOUNT_ID` jest poprawny
-
-## Pomocne linki
-
-- [Cloudflare Dashboard](https://dash.cloudflare.com/)
-- [GitHub Repository Settings](../../settings)
-- [Deployment Guide](./DEPLOYMENT-CLOUDFLARE.md)
-- [Workflow Documentation](./.github/workflows/README-MASTER.md)
-
-## Następne kroki po wdrożeniu
-
-- [ ] Skonfiguruj custom domain w Cloudflare Pages (opcjonalnie)
-- [ ] Włącz monitoring i analytics w Cloudflare
-- [ ] Skonfiguruj alerty dla failed deployments
-- [ ] Zoptymalizuj cache settings dla lepszej wydajności
-- [ ] Przetestuj rollback procedure
-
-## Wsparcie
-
-Jeśli napotkasz problemy:
-1. Sprawdź [DEPLOYMENT-CLOUDFLARE.md](./DEPLOYMENT-CLOUDFLARE.md) - sekcja Troubleshooting
-2. Przejrzyj logi GitHub Actions i Cloudflare
-3. Sprawdź [Cloudflare Pages Known Issues](https://developers.cloudflare.com/pages/platform/known-issues/)
-
+Dla szczegółowych informacji, zobacz:
+- 📖 [DEPLOYMENT-CLOUDFLARE.md](./DEPLOYMENT-CLOUDFLARE.md) - Pełna dokumentacja techniczna
+- 📖 [.github/workflows/README-MASTER.md](./.github/workflows/README-MASTER.md) - Dokumentacja workflow
+- 🔗 [Cloudflare Pages Docs](https://developers.cloudflare.com/pages/)
+- 🔗 [Astro Cloudflare Adapter](https://docs.astro.build/en/guides/integrations-guide/cloudflare/)
