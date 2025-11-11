@@ -108,4 +108,3 @@ export const GET: APIRoute = async ({ request, cookies, locals }) => {
   const finalRedirectUrl = new URL(redirectPath, requestUrl.origin);
   return buildRedirectResponse(finalRedirectUrl.toString());
 };
-
