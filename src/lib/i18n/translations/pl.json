@@ -1,0 +1,273 @@
+{
+  "language": {
+    "name": "Polski",
+    "code": "pl"
+  },
+  "nav": {
+    "logo": "10xCards",
+    "generate": "Generuj",
+    "myFlashcards": "Moje Fiszki",
+    "studySession": "Sesja Naukowa",
+    "logout": "Wyloguj"
+  },
+  "auth": {
+    "login": {
+      "title": "Zaloguj się",
+      "emailLabel": "Adres e-mail",
+      "emailPlaceholder": "Wprowadź swój adres e-mail",
+      "passwordLabel": "Hasło",
+      "passwordPlaceholder": "Wprowadź swoje hasło",
+      "signInButton": "Zaloguj się",
+      "signingIn": "Logowanie...",
+      "forgotPassword": "Zapomniałeś hasła?",
+      "noAccount": "Nie masz konta?",
+      "signUpLink": "Zarejestruj się",
+      "orContinueWithEmail": "Lub kontynuuj z adresem e-mail",
+      "socialLogin": {
+        "accessDenied": "Dostawca odmówił dostępu do Twojego konta. Spróbuj ponownie lub użyj innej metody.",
+        "missingCode": "Odpowiedź uwierzytelniająca nie zawierała wymaganych informacji. Spróbuj ponownie.",
+        "sessionExchangeFailed": "Nie mogliśmy zweryfikować Twojej sesji u dostawcy. Spróbuj ponownie.",
+        "serverConfigError": "Konfiguracja logowania społecznościowego jest niekompletna. Skontaktuj się z pomocą techniczną i użyj logowania e-mail.",
+        "genericError": "Nie mogliśmy Cię zalogować przez {provider}. Spróbuj ponownie."
+      }
+    },
+    "register": {
+      "title": "Utwórz konto",
+      "emailLabel": "Adres e-mail",
+      "emailPlaceholder": "Wprowadź swój adres e-mail",
+      "passwordLabel": "Hasło",
+      "passwordPlaceholder": "Wprowadź swoje hasło",
+      "confirmPasswordLabel": "Potwierdź hasło",
+      "confirmPasswordPlaceholder": "Potwierdź swoje hasło",
+      "createAccountButton": "Utwórz konto",
+      "creatingAccount": "Tworzenie konta...",
+      "haveAccount": "Masz już konto?",
+      "signInLink": "Zaloguj się",
+      "orSignUpWithEmail": "Lub zarejestruj się przez e-mail"
+    },
+    "resetPassword": {
+      "title": "Zresetuj hasło",
+      "description": "Wprowadź swój adres e-mail, a wyślemy Ci link do resetowania hasła.",
+      "emailLabel": "Adres e-mail",
+      "emailPlaceholder": "Wprowadź swój adres e-mail",
+      "sendResetLink": "Wyślij link resetujący",
+      "sending": "Wysyłanie...",
+      "backToSignIn": "Powrót do logowania"
+    },
+    "resetPasswordConfirm": {
+      "title": "Ustaw nowe hasło",
+      "description": "Wprowadź poniżej swoje nowe hasło.",
+      "passwordLabel": "Nowe hasło",
+      "passwordPlaceholder": "Wprowadź swoje nowe hasło",
+      "confirmPasswordLabel": "Potwierdź nowe hasło",
+      "confirmPasswordPlaceholder": "Potwierdź swoje nowe hasło",
+      "updatePassword": "Zaktualizuj hasło",
+      "updating": "Aktualizowanie...",
+      "backToSignIn": "Powrót do logowania"
+    }
+  },
+  "validation": {
+    "auth": {
+      "emailRequired": "E-mail jest wymagany",
+      "emailInvalid": "Wprowadź prawidłowy adres e-mail",
+      "passwordRequired": "Hasło jest wymagane",
+      "passwordMinLength": "Hasło musi mieć co najmniej 8 znaków",
+      "passwordMaxLength": "Hasło musi mieć mniej niż 128 znaków",
+      "confirmPasswordRequired": "Potwierdź swoje hasło",
+      "passwordsDoNotMatch": "Hasła nie są identyczne"
+    },
+    "flashcard": {
+      "frontRequired": "Strona przednia jest wymagana",
+      "frontMaxLength": "Strona przednia musi mieć mniej niż 200 znaków",
+      "backRequired": "Strona tylna jest wymagana",
+      "backMaxLength": "Strona tylna musi mieć mniej niż 500 znaków"
+    },
+    "generation": {
+      "textRequired": "Tekst jest wymagany",
+      "textMinLength": "Tekst musi mieć co najmniej 1000 znaków",
+      "textMaxLength": "Tekst musi mieć mniej niż 10000 znaków"
+    },
+    "search": {
+      "queryMaxLength": "Zapytanie wyszukiwania musi mieć mniej niż 100 znaków"
+    }
+  },
+  "pages": {
+    "generate": {
+      "title": "Generuj Fiszki",
+      "sourceTextLabel": "Tekst źródłowy",
+      "sourceTextPlaceholder": "Wklej swój tekst tutaj (1000-10000 znaków)",
+      "generateButton": "Generuj Fiszki",
+      "generating": "Generowanie...",
+      "charCount": "{count} / 10000 znaków",
+      "minCharsRequired": "(Wymagane minimum 1000 znaków)",
+      "maxCharsExceeded": "(Przekroczono maksymalnie 10000 znaków)"
+    },
+    "myFlashcards": {
+      "title": "Moje Fiszki",
+      "noFlashcards": "Nie znaleziono fiszek",
+      "noFlashcardsDescription": "Utwórz swoją pierwszą fiszkę lub wygeneruj kilka z tekstu",
+      "searchPlaceholder": "Szukaj fiszek...",
+      "createNewButton": "Utwórz Nową Fiszkę",
+      "createNewForm": {
+        "title": "Utwórz Nową Fiszkę",
+        "frontLabel": "Przód (Pytanie/Zadanie)",
+        "frontPlaceholder": "Wprowadź przód swojej fiszki",
+        "backLabel": "Tył (Odpowiedź)",
+        "backPlaceholder": "Wprowadź tył swojej fiszki",
+        "cancelButton": "Anuluj",
+        "createButton": "Utwórz Fiszkę",
+        "creating": "Tworzenie...",
+        "frontCharCount": "{count}/200 znaków",
+        "backCharCount": "{count}/500 znaków"
+      },
+      "editForm": {
+        "title": "Edytuj Fiszkę",
+        "frontLabel": "Przód",
+        "frontPlaceholder": "Przód fiszki",
+        "backLabel": "Tył",
+        "backPlaceholder": "Tył fiszki",
+        "cancelButton": "Anuluj",
+        "saveButton": "Zapisz",
+        "saving": "Zapisywanie...",
+        "frontCharCount": "{count}/200 znaków",
+        "backCharCount": "{count}/500 znaków"
+      },
+      "card": {
+        "clickToSeeBack": "Kliknij aby zobaczyć tył",
+        "clickToSeeFront": "Kliknij aby zobaczyć przód",
+        "copyTooltip": "Skopiuj fiszkę",
+        "editTooltip": "Edytuj fiszkę",
+        "deleteTooltip": "Usuń fiszkę"
+      },
+      "flashcardCount": "{filtered} z {total} fiszek",
+      "filtered": "filtrowane",
+      "flashcardCard": {
+        "editButton": "Edytuj",
+        "deleteButton": "Usuń",
+        "confirmDelete": "Czy na pewno chcesz usunąć tę fiszkę?",
+        "confirmDeleteDescription": "Ta akcja nie może zostać cofnięta.",
+        "deleteConfirmButton": "Usuń",
+        "deleteCancelButton": "Anuluj"
+      }
+    },
+    "studySession": {
+      "title": "Sesja Naukowa",
+      "description": "Ucz się fiszek z algorytmem powtórek rozłożonych w czasie",
+      "sessionComplete": "Sesja Zakończona!",
+      "noFlashcardsMessage": "Nie masz fiszek do powtórki. Dodaj nowe fiszki lub wróć później.",
+      "completedMessage": "Świetna robota! Ukończyłeś sesję naukową.",
+      "startNewSession": "Rozpocznij Nową Sesję",
+      "cardProgress": "Karta {current} z {total}",
+      "percentComplete": "{percent}% ukończone",
+      "question": "Pytanie",
+      "answer": "Odpowiedź",
+      "showAnswer": "Pokaż Odpowiedź",
+      "ratingPrompt": "Jak dobrze znasz tę fiszkę?",
+      "ratingAgain": "Powtórz",
+      "ratingHard": "Trudne",
+      "ratingGood": "Dobre",
+      "ratingEasy": "Łatwe",
+      "state": "Stan",
+      "stateNew": "Nowe",
+      "stateLearning": "Uczenie",
+      "stateReview": "Powtórka",
+      "stateRelearning": "Ponowne uczenie",
+      "reviews": "Powtórki"
+    }
+  },
+  "components": {
+    "bulkSave": {
+      "saveAccepted": "Zapisz Zaakceptowane",
+      "saveAll": "Zapisz Wszystkie",
+      "saving": "Zapisywanie..."
+    },
+    "flashcardList": {
+      "accept": "Akceptuj",
+      "reject": "Odrzuć",
+      "edit": "Edytuj",
+      "accepted": "Zaakceptowane",
+      "rejected": "Odrzucone",
+      "pending": "Oczekujące"
+    },
+    "errorNotification": {
+      "title": "Błąd",
+      "retry": "Spróbuj ponownie"
+    },
+    "themeToggle": {
+      "light": "Jasny",
+      "dark": "Ciemny",
+      "system": "Systemowy"
+    }
+  },
+  "common": {
+    "loading": "Ładowanie...",
+    "error": "Nie udało się załadować danych",
+    "success": "Sukces",
+    "cancel": "Anuluj",
+    "save": "Zapisz",
+    "delete": "Usuń",
+    "edit": "Edytuj",
+    "close": "Zamknij",
+    "back": "Wstecz",
+    "next": "Dalej",
+    "previous": "Poprzedni",
+    "yes": "Tak",
+    "no": "Nie",
+    "ok": "OK",
+    "submit": "Wyślij",
+    "reset": "Resetuj",
+    "search": "Szukaj",
+    "filter": "Filtruj",
+    "sort": "Sortuj",
+    "export": "Eksportuj",
+    "import": "Importuj"
+  },
+  "errors": {
+    "auth": {
+      "logoutFailed": "Nie udało się wylogować. Spróbuj ponownie.",
+      "loginFailed": "Logowanie nie powiodło się. Sprawdź swoje dane i spróbuj ponownie.",
+      "registerFailed": "Rejestracja nie powiodła się. Spróbuj ponownie.",
+      "resetPasswordFailed": "Nie udało się wysłać e-maila resetującego hasło. Spróbuj ponownie.",
+      "updatePasswordFailed": "Nie udało się zaktualizować hasła. Spróbuj ponownie."
+    },
+    "flashcard": {
+      "createFailed": "Nie udało się utworzyć fiszki",
+      "updateFailed": "Nie udało się zaktualizować fiszki",
+      "deleteFailed": "Nie udało się usunąć fiszki",
+      "loadFailed": "Nie udało się załadować fiszek",
+      "saveFailed": "Nie udało się zapisać fiszek",
+      "emptyContent": "Zawartość przodu i tyłu nie może być pusta",
+      "textTooLong": "Tekst przekracza maksymalną długość",
+      "createdSuccess": "Fiszka utworzona pomyślnie",
+      "updatedSuccess": "Fiszka zaktualizowana pomyślnie",
+      "deletedSuccess": "Fiszka usunięta pomyślnie",
+      "copiedSuccess": "Fiszka skopiowana do schowka",
+      "savedSuccess": "Fiszki zapisane pomyślnie"
+    },
+    "generation": {
+      "generateFailed": "Nie udało się wygenerować fiszek. Spróbuj ponownie.",
+      "saveFailed": "Nie udało się zapisać fiszek. Spróbuj ponownie.",
+      "networkError": "Błąd sieci. Sprawdź swoje połączenie i spróbuj ponownie.",
+      "serverError": "Błąd serwera. Spróbuj ponownie później."
+    },
+    "generic": {
+      "unexpectedError": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+      "validationError": "Sprawdź swoje dane wejściowe i spróbuj ponownie."
+    }
+  },
+  "welcome": {
+    "title": "Witaj w 10xDevs Astro Starter!",
+    "subtitle": "Ten projekt został zbudowany w oparciu o nowoczesny stack technologiczny:",
+    "core": "Podstawowe",
+    "styling": "Stylowanie",
+    "codeAnalysis": "Analiza kodu",
+    "astro": "Astro v5.5.5 - Metaframework do aplikacji webowych",
+    "react": "React v19 - Biblioteka UI do interaktywnych komponentów",
+    "typescript": "TypeScript - Typowanie statyczne",
+    "tailwind": "Tailwind CSS v4 - Utility-first CSS framework",
+    "eslint": "ESLint v9 - Lintowanie kodu",
+    "prettier": "Prettier - Formatowanie kodu",
+    "husky": "Husky i Lint-staged - Automatyczna analiza kodu przed commitowaniem",
+    "description": "Starter zawiera wszystko, czego potrzebujesz do rozpoczęcia tworzenia nowoczesnych aplikacji webowych!"
+  }
+}

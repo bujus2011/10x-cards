@@ -1,18 +1,21 @@
 ---
 import "../styles/global.css";
-import { Toaster } from "@/components/ui/sonner";
-import { Navbar } from "@/components/Navbar";
+import { AppWrapper } from "@/components/AppWrapper";
+import { getLanguageFromCookie, LANGUAGE_COOKIE_NAME } from "@/lib/i18n";
 
 interface Props {
   title?: string;
+  page?: "generate" | "my-flashcards" | "study-session";
 }
 
-const { title = "10xCards" } = Astro.props;
+const { title = "10xCards", page } = Astro.props;
 const user = Astro.locals.user;
+const cookieLang = Astro.cookies.get(LANGUAGE_COOKIE_NAME)?.value;
+const initialLanguage = getLanguageFromCookie(cookieLang);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={initialLanguage}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -21,9 +24,9 @@ const user = Astro.locals.user;
     <title>{title}</title>
   </head>
   <body>
-    {user && <Navbar client:load user={user} />}
-    <slot />
-    <Toaster richColors closeButton client:only="react" />
+    <AppWrapper client:only="react" initialLanguage={initialLanguage} user={user} page={page}>
+      <slot />
+    </AppWrapper>
   </body>
 </html>
 

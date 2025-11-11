@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Check, X, Edit2, Save } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n";
 import type { FlashcardProposalViewModel } from "@/hooks/useFlashcardGeneration";
 
 interface FlashcardListItemProps {
@@ -14,6 +15,7 @@ interface FlashcardListItemProps {
 }
 
 export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit, itemTestId }: FlashcardListItemProps) {
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [editedFront, setEditedFront] = useState(flashcard.front);
   const [editedBack, setEditedBack] = useState(flashcard.back);
@@ -89,6 +91,8 @@ export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit, itemT
                 variant={flashcard.accepted ? "default" : "outline"}
                 onClick={onAccept}
                 type="button"
+                title={t("components.flashcardList.accept")}
+                aria-label={t("components.flashcardList.accept")}
                 data-testid="accept-button"
               >
                 <Check className="h-4 w-4" />
@@ -98,11 +102,21 @@ export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit, itemT
                 variant="outline"
                 onClick={() => setIsEditing(true)}
                 type="button"
+                title={t("components.flashcardList.edit")}
+                aria-label={t("components.flashcardList.edit")}
                 data-testid="edit-button"
               >
                 <Edit2 className="h-4 w-4" />
               </Button>
-              <Button size="icon" variant="outline" onClick={onReject} type="button" data-testid="reject-button">
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={onReject}
+                type="button"
+                title={t("components.flashcardList.reject")}
+                aria-label={t("components.flashcardList.reject")}
+                data-testid="reject-button"
+              >
                 <X className="h-4 w-4" />
               </Button>
             </>
@@ -110,7 +124,7 @@ export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit, itemT
         </div>
       </div>
 
-      {flashcard.edited && <div className="text-sm text-muted-foreground">Edited</div>}
+      {flashcard.edited && <div className="text-sm text-muted-foreground">{t("components.flashcardList.edit")}</div>}
     </div>
   );
 }

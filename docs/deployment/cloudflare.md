@@ -25,8 +25,8 @@ Ten dokument zawiera kompletny przewodnik wdrażania aplikacji 10xCards na Cloud
 
 W dashboardzie projektu: **Settings** → **Environment variables** → **Production**
 
-- [ ] `SUPABASE_URL`
-- [ ] `SUPABASE_KEY`
+- [ ] `PUBLIC_SUPABASE_URL`
+- [ ] `PUBLIC_SUPABASE_KEY`
 - [ ] `OPENROUTER_API_KEY`
 
 #### 3️⃣ Wygeneruj Cloudflare API Token
@@ -51,8 +51,8 @@ W dashboardzie projektu: **Settings** → **Environment variables** → **Produc
 
 **Sekrety aplikacji:**
 
-- [ ] `SUPABASE_URL`
-- [ ] `SUPABASE_KEY`
+- [ ] `PUBLIC_SUPABASE_URL`
+- [ ] `PUBLIC_SUPABASE_KEY`
 - [ ] `OPENROUTER_API_KEY`
 
 **Sekrety Cloudflare:**
@@ -139,11 +139,11 @@ W ustawieniach projektu Cloudflare Pages:
 1. Przejdź do **Settings** → **Environment variables**
 2. Dodaj zmienne dla środowiska **Production**:
 
-| Zmienna              | Wartość                          | Opis                      |
-| -------------------- | -------------------------------- | ------------------------- |
-| `SUPABASE_URL`       | https://your-project.supabase.co | URL projektu Supabase     |
-| `SUPABASE_KEY`       | your-anon-key                    | Supabase anon key         |
-| `OPENROUTER_API_KEY` | your-api-key                     | OpenRouter API key dla AI |
+| Zmienna                | Wartość                          | Opis                                 |
+| ---------------------- | -------------------------------- | ------------------------------------ |
+| `PUBLIC_SUPABASE_URL`  | https://your-project.supabase.co | URL projektu Supabase (publicznie)   |
+| `PUBLIC_SUPABASE_KEY`  | your-anon-key                    | Supabase anon key (publicznie)       |
+| `OPENROUTER_API_KEY`   | your-api-key                     | OpenRouter API key dla AI (serwer)   |
 
 ### W GitHub Secrets
 
@@ -154,9 +154,9 @@ Dla automatycznego wdrażania przez GitHub Actions:
 
 #### Sekrety aplikacji:
 
-- `SUPABASE_URL` - URL projektu Supabase
-- `SUPABASE_KEY` - Supabase anon key
-- `OPENROUTER_API_KEY` - OpenRouter API key
+- `PUBLIC_SUPABASE_URL` - URL projektu Supabase (dostępny publicznie)
+- `PUBLIC_SUPABASE_KEY` - Supabase anon key (dostępny publicznie)
+- `OPENROUTER_API_KEY` - OpenRouter API key (tylko serwer)
 
 #### Sekrety Cloudflare:
 
@@ -285,8 +285,8 @@ dist/
 
 1. GitHub → Settings → Environments → `production`
 2. Sprawdź czy wszystkie sekrety są dodane:
-   - `SUPABASE_URL`
-   - `SUPABASE_KEY`
+   - `PUBLIC_SUPABASE_URL`
+   - `PUBLIC_SUPABASE_KEY`
    - `OPENROUTER_API_KEY`
    - `CLOUDFLARE_API_TOKEN`
    - `CLOUDFLARE_ACCOUNT_ID`

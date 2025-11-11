@@ -7,6 +7,7 @@
 ### ✨ Kluczowe funkcje
 
 - **🤖 AI-Powered Generation**: Automatyczne tworzenie fiszek przy użyciu OpenRouter.ai API
+- **🌍 Wielojęzyczność (i18n)**: Pełne wsparcie dla angielskiego 🇬🇧, hiszpańskiego 🇪🇸 i polskiego 🇵🇱
 - **🌙 Dark/Light Mode**: Wsparcie dla ciemnego i jasnego motywu z automatyczną detekcją preferencji systemowych
 - **📱 Responsive Design**: Optymalizacja dla wszystkich urządzeń
 - **🔐 Bezpieczna autentyfikacja**: Logowanie przez GitHub/Google OAuth oraz tradycyjne konto
@@ -138,6 +139,9 @@ Projekt posiada kompleksową dokumentację w katalogu `docs/`. Główne sekcje:
 ### 📱 Funkcje
 
 - [My Flashcards](./docs/features/my-flashcards.md) - Zarządzanie fiszkami (CRUD, wyszukiwanie)
+- [Dark Mode](./docs/features/dark-mode.md) - Ciemny/jasny motyw z automatyczną detekcją
+- [Internationalization](./docs/features/internationalization.md) - System wielojęzyczności (EN/ES/PL)
+- [i18n Implementation Summary](./docs/features/i18n-implementation-summary.md) - Kompletne podsumowanie implementacji i18n
 
 ### 👨‍💻 Development
 
@@ -171,9 +175,9 @@ Skonfiguruj następujące sekrety w środowisku `production`:
 
 **Aplikacja:**
 
-- `PUBLIC_SUPABASE_URL` - URL projektu Supabase
-- `PUBLIC_SUPABASE_KEY` - Supabase anon key
-- `OPENROUTER_API_KEY` - OpenRouter API key
+- `PUBLIC_SUPABASE_URL` - URL projektu Supabase (dostępny publicznie)
+- `PUBLIC_SUPABASE_KEY` - Supabase anon key (dostępny publicznie)
+- `OPENROUTER_API_KEY` - OpenRouter API key (tylko serwer)
 
 **Cloudflare:**
 

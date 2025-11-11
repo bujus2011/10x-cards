@@ -73,14 +73,14 @@ Połączono build i deploy w jeden job - projekt jest budowany i od razu wdraża
 
 ### 🔍 Przyczyna
 
-Brakujące sekrety `SUPABASE_KEY`, `SUPABASE_URL`, lub `OPENROUTER_API_KEY` w środowisku `production`.
+Brakujące sekrety `PUBLIC_SUPABASE_KEY`, `PUBLIC_SUPABASE_URL`, lub `OPENROUTER_API_KEY` w środowisku `production`.
 
 ### ✅ Rozwiązanie
 
 1. Przejdź do: `Settings` → `Environments` → `production`
 2. Dodaj brakujące sekrety:
-   - `SUPABASE_KEY`
-   - `SUPABASE_URL`
+   - `PUBLIC_SUPABASE_KEY`
+   - `PUBLIC_SUPABASE_URL`
    - `OPENROUTER_API_KEY`
 
 ## Problem: "Invalid API token" podczas deploymentu
@@ -215,9 +215,9 @@ Upewnij się, że wszystkie wymagane sekrety są ustawione w środowisku `produc
 
 ### Sekrety aplikacji (wymagane dla buildu)
 
-- [ ] `SUPABASE_KEY` - Supabase anon key
-- [ ] `SUPABASE_URL` - URL projektu Supabase
-- [ ] `OPENROUTER_API_KEY` - OpenRouter API key
+- [ ] `PUBLIC_SUPABASE_KEY` - Supabase anon key (dostępny publicznie)
+- [ ] `PUBLIC_SUPABASE_URL` - URL projektu Supabase (dostępny publicznie)
+- [ ] `OPENROUTER_API_KEY` - OpenRouter API key (tylko serwer)
 
 ### Jak sprawdzić sekrety
 

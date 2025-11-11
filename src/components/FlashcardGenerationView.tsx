@@ -8,8 +8,10 @@ import { BulkSaveButton } from "./BulkSaveButton";
 import { ErrorNotification } from "./ErrorNotification";
 import { generateFlashcardsSchema, type GenerateFlashcardsFormData } from "@/lib/validations";
 import { useFlashcardGeneration } from "@/hooks/useFlashcardGeneration";
+import { useTranslation } from "@/lib/i18n";
 
 export function FlashcardGenerationView() {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -45,43 +47,47 @@ export function FlashcardGenerationView() {
   const isFormValid = textValue.length >= 1000 && textValue.length <= 10000;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {error && <ErrorNotification message={error} />}
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-8">{t("pages.generate.title")}</h1>
 
-      <div className="space-y-2">
-        <TextInputArea {...register("source_text")} value={textValue} disabled={isLoading} />
-        {errors.source_text && <p className="text-sm text-destructive">{errors.source_text.message}</p>}
-      </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {error && <ErrorNotification message={error} />}
 
-      <GenerateButton
-        type="submit"
-        disabled={isLoading || !isFormValid}
-        isLoading={isLoading}
-        data-testid="generate-button"
-      />
+        <div className="space-y-2">
+          <TextInputArea {...register("source_text")} value={textValue} disabled={isLoading} />
+          {errors.source_text && <p className="text-sm text-destructive">{errors.source_text.message}</p>}
+        </div>
 
-      {isLoading && <SkeletonLoader />}
+        <GenerateButton
+          type="submit"
+          disabled={isLoading || !isFormValid}
+          isLoading={isLoading}
+          data-testid="generate-button"
+        />
 
-      {flashcards.length > 0 && (
-        <>
-          {generationId !== null && (
-            <BulkSaveButton
+        {isLoading && <SkeletonLoader />}
+
+        {flashcards.length > 0 && (
+          <>
+            {generationId !== null && (
+              <BulkSaveButton
+                flashcards={flashcards}
+                disabled={isLoading}
+                isLoading={isLoading}
+                onSaveAccepted={handleSaveAcceptedFlashcards}
+                onSaveAll={handleSaveAllFlashcards}
+              />
+            )}
+            <FlashcardList
               flashcards={flashcards}
-              disabled={isLoading}
-              isLoading={isLoading}
-              onSaveAccepted={handleSaveAcceptedFlashcards}
-              onSaveAll={handleSaveAllFlashcards}
+              onAccept={handleFlashcardAccept}
+              onReject={handleFlashcardReject}
+              onEdit={handleFlashcardEdit}
+              data-testid="flashcard-list"
             />
-          )}
-          <FlashcardList
-            flashcards={flashcards}
-            onAccept={handleFlashcardAccept}
-            onReject={handleFlashcardReject}
-            onEdit={handleFlashcardEdit}
-            data-testid="flashcard-list"
-          />
-        </>
-      )}
-    </form>
+          </>
+        )}
+      </form>
+    </div>
   );
 }

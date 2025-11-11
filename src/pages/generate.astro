@@ -1,6 +1,5 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import { FlashcardGenerationView } from "@/components/FlashcardGenerationView";
 import { Logger } from "@/lib/logger";
 
 const pageLogger = Logger.forContext("page/generate");
@@ -43,20 +42,4 @@ if (!user.id || !user.email) {
 }
 ---
 
-<Layout title="Generate Flashcards - 10xCards">
-  <div class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold mb-8">Generate Flashcards</h1>
-    {
-      /* 
-        FlashcardGenerationView is a React component that handles:
-        - Fetching authenticated user's flashcard data via API
-        - Generating new flashcards using OpenRouter AI
-        - User interaction and form submission
-        
-        User data is passed as a prop for reference but should never
-        be used for authentication - that's handled server-side
-      */
-    }
-    <FlashcardGenerationView client:load />
-  </div>
-</Layout>
+<Layout title="Generate Flashcards - 10xCards" page="generate" />

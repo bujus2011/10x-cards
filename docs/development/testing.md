@@ -111,8 +111,8 @@ npm run test -- -t "nazwa komponentu"
 Utwórz plik `.env.test` z następującymi zmiennymi:
 
 ```env
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_KEY=your-anon-key
+PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+PUBLIC_SUPABASE_KEY=your-anon-key
 OPENROUTER_API_KEY=your-openrouter-key
 E2E_USERNAME=test-user@example.com
 E2E_PASSWORD=test-password

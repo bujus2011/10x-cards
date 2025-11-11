@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Edit2, Trash2, Save, X, Copy } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "@/lib/i18n";
 import type { FlashcardDto, FlashcardUpdateDto } from "@/types";
 import { Logger } from "@/lib/logger";
 
@@ -22,6 +23,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
   onDelete,
   isLoading = false,
 }: FlashcardCardProps) {
+  const { t, language } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [editedFront, setEditedFront] = useState(flashcard.front);
   const [editedBack, setEditedBack] = useState(flashcard.back);
@@ -35,12 +37,12 @@ const FlashcardCardComponent = memo(function FlashcardCard({
 
   const handleSave = useCallback(async () => {
     if (!editedFront.trim() || !editedBack.trim()) {
-      toast.error("Front and back content cannot be empty");
+      toast.error(t("errors.flashcard.emptyContent"));
       return;
     }
 
     if (editedFront.length > 200 || editedBack.length > 500) {
-      toast.error("Text exceeds maximum length");
+      toast.error(t("errors.flashcard.textTooLong"));
       return;
     }
 
@@ -53,33 +55,33 @@ const FlashcardCardComponent = memo(function FlashcardCard({
         generation_id: flashcard.generation_id,
       });
       setIsEditing(false);
-      toast.success("Flashcard updated successfully");
+      toast.success(t("errors.flashcard.updatedSuccess"));
     } catch (error) {
       flashcardLogger.error("Error updating flashcard", error, { flashcardId: flashcard.id });
-      toast.error("Failed to update flashcard");
+      toast.error(t("errors.flashcard.updateFailed"));
     } finally {
       setIsSaving(false);
     }
-  }, [editedFront, editedBack, flashcard, onUpdate]);
+  }, [editedFront, editedBack, flashcard, onUpdate, t]);
 
   const handleDelete = useCallback(async () => {
     setIsDeleting(true);
     try {
       await onDelete(flashcard.id);
-      toast.success("Flashcard deleted successfully");
+      toast.success(t("errors.flashcard.deletedSuccess"));
     } catch (error) {
       flashcardLogger.error("Error deleting flashcard", error, { flashcardId: flashcard.id });
-      toast.error("Failed to delete flashcard");
+      toast.error(t("errors.flashcard.deleteFailed"));
     } finally {
       setIsDeleting(false);
     }
-  }, [flashcard.id, onDelete]);
+  }, [flashcard.id, onDelete, t]);
 
   const handleCopy = useCallback(() => {
     const text = `Front: ${flashcard.front}\n\nBack: ${flashcard.back}`;
     navigator.clipboard.writeText(text);
-    toast.success("Flashcard copied to clipboard");
-  }, [flashcard.front, flashcard.back]);
+    toast.success(t("errors.flashcard.copiedSuccess"));
+  }, [flashcard.front, flashcard.back, t]);
 
   const handleCancel = useCallback(() => {
     setIsEditing(false);
@@ -92,7 +94,13 @@ const FlashcardCardComponent = memo(function FlashcardCard({
   }, []);
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString("en-US", {
+    const languageMap: Record<string, string> = {
+      en: "en-US",
+      es: "es-ES",
+      pl: "pl-PL",
+    };
+    const locale = languageMap[language] || "en-US";
+    return new Date(date).toLocaleDateString(locale, {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -103,18 +111,18 @@ const FlashcardCardComponent = memo(function FlashcardCard({
     return (
       <Card className="h-full" data-testid={`flashcard-edit-form-${flashcard.id}`}>
         <CardHeader>
-          <CardTitle className="text-sm">Edit Flashcard</CardTitle>
+          <CardTitle className="text-sm">{t("pages.myFlashcards.editForm.title")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <label htmlFor={frontInputId} className="text-sm font-medium">
-              Front
+              {t("pages.myFlashcards.editForm.frontLabel")}
             </label>
             <Textarea
               id={frontInputId}
               value={editedFront}
               onChange={(e) => setEditedFront(e.target.value)}
-              placeholder="Front side of the flashcard"
+              placeholder={t("pages.myFlashcards.editForm.frontPlaceholder")}
               maxLength={200}
               className="resize-none"
               rows={3}
@@ -122,19 +130,19 @@ const FlashcardCardComponent = memo(function FlashcardCard({
               data-testid={`edit-flashcard-front-${flashcard.id}`}
             />
             <div id="front-char-count" className="text-xs text-muted-foreground">
-              {editedFront.length}/200 characters
+              {t("pages.myFlashcards.editForm.frontCharCount", { count: editedFront.length })}
             </div>
           </div>
 
           <div className="space-y-2">
             <label htmlFor={backInputId} className="text-sm font-medium">
-              Back
+              {t("pages.myFlashcards.editForm.backLabel")}
             </label>
             <Textarea
               id={backInputId}
               value={editedBack}
               onChange={(e) => setEditedBack(e.target.value)}
-              placeholder="Back side of the flashcard"
+              placeholder={t("pages.myFlashcards.editForm.backPlaceholder")}
               maxLength={500}
               className="resize-none"
               rows={4}
@@ -142,7 +150,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
               data-testid={`edit-flashcard-back-${flashcard.id}`}
             />
             <div id="back-char-count" className="text-xs text-muted-foreground">
-              {editedBack.length}/500 characters
+              {t("pages.myFlashcards.editForm.backCharCount", { count: editedBack.length })}
             </div>
           </div>
 
@@ -156,7 +164,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
               data-testid={`cancel-edit-flashcard-${flashcard.id}`}
             >
               <X className="h-4 w-4 mr-1" />
-              Cancel
+              {t("pages.myFlashcards.editForm.cancelButton")}
             </Button>
             <Button
               size="sm"
@@ -166,7 +174,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
               data-testid={`save-flashcard-${flashcard.id}`}
             >
               <Save className="h-4 w-4 mr-1" />
-              {isSaving ? "Saving..." : "Save"}
+              {isSaving ? t("pages.myFlashcards.editForm.saving") : t("pages.myFlashcards.editForm.saveButton")}
             </Button>
           </div>
         </CardContent>
@@ -204,8 +212,8 @@ const FlashcardCardComponent = memo(function FlashcardCard({
                 handleCopy();
               }}
               disabled={isLoading}
-              aria-label="Copy flashcard to clipboard"
-              title="Copy flashcard content"
+              aria-label={t("pages.myFlashcards.card.copyTooltip")}
+              title={t("pages.myFlashcards.card.copyTooltip")}
               data-testid={`copy-flashcard-${flashcard.id}`}
             >
               <Copy className="h-3.5 w-3.5" />
@@ -219,8 +227,8 @@ const FlashcardCardComponent = memo(function FlashcardCard({
                 setIsEditing(true);
               }}
               disabled={isLoading}
-              aria-label="Edit flashcard"
-              title="Edit this flashcard"
+              aria-label={t("pages.myFlashcards.card.editTooltip")}
+              title={t("pages.myFlashcards.card.editTooltip")}
               data-testid={`edit-flashcard-${flashcard.id}`}
             >
               <Edit2 className="h-3.5 w-3.5" />
@@ -234,8 +242,8 @@ const FlashcardCardComponent = memo(function FlashcardCard({
                 handleDelete();
               }}
               disabled={isLoading || isDeleting}
-              aria-label="Delete flashcard"
-              title="Delete this flashcard permanently"
+              aria-label={t("pages.myFlashcards.card.deleteTooltip")}
+              title={t("pages.myFlashcards.card.deleteTooltip")}
               data-testid={`delete-flashcard-${flashcard.id}`}
             >
               <Trash2 className="h-3.5 w-3.5" />
@@ -251,7 +259,7 @@ const FlashcardCardComponent = memo(function FlashcardCard({
           </p>
         </div>
         <div className="text-xs text-center text-muted-foreground mt-2">
-          {isFlipped ? "Click to see front" : "Click to see back"}
+          {isFlipped ? t("pages.myFlashcards.card.clickToSeeFront") : t("pages.myFlashcards.card.clickToSeeBack")}
         </div>
       </CardContent>
     </Card>

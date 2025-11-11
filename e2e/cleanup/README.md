@@ -25,8 +25,8 @@ Czyści plik `.auth/user.json`, aby usunąć wrażliwe dane autentykacyjne i zap
 1. **Zmienne środowiskowe** w `.env.test`:
 
 ```env
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_KEY=your_supabase_anon_key
+PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+PUBLIC_SUPABASE_KEY=your_supabase_anon_key
 E2E_USERNAME=test@example.com
 E2E_PASSWORD=YourSecurePassword123!
 E2E_USERNAME_ID=your-user-uuid-here
@@ -52,8 +52,8 @@ BASE_URL=http://localhost:3000
 2. **Wypełnij dane dostępowe Supabase**:
 
    - Przejdź do Supabase Dashboard → Project Settings → API
-   - Skopiuj `Project URL` → `SUPABASE_URL`
-   - Skopiuj klucz `anon public` → `SUPABASE_KEY`
+   - Skopiuj `Project URL` → `PUBLIC_SUPABASE_URL`
+   - Skopiuj klucz `anon public` → `PUBLIC_SUPABASE_KEY`
 
 3. **Utwórz użytkownika testowego**:
 
@@ -100,19 +100,19 @@ Test wykonuje:
 
 ### Wymagane zmienne
 
-| Zmienna           | Opis                         | Przykład                      |
-| ----------------- | ---------------------------- | ----------------------------- |
-| `SUPABASE_URL`    | URL projektu Supabase        | `https://project.supabase.co` |
-| `SUPABASE_KEY`    | Klucz anonimowy Supabase     | `eyJhbGciOiJIUzI1NiIs...`     |
-| `E2E_USERNAME_ID` | UUID użytkownika testowego   | `123e4567-e89b-12d3-a456...`  |
+| Zmienna               | Opis                       | Przykład                      |
+| --------------------- | -------------------------- | ----------------------------- |
+| `PUBLIC_SUPABASE_URL` | URL projektu Supabase      | `https://project.supabase.co` |
+| `PUBLIC_SUPABASE_KEY` | Klucz anonimowy Supabase   | `eyJhbGciOiJIUzI1NiIs...`     |
+| `E2E_USERNAME_ID`     | UUID użytkownika testowego | `123e4567-e89b-12d3-a456...`  |
 
 ### Opcjonalne zmienne
 
-| Zmienna        | Opis                     | Domyślne                |
-| -------------- | ------------------------ | ----------------------- |
-| `E2E_USERNAME` | Email użytkownika test.  | `test@example.com`      |
-| `E2E_PASSWORD` | Hasło użytkownika test.  | `Test123456!`           |
-| `BASE_URL`     | Bazowy URL aplikacji     | `http://localhost:3000` |
+| Zmienna        | Opis                    | Domyślne                |
+| -------------- | ----------------------- | ----------------------- |
+| `E2E_USERNAME` | Email użytkownika test. | `test@example.com`      |
+| `E2E_PASSWORD` | Hasło użytkownika test. | `Test123456!`           |
+| `BASE_URL`     | Bazowy URL aplikacji    | `http://localhost:3000` |
 
 ## Helpery
 
@@ -172,14 +172,14 @@ Jeśli `.env.test` jest niekompletny, zobaczysz:
 
 ```
 ⚠️  Czyszczenie bazy danych pominięte - brakujące zmienne środowiskowe:
-   - SUPABASE_URL
-   - SUPABASE_KEY
+   - PUBLIC_SUPABASE_URL
+   - PUBLIC_SUPABASE_KEY
    - E2E_USERNAME_ID
 ```
 
 ### Problemy z połączeniem do bazy danych
 
-- Zweryfikuj poprawność `SUPABASE_URL` i `SUPABASE_KEY`
+- Zweryfikuj poprawność `PUBLIC_SUPABASE_URL` i `PUBLIC_SUPABASE_KEY`
 - Sprawdź połączenie internetowe
 - Zweryfikuj dostępność projektu Supabase
 - Sprawdź Supabase Dashboard pod kątem problemów z usługą
@@ -217,7 +217,7 @@ Rozwiązanie:
 
 Rozwiązanie:
 
-1. Zweryfikuj poprawność `SUPABASE_URL` i `SUPABASE_KEY`
+1. Zweryfikuj poprawność `PUBLIC_SUPABASE_URL` i `PUBLIC_SUPABASE_KEY`
 2. Sprawdź status usługi w Supabase Dashboard
 3. Uruchom `npm run test:e2e:create-user` aby zweryfikować dane dostępowe
 

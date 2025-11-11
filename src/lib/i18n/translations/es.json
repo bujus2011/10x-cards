@@ -1,0 +1,273 @@
+{
+  "language": {
+    "name": "Español",
+    "code": "es"
+  },
+  "nav": {
+    "logo": "10xCards",
+    "generate": "Generar",
+    "myFlashcards": "Mis Flashcards",
+    "studySession": "Sesión de Estudio",
+    "logout": "Cerrar Sesión"
+  },
+  "auth": {
+    "login": {
+      "title": "Iniciar sesión",
+      "emailLabel": "Dirección de correo electrónico",
+      "emailPlaceholder": "Ingresa tu correo electrónico",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Ingresa tu contraseña",
+      "signInButton": "Iniciar sesión",
+      "signingIn": "Iniciando sesión...",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "noAccount": "¿No tienes una cuenta?",
+      "signUpLink": "Regístrate",
+      "orContinueWithEmail": "O continúa con correo electrónico",
+      "socialLogin": {
+        "accessDenied": "El proveedor denegó el acceso a tu cuenta. Inténtalo de nuevo o usa otro método.",
+        "missingCode": "La respuesta de autenticación no contenía la información requerida. Inténtalo de nuevo.",
+        "sessionExchangeFailed": "No pudimos verificar tu sesión con el proveedor. Inténtalo de nuevo.",
+        "serverConfigError": "La configuración de inicio de sesión social está incompleta. Contacta al soporte y usa el inicio de sesión por correo electrónico por ahora.",
+        "genericError": "No pudimos iniciar tu sesión con {provider}. Inténtalo de nuevo."
+      }
+    },
+    "register": {
+      "title": "Crear cuenta",
+      "emailLabel": "Dirección de correo electrónico",
+      "emailPlaceholder": "Ingresa tu correo electrónico",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Ingresa tu contraseña",
+      "confirmPasswordLabel": "Confirmar contraseña",
+      "confirmPasswordPlaceholder": "Confirma tu contraseña",
+      "createAccountButton": "Crear cuenta",
+      "creatingAccount": "Creando cuenta...",
+      "haveAccount": "¿Ya tienes una cuenta?",
+      "signInLink": "Iniciar sesión",
+      "orSignUpWithEmail": "O regístrate con correo electrónico"
+    },
+    "resetPassword": {
+      "title": "Restablecer contraseña",
+      "description": "Ingresa tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+      "emailLabel": "Dirección de correo electrónico",
+      "emailPlaceholder": "Ingresa tu correo electrónico",
+      "sendResetLink": "Enviar enlace de restablecimiento",
+      "sending": "Enviando...",
+      "backToSignIn": "Volver al inicio de sesión"
+    },
+    "resetPasswordConfirm": {
+      "title": "Establecer nueva contraseña",
+      "description": "Ingresa tu nueva contraseña a continuación.",
+      "passwordLabel": "Nueva contraseña",
+      "passwordPlaceholder": "Ingresa tu nueva contraseña",
+      "confirmPasswordLabel": "Confirmar nueva contraseña",
+      "confirmPasswordPlaceholder": "Confirma tu nueva contraseña",
+      "updatePassword": "Actualizar contraseña",
+      "updating": "Actualizando...",
+      "backToSignIn": "Volver al inicio de sesión"
+    }
+  },
+  "validation": {
+    "auth": {
+      "emailRequired": "El correo electrónico es obligatorio",
+      "emailInvalid": "Ingresa una dirección de correo electrónico válida",
+      "passwordRequired": "La contraseña es obligatoria",
+      "passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
+      "passwordMaxLength": "La contraseña debe tener menos de 128 caracteres",
+      "confirmPasswordRequired": "Confirma tu contraseña",
+      "passwordsDoNotMatch": "Las contraseñas no coinciden"
+    },
+    "flashcard": {
+      "frontRequired": "El lado frontal es obligatorio",
+      "frontMaxLength": "El lado frontal debe tener menos de 200 caracteres",
+      "backRequired": "El lado trasero es obligatorio",
+      "backMaxLength": "El lado trasero debe tener menos de 500 caracteres"
+    },
+    "generation": {
+      "textRequired": "El texto es obligatorio",
+      "textMinLength": "El texto debe tener al menos 1000 caracteres",
+      "textMaxLength": "El texto debe tener menos de 10000 caracteres"
+    },
+    "search": {
+      "queryMaxLength": "La consulta de búsqueda debe tener menos de 100 caracteres"
+    }
+  },
+  "pages": {
+    "generate": {
+      "title": "Generar Flashcards",
+      "sourceTextLabel": "Texto Fuente",
+      "sourceTextPlaceholder": "Pega tu texto aquí (1000-10000 caracteres)",
+      "generateButton": "Generar Flashcards",
+      "generating": "Generando...",
+      "charCount": "{count} / 10000 caracteres",
+      "minCharsRequired": "(Se requieren mínimo 1000 caracteres)",
+      "maxCharsExceeded": "(Se excedió el máximo de 10000 caracteres)"
+    },
+    "myFlashcards": {
+      "title": "Mis Flashcards",
+      "noFlashcards": "No se encontraron flashcards",
+      "noFlashcardsDescription": "Crea tu primera flashcard o genera algunas desde texto",
+      "searchPlaceholder": "Buscar flashcards...",
+      "createNewButton": "Crear Nueva Flashcard",
+      "createNewForm": {
+        "title": "Crear Nueva Flashcard",
+        "frontLabel": "Frente (Pregunta/Indicación)",
+        "frontPlaceholder": "Ingresa el lado frontal de tu flashcard",
+        "backLabel": "Reverso (Respuesta)",
+        "backPlaceholder": "Ingresa el lado trasero de tu flashcard",
+        "cancelButton": "Cancelar",
+        "createButton": "Crear Flashcard",
+        "creating": "Creando...",
+        "frontCharCount": "{count}/200 caracteres",
+        "backCharCount": "{count}/500 caracteres"
+      },
+      "editForm": {
+        "title": "Editar Flashcard",
+        "frontLabel": "Frente",
+        "frontPlaceholder": "Lado frontal de la flashcard",
+        "backLabel": "Reverso",
+        "backPlaceholder": "Lado trasero de la flashcard",
+        "cancelButton": "Cancelar",
+        "saveButton": "Guardar",
+        "saving": "Guardando...",
+        "frontCharCount": "{count}/200 caracteres",
+        "backCharCount": "{count}/500 caracteres"
+      },
+      "card": {
+        "clickToSeeBack": "Haz clic para ver el reverso",
+        "clickToSeeFront": "Haz clic para ver el frente",
+        "copyTooltip": "Copiar flashcard",
+        "editTooltip": "Editar flashcard",
+        "deleteTooltip": "Eliminar flashcard"
+      },
+      "flashcardCount": "{filtered} de {total} flashcards",
+      "filtered": "filtradas",
+      "flashcardCard": {
+        "editButton": "Editar",
+        "deleteButton": "Eliminar",
+        "confirmDelete": "¿Estás seguro de que quieres eliminar esta flashcard?",
+        "confirmDeleteDescription": "Esta acción no se puede deshacer.",
+        "deleteConfirmButton": "Eliminar",
+        "deleteCancelButton": "Cancelar"
+      }
+    },
+    "studySession": {
+      "title": "Sesión de Estudio",
+      "description": "Aprende tus flashcards con algoritmo de repetición espaciada",
+      "sessionComplete": "¡Sesión Completada!",
+      "noFlashcardsMessage": "No tienes flashcards para repasar. Agrega nuevas flashcards o vuelve más tarde.",
+      "completedMessage": "¡Excelente trabajo! Has completado la sesión de estudio.",
+      "startNewSession": "Iniciar Nueva Sesión",
+      "cardProgress": "Tarjeta {current} de {total}",
+      "percentComplete": "{percent}% completado",
+      "question": "Pregunta",
+      "answer": "Respuesta",
+      "showAnswer": "Mostrar Respuesta",
+      "ratingPrompt": "¿Qué tan bien conoces esta flashcard?",
+      "ratingAgain": "Otra vez",
+      "ratingHard": "Difícil",
+      "ratingGood": "Bien",
+      "ratingEasy": "Fácil",
+      "state": "Estado",
+      "stateNew": "Nuevo",
+      "stateLearning": "Aprendiendo",
+      "stateReview": "Repaso",
+      "stateRelearning": "Reaprendiendo",
+      "reviews": "Repasos"
+    }
+  },
+  "components": {
+    "bulkSave": {
+      "saveAccepted": "Guardar Aceptadas",
+      "saveAll": "Guardar Todas",
+      "saving": "Guardando..."
+    },
+    "flashcardList": {
+      "accept": "Aceptar",
+      "reject": "Rechazar",
+      "edit": "Editar",
+      "accepted": "Aceptadas",
+      "rejected": "Rechazadas",
+      "pending": "Pendientes"
+    },
+    "errorNotification": {
+      "title": "Error",
+      "retry": "Intentar de nuevo"
+    },
+    "themeToggle": {
+      "light": "Claro",
+      "dark": "Oscuro",
+      "system": "Sistema"
+    }
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error al cargar los datos",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "yes": "Sí",
+    "no": "No",
+    "ok": "OK",
+    "submit": "Enviar",
+    "reset": "Restablecer",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "export": "Exportar",
+    "import": "Importar"
+  },
+  "errors": {
+    "auth": {
+      "logoutFailed": "Error al cerrar sesión. Inténtalo de nuevo.",
+      "loginFailed": "Error de inicio de sesión. Verifica tus credenciales e inténtalo de nuevo.",
+      "registerFailed": "Error de registro. Inténtalo de nuevo.",
+      "resetPasswordFailed": "Error al enviar el correo de restablecimiento de contraseña. Inténtalo de nuevo.",
+      "updatePasswordFailed": "Error al actualizar la contraseña. Inténtalo de nuevo."
+    },
+    "flashcard": {
+      "createFailed": "Error al crear la flashcard",
+      "updateFailed": "Error al actualizar la flashcard",
+      "deleteFailed": "Error al eliminar la flashcard",
+      "loadFailed": "Error al cargar las flashcards",
+      "saveFailed": "Error al guardar las flashcards",
+      "emptyContent": "El contenido frontal y trasero no puede estar vacío",
+      "textTooLong": "El texto excede la longitud máxima",
+      "createdSuccess": "Flashcard creada exitosamente",
+      "updatedSuccess": "Flashcard actualizada exitosamente",
+      "deletedSuccess": "Flashcard eliminada exitosamente",
+      "copiedSuccess": "Flashcard copiada al portapapeles",
+      "savedSuccess": "Flashcards guardadas exitosamente"
+    },
+    "generation": {
+      "generateFailed": "Error al generar flashcards. Inténtalo de nuevo.",
+      "saveFailed": "Error al guardar flashcards. Inténtalo de nuevo.",
+      "networkError": "Error de red. Verifica tu conexión e inténtalo de nuevo.",
+      "serverError": "Error del servidor. Inténtalo de nuevo más tarde."
+    },
+    "generic": {
+      "unexpectedError": "Ocurrió un error inesperado. Inténtalo de nuevo.",
+      "validationError": "Verifica tu entrada e inténtalo de nuevo."
+    }
+  },
+  "welcome": {
+    "title": "¡Bienvenido a 10xDevs Astro Starter!",
+    "subtitle": "Este proyecto fue construido utilizando un stack tecnológico moderno:",
+    "core": "Núcleo",
+    "styling": "Estilización",
+    "codeAnalysis": "Análisis de código",
+    "astro": "Astro v5.5.5 - Metaframework para aplicaciones web",
+    "react": "React v19 - Biblioteca UI para componentes interactivos",
+    "typescript": "TypeScript - Tipado estático",
+    "tailwind": "Tailwind CSS v4 - Framework CSS utility-first",
+    "eslint": "ESLint v9 - Lintado de código",
+    "prettier": "Prettier - Formateo de código",
+    "husky": "Husky y Lint-staged - Análisis automático de código antes del commit",
+    "description": "¡El starter contiene todo lo que necesitas para comenzar a crear aplicaciones web modernas!"
+  }
+}

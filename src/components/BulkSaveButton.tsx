@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
 import type { FlashcardProposalViewModel } from "@/hooks/useFlashcardGeneration";
 
 interface BulkSaveButtonProps {
@@ -11,6 +12,8 @@ interface BulkSaveButtonProps {
 }
 
 export function BulkSaveButton({ flashcards, disabled, isLoading, onSaveAccepted, onSaveAll }: BulkSaveButtonProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col sm:flex-row gap-2 max-w-md">
       <Button
@@ -23,10 +26,10 @@ export function BulkSaveButton({ flashcards, disabled, isLoading, onSaveAccepted
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Saving...
+            {t("components.bulkSave.saving")}
           </>
         ) : (
-          "Save Accepted"
+          t("components.bulkSave.saveAccepted")
         )}
       </Button>
 
@@ -41,10 +44,10 @@ export function BulkSaveButton({ flashcards, disabled, isLoading, onSaveAccepted
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Saving...
+            {t("components.bulkSave.saving")}
           </>
         ) : (
-          "Save All"
+          t("components.bulkSave.saveAll")
         )}
       </Button>
     </div>

@@ -301,6 +301,7 @@ npm run test:coverage    # Generate coverage report
 1. **`.env.test` file is required** with the following variables:
 
    ```env
+   # PUBLIC_ prefix dla dostępu w przeglądarce i serwerze
    PUBLIC_SUPABASE_URL=https://your-project.supabase.co
    PUBLIC_SUPABASE_KEY=your-anon-key
    OPENROUTER_API_KEY=your-openrouter-key

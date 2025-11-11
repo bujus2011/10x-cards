@@ -1014,12 +1014,9 @@ if (error) {
 ### Wymagane w `.env`
 
 ```env
-# Supabase (Server-side)
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_KEY=your-anon-key
-
-# Supabase (Client-side - Required for OAuth)
-# IMPORTANT: Prefix PUBLIC_ makes these accessible in browser
+# Supabase (Public variables - accessible in browser and server)
+# IMPORTANT: Prefix PUBLIC_ makes these accessible everywhere
+# These are safe to expose as they use Row Level Security (RLS)
 PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 PUBLIC_SUPABASE_KEY=your-anon-key
 ```
@@ -1035,10 +1032,8 @@ PUBLIC_SUPABASE_KEY=your-anon-key
 ```env
 # Supabase Configuration
 # Get these from https://supabase.com/dashboard/project/_/settings/api
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_KEY=your_supabase_anon_key
-
-# Public variables for client-side (browser) - Required for OAuth
+# Use PUBLIC_ prefix to make them accessible in browser and server
+# These are safe to expose as they use Row Level Security (RLS)
 PUBLIC_SUPABASE_URL=your_supabase_project_url
 PUBLIC_SUPABASE_KEY=your_supabase_anon_key
 ```

@@ -77,11 +77,11 @@ Workflow wymaga następujących sekretów w GitHub (Settings → Secrets and var
 
 ### Sekrety Aplikacji
 
-| Sekret               | Opis                          | Wymagany dla |
-| -------------------- | ----------------------------- | ------------ |
-| `SUPABASE_URL`       | URL projektu Supabase         | Build        |
-| `SUPABASE_KEY`       | Klucz API Supabase (anon key) | Build        |
-| `OPENROUTER_API_KEY` | Klucz API OpenRouter dla AI   | Build        |
+| Sekret                 | Opis                                      | Wymagany dla |
+| ---------------------- | ----------------------------------------- | ------------ |
+| `PUBLIC_SUPABASE_URL`  | URL projektu Supabase (publicznie)        | Build        |
+| `PUBLIC_SUPABASE_KEY`  | Klucz API Supabase anon key (publicznie)  | Build        |
+| `OPENROUTER_API_KEY`   | Klucz API OpenRouter dla AI (serwer)      | Build        |
 
 ### Sekrety Cloudflare
 

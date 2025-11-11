@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
 
 interface GenerateButtonProps {
   onClick?: () => void;
@@ -16,6 +17,8 @@ export function GenerateButton({
   type = "button",
   "data-testid": testId,
 }: GenerateButtonProps) {
+  const { t } = useTranslation();
+
   return (
     <Button
       type={type}
@@ -26,7 +29,7 @@ export function GenerateButton({
       data-testid={testId || "generate-button"}
     >
       {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-      {isLoading ? "Generating..." : "Generate Flashcards"}
+      {isLoading ? t("pages.generate.generating") : t("pages.generate.generateButton")}
     </Button>
   );
 }

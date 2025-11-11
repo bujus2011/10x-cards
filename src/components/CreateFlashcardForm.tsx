@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, X } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "@/lib/i18n";
 import { Logger } from "@/lib/logger";
 
 const createFlashcardLogger = Logger.forContext("CreateFlashcardForm");
@@ -17,6 +18,7 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
   onSubmit,
   isLoading = false,
 }: CreateFlashcardFormProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
@@ -28,12 +30,12 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
 
   const handleSubmit = useCallback(async () => {
     if (!front.trim() || !back.trim()) {
-      toast.error("Front and back content cannot be empty");
+      toast.error(t("errors.flashcard.emptyContent"));
       return;
     }
 
     if (front.length > 200 || back.length > 500) {
-      toast.error("Text exceeds maximum length");
+      toast.error(t("errors.flashcard.textTooLong"));
       return;
     }
 
@@ -43,9 +45,9 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
       setFront("");
       setBack("");
       setIsOpen(false);
-      toast.success("Flashcard created successfully");
+      toast.success(t("errors.flashcard.createdSuccess"));
     } catch (error) {
-      toast.error("Failed to create flashcard");
+      toast.error(t("errors.flashcard.createFailed"));
       createFlashcardLogger.error("Failed to create flashcard", error, {
         frontLength: front.length,
         backLength: back.length,
@@ -53,7 +55,7 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
     } finally {
       setIsSubmitting(false);
     }
-  }, [front, back, onSubmit]);
+  }, [front, back, onSubmit, t]);
 
   const handleReset = useCallback(() => {
     setIsOpen(false);
@@ -65,18 +67,18 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
     return (
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Create New Flashcard</CardTitle>
+          <CardTitle>{t("pages.myFlashcards.createNewForm.title")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <label htmlFor={frontInputId} className="text-sm font-medium">
-              Front (Question/Prompt)
+              {t("pages.myFlashcards.createNewForm.frontLabel")}
             </label>
             <Textarea
               id={frontInputId}
               value={front}
               onChange={(e) => setFront(e.target.value)}
-              placeholder="Enter the front side of your flashcard"
+              placeholder={t("pages.myFlashcards.createNewForm.frontPlaceholder")}
               maxLength={200}
               className="resize-none"
               rows={3}
@@ -84,19 +86,19 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
               aria-describedby="front-char-count"
             />
             <div id="front-char-count" className="text-xs text-muted-foreground">
-              {front.length}/200 characters
+              {t("pages.myFlashcards.createNewForm.frontCharCount", { count: front.length })}
             </div>
           </div>
 
           <div className="space-y-2">
             <label htmlFor={backInputId} className="text-sm font-medium">
-              Back (Answer)
+              {t("pages.myFlashcards.createNewForm.backLabel")}
             </label>
             <Textarea
               id={backInputId}
               value={back}
               onChange={(e) => setBack(e.target.value)}
-              placeholder="Enter the back side of your flashcard"
+              placeholder={t("pages.myFlashcards.createNewForm.backPlaceholder")}
               maxLength={500}
               className="resize-none"
               rows={4}
@@ -104,7 +106,7 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
               aria-describedby="back-char-count"
             />
             <div id="back-char-count" className="text-xs text-muted-foreground">
-              {back.length}/500 characters
+              {t("pages.myFlashcards.createNewForm.backCharCount", { count: back.length })}
             </div>
           </div>
 
@@ -116,7 +118,7 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
               aria-label="Cancel creating flashcard"
             >
               <X className="h-4 w-4 mr-2" />
-              Cancel
+              {t("pages.myFlashcards.createNewForm.cancelButton")}
             </Button>
             <Button
               onClick={handleSubmit}
@@ -124,7 +126,9 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
               aria-label="Create new flashcard"
             >
               <Plus className="h-4 w-4 mr-2" />
-              {isSubmitting ? "Creating..." : "Create Flashcard"}
+              {isSubmitting
+                ? t("pages.myFlashcards.createNewForm.creating")
+                : t("pages.myFlashcards.createNewForm.createButton")}
             </Button>
           </div>
         </CardContent>
@@ -141,7 +145,7 @@ const CreateFlashcardFormComponent = memo(function CreateFlashcardForm({
       data-testid="create-flashcard-button"
     >
       <Plus className="h-4 w-4 mr-2" />
-      Create New Flashcard
+      {t("pages.myFlashcards.createNewButton")}
     </Button>
   );
 });

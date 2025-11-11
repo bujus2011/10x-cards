@@ -29,8 +29,10 @@ Dowiedz się o strukturze i wzorcach projektowych aplikacji:
 
 Szczegółowa dokumentacja poszczególnych funkcji aplikacji:
 
+- **[Internationalization (i18n)](./features/internationalization.md)** - ✅ System wielojęzyczności (EN/ES/PL) z Globe icon i flagami
+- **[i18n Implementation Summary](./features/i18n-implementation-summary.md)** - ✅ Kompletne podsumowanie implementacji i18n
 - **[Dark Mode](./features/dark-mode.md)** - ✅ Obsługa ciemnego i jasnego motywu
-- **[My Flashcards](./features/my-flashcards.md)** - Zarządzanie fiszkami (CRUD, wyszukiwanie, filtrowanie)
+- **[My Flashcards](./features/my-flashcards.md)** - ✅ Zarządzanie fiszkami (CRUD, wyszukiwanie, filtrowanie)
 - **[Flashcard Generation](./features/flashcard-generation.md)** - Generowanie fiszek AI przez OpenRouter (TODO)
 - **[Study Session](./features/study-session.md)** - Algorytm FSRS, sesje nauki (TODO)
 
@@ -95,6 +97,7 @@ Dokumentacja zakończonych refaktoringów:
 
 - **Autentykacja**: [Architecture/Authentication](./architecture/authentication.md)
 - **Baza danych**: [Architecture/Database](./architecture/database.md)
+- **Wielojęzyczność**: [Features/Internationalization](./features/internationalization.md)
 - **Testowanie**: [Development/Testing](./development/testing.md)
 - **Wdrażanie**: [Deployment/Cloudflare](./deployment/cloudflare.md)
 - **CI/CD**: [Deployment/CI-CD](./deployment/ci-cd.md)
@@ -162,7 +165,7 @@ Każdy dokument powinien zawierać:
 | Kategoria    | Plików | Status            | Ostatnia aktualizacja |
 | ------------ | ------ | ----------------- | --------------------- |
 | Architecture | 3      | ✅ Kompletne      | 2024-11               |
-| Features     | 2      | ⚠️ W trakcie      | 2024-11               |
+| Features     | 4      | ✅ Kompletne      | 2024-11               |
 | Development  | 1      | ⚠️ W trakcie      | 2024-11               |
 | Deployment   | 3      | ✅ Kompletne      | 2024-11               |
 | API          | 0      | ❌ TODO           | -                     |
@@ -221,6 +224,7 @@ Każdy dokument powinien zawierać:
 
 ## 🔄 Historia Zmian
 
+- **2024-11-11**: Dokumentacja Internationalization (i18n) - kompletna implementacja wielojęzyczności
 - **2024-11-11**: Dokumentacja Dark Mode feature
 - **2024-11-07**: Reorganizacja dokumentacji, utworzenie struktury docs/
 - **2024-10**: Dokumentacja My Flashcards feature
@@ -230,5 +234,5 @@ Każdy dokument powinien zawierać:
 ---
 
 **Ostatnia aktualizacja**: 2024-11-11
-**Wersja**: 2.1
+**Wersja**: 2.2
 **Status**: ✅ Aktywnie utrzymywana
