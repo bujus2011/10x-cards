@@ -4,6 +4,15 @@
 
 10xCards to aplikacja webowa zaprojektowana do automatycznego generowania fiszek przy użyciu LLM. Usprawnia proces tworzenia wysokiej jakości fiszek z tekstu dostarczonego przez użytkownika, czyniąc naukę bardziej efektywną i angażującą. Użytkownicy mogą generować fiszki automatycznie za pomocą AI lub tworzyć i zarządzać nimi manualnie.
 
+### ✨ Kluczowe funkcje
+
+- **🤖 AI-Powered Generation**: Automatyczne tworzenie fiszek przy użyciu OpenRouter.ai API
+- **🌙 Dark/Light Mode**: Wsparcie dla ciemnego i jasnego motywu z automatyczną detekcją preferencji systemowych
+- **📱 Responsive Design**: Optymalizacja dla wszystkich urządzeń
+- **🔐 Bezpieczna autentyfikacja**: Logowanie przez GitHub/Google OAuth oraz tradycyjne konto
+- **📊 Spaced Repetition**: Algorytm FSRS do optymalizacji procesu nauki
+- **🎯 Manualne zarządzanie**: Tworzenie, edycja i organizacja fiszek
+
 ## Spis treści
 
 - [Opis projektu](#opis-projektu)
@@ -121,17 +130,21 @@ Aby uzyskać szczegółową dokumentację testową, zobacz [docs/development/tes
 Projekt posiada kompleksową dokumentację w katalogu `docs/`. Główne sekcje:
 
 ### 🏗️ Architektura
+
 - [Authentication](./docs/architecture/authentication.md) - System autentykacji (JWT, Supabase, middleware)
 - [Database](./docs/architecture/database.md) - Schema PostgreSQL, migracje
 - [API Design](./docs/architecture/api-design.md) - Wzorce projektowe API
 
 ### 📱 Funkcje
+
 - [My Flashcards](./docs/features/my-flashcards.md) - Zarządzanie fiszkami (CRUD, wyszukiwanie)
 
 ### 👨‍💻 Development
+
 - [Testing](./docs/development/testing.md) - Testy jednostkowe (Vitest) i E2E (Playwright)
 
 ### 🚀 Deployment
+
 - [Cloudflare](./docs/deployment/cloudflare.md) - Wdrażanie na Cloudflare Pages (kompletny przewodnik)
 - [CI/CD](./docs/deployment/ci-cd.md) - GitHub Actions workflows
 - [Troubleshooting](./docs/deployment/troubleshooting.md) - Rozwiązywanie problemów
@@ -157,11 +170,13 @@ Aplikacja jest wdrażana automatycznie na Cloudflare Pages przy każdym pushu do
 Skonfiguruj następujące sekrety w środowisku `production`:
 
 **Aplikacja:**
+
 - `PUBLIC_SUPABASE_URL` - URL projektu Supabase
 - `PUBLIC_SUPABASE_KEY` - Supabase anon key
 - `OPENROUTER_API_KEY` - OpenRouter API key
 
 **Cloudflare:**
+
 - `CLOUDFLARE_API_TOKEN` - Token API z uprawnieniami Cloudflare Pages
 - `CLOUDFLARE_ACCOUNT_ID` - ID konta Cloudflare
 

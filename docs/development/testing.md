@@ -170,7 +170,7 @@ npm run test:e2e:codegen
 
 Umieszczaj testy E2E w:
 
-- `e2e/` - Wszystkie pliki testów end-to-end (*.spec.ts)
+- `e2e/` - Wszystkie pliki testów end-to-end (\*.spec.ts)
 
 ### Pisanie Testów E2E
 
@@ -365,11 +365,11 @@ Zobacz [docs/deployment/ci-cd.md](../deployment/ci-cd.md) dla szczegółów work
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'jsdom',
-    setupFiles: './src/tests/setup.ts',
+    environment: "jsdom",
+    setupFiles: "./src/tests/setup.ts",
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      provider: "v8",
+      reporter: ["text", "json", "html"],
     },
   },
 });
@@ -379,13 +379,13 @@ export default defineConfig({
 
 ```typescript
 export default defineConfig({
-  testDir: './e2e',
+  testDir: "./e2e",
   fullyParallel: false,
   workers: 1, // Sekwencyjne wykonanie
   retries: process.env.CI ? 2 : 0,
   use: {
-    baseURL: 'http://localhost:3000',
-    trace: 'on-first-retry',
+    baseURL: "http://localhost:3000",
+    trace: "on-first-retry",
   },
 });
 ```
@@ -415,6 +415,7 @@ export default defineConfig({
 ## ✅ Szybki Start
 
 ### Dla testów jednostkowych:
+
 ```bash
 npm run test:watch
 ```
@@ -422,11 +423,13 @@ npm run test:watch
 ### Dla testów E2E:
 
 **Terminal 1:**
+
 ```bash
 npm run dev:e2e
 ```
 
 **Terminal 2:**
+
 ```bash
 npm run test:e2e
 ```
@@ -435,9 +438,9 @@ npm run test:e2e
 
 ## 🎯 Status Testów
 
-| Typ Testów | Framework | Status | Pokrycie |
-|------------|-----------|--------|----------|
-| Jednostkowe | Vitest | ✅ Działają | ~80% |
-| Integracyjne | Vitest | ✅ Działają | ~70% |
-| E2E | Playwright | ✅ Działają | Kluczowe ścieżki pokryte |
-| Wizualne | Playwright | ⚠️ Opcjonalne | - |
+| Typ Testów   | Framework  | Status        | Pokrycie                 |
+| ------------ | ---------- | ------------- | ------------------------ |
+| Jednostkowe  | Vitest     | ✅ Działają   | ~80%                     |
+| Integracyjne | Vitest     | ✅ Działają   | ~70%                     |
+| E2E          | Playwright | ✅ Działają   | Kluczowe ścieżki pokryte |
+| Wizualne     | Playwright | ⚠️ Opcjonalne | -                        |

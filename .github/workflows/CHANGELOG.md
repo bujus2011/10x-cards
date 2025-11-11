@@ -7,6 +7,7 @@
 #### Migracja na wrangler-action@v3
 
 **Przed:**
+
 ```yaml
 - name: Publish to Cloudflare Pages
   uses: cloudflare/pages-action@v1
@@ -19,6 +20,7 @@
 ```
 
 **Po:**
+
 ```yaml
 - name: Deploy to Cloudflare Pages
   uses: cloudflare/wrangler-action@v3
@@ -29,6 +31,7 @@
 ```
 
 **Korzyści:**
+
 - ✅ Najnowsza akcja Cloudflare (v3.14.1)
 - ✅ Pełne wsparcie dla Wrangler CLI
 - ✅ Lepsza kompatybilność z nowymi funkcjami
@@ -121,12 +124,12 @@ Lint → Unit Tests → Deploy (build + deploy)
 
 ## Version History
 
-| Version | Date | Major Changes |
-|---------|------|---------------|
-| v2.0.0 | 2024-11-06 | Migracja na wrangler-action@v3 |
-| v1.2.0 | 2024-11-06 | Hardcoded project name |
-| v1.1.0 | 2024-11-06 | Połączono build i deploy |
-| v1.0.0 | 2024-11-06 | Initial release |
+| Version | Date       | Major Changes                  |
+| ------- | ---------- | ------------------------------ |
+| v2.0.0  | 2024-11-06 | Migracja na wrangler-action@v3 |
+| v1.2.0  | 2024-11-06 | Hardcoded project name         |
+| v1.1.0  | 2024-11-06 | Połączono build i deploy       |
+| v1.0.0  | 2024-11-06 | Initial release                |
 
 ---
 
@@ -135,6 +138,7 @@ Lint → Unit Tests → Deploy (build + deploy)
 ### v2.0.0
 
 **Zmiana akcji deploymentu:**
+
 - Jeśli używasz forka tego workflow, musisz zaktualizować na `wrangler-action@v3`
 - Parametry są teraz przekazywane przez `command` zamiast bezpośrednich parametrów
 
@@ -201,6 +205,7 @@ Lint → Unit Tests → Deploy (build + deploy)
 ## Support
 
 Jeśli napotkasz problemy:
+
 1. Sprawdź [TROUBLESHOOTING.md](.github/workflows/TROUBLESHOOTING.md)
 2. Zobacz [DEPLOYMENT-CLOUDFLARE.md](DEPLOYMENT-CLOUDFLARE.md)
 3. Sprawdź logi GitHub Actions i Cloudflare
@@ -209,4 +214,3 @@ Jeśli napotkasz problemy:
 
 **Maintainer:** 10xCards Team  
 **Last Updated:** 6 listopada 2024
-

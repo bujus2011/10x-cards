@@ -5,6 +5,7 @@
 ### 🔍 Przyczyna
 
 Akcja deploymentu wymaga nazwy projektu, ale:
+
 1. Sekret `CLOUDFLARE_PROJECT_NAME` nie jest ustawiony w środowisku `production`
 2. Lub środowisko `production` nie jest poprawnie skonfigurowane w GitHub
 
@@ -20,15 +21,17 @@ Ustawiono nazwę projektu bezpośrednio w poleceniu Wrangler:
   with:
     apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-    command: pages deploy dist --project-name=10x-cards  # ← Hardcoded
+    command: pages deploy dist --project-name=10x-cards # ← Hardcoded
 ```
 
 **Zalety:**
+
 - ✅ Działa natychmiast
 - ✅ Jeden sekret mniej do zarządzania
 - ✅ Nazwa projektu zwykle nie jest wrażliwa
 
 **Wady:**
+
 - ❌ Jeśli zmienisz nazwę projektu w Cloudflare, musisz zaktualizować workflow
 
 ### 📝 Rozwiązanie 2: Skonfigurować sekret (OPCJONALNE)
@@ -90,6 +93,7 @@ Brakujące sekrety `SUPABASE_KEY`, `SUPABASE_URL`, lub `OPENROUTER_API_KEY` w ś
 ### ✅ Rozwiązanie
 
 1. Wygeneruj nowy token w Cloudflare:
+
    - Dashboard → `My Profile` → `API Tokens`
    - Kliknij `Create Token`
    - Wybierz template `Edit Cloudflare Pages`
@@ -132,10 +136,12 @@ projectName: your-actual-project-name
 ### 🔍 Możliwe przyczyny
 
 1. **Brak katalogu dist:**
+
    - Build nie utworzył katalogu `dist/`
    - Sprawdź logi buildu
 
 2. **Pusty katalog dist:**
+
    - Build się wykonał, ale nie wygenerował plików
    - Zweryfikuj konfigurację Astro
 
@@ -146,6 +152,7 @@ projectName: your-actual-project-name
 ### ✅ Rozwiązanie
 
 Sprawdź logi buildu:
+
 ```bash
 # Lokalnie przetestuj build
 npm run build
@@ -272,4 +279,3 @@ npm run preview
 
 **Ostatnia aktualizacja:** 6 listopada 2024  
 **Aktywne rozwiązania:** projectName hardcoded jako `10x-cards`
-

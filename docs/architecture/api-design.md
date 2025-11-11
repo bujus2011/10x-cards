@@ -3,19 +3,22 @@
 ## 1. Resources
 
 - **Users**
-  - *Database Table*: `users`
+
+  - _Database Table_: `users`
   - Managed through Supabase Auth; operations such as registration and login may be handled via Supabase or custom endpoints if needed.
 
 - **Flashcards**
-  - *Database Table*: `flashcards`
+
+  - _Database Table_: `flashcards`
   - Fields include: `id`, `front`, `back`, `source`, `created_at`, `updated_at`, `generation_id`, `user_id`.
 
 - **Generations**
-  - *Database Table*: `generations`
+
+  - _Database Table_: `generations`
   - Stores metadata and results of AI generation requests (e.g., `model`, `generated_count`, `source_text_hash`, `source_text_length`, `generation_duration`).
 
 - **Generation Error Logs**
-  - *Database Table*: `generation_error_logs`
+  - _Database Table_: `generation_error_logs`
   - Used for logging errors encountered during AI flashcard generation.
 
 ## 2. Endpoints
@@ -23,6 +26,7 @@
 ### 2.2. Flashcards
 
 - **GET `/flashcards`**
+
   - **Description**: Retrieve a paginated, filtered, and sortable list of flashcards for the authenticated user.
   - **Query Parameters**:
     - `page` (default: 1)
@@ -42,11 +46,13 @@
   - **Errors**: 401 Unauthorized if token is invalid.
 
 - **GET `/flashcards/{id}`**
+
   - **Description**: Retrieve details for a specific flashcard.
   - **Response JSON**: Flashcard object.
   - **Errors**: 404 Not Found, 401 Unauthorized.
 
 - **POST `/flashcards`**
+
   - **Description**: Create one or more flashcards (manually or from AI generation).
   - **Request JSON**:
     ```json
@@ -84,6 +90,7 @@
   - **Errors**: 400 for invalid inputs, including validation errors for any flashcard in the array.
 
 - **PUT `/flashcards/{id}`**
+
   - **Description**: Edit an existing flashcard.
   - **Request JSON**: Fields to update.
   - **Response JSON**: Updated flashcard object.
@@ -97,11 +104,12 @@
 ### 2.3. Generations
 
 - **POST `/generations`**
+
   - **Description**: Initiate the AI generation process for flashcards proposals based on user-provided text.
   - **Request JSON**:
     ```json
     {
-      "source_text": "User provided text (1000 to 10000 characters)",
+      "source_text": "User provided text (1000 to 10000 characters)"
     }
     ```
   - **Business Logic**:
@@ -112,9 +120,7 @@
     ```json
     {
       "generation_id": 123,
-      "flashcards_proposals": [
-         { "front": "Generated Question", "back": "Generated Answer", "source": "ai-full" }
-      ],
+      "flashcards_proposals": [{ "front": "Generated Question", "back": "Generated Answer", "source": "ai-full" }],
       "generated_count": 5
     }
     ```
@@ -123,6 +129,7 @@
     - 500: AI service errors (logs recorded in `generation_error_logs`).
 
 - **GET `/generations`**
+
   - **Description**: Retrieve a list of generation requests for the authenticated user.
   - **Query Parameters**: Supports pagination as needed.
   - **Response JSON**: List of generation objects with metadata.
@@ -134,7 +141,7 @@
 
 ### 2.4. Generation Error Logs
 
-*(Typically used internally or by admin users)*
+_(Typically used internally or by admin users)_
 
 - **GET `/generation-error-logs`**
   - **Description**: Retrieve error logs for AI flashcard generation for the authenticated user or admin.
@@ -155,6 +162,7 @@
 ## 4. Validation and Business Logic
 
 - **Validation Rules**:
+
   - **Flashcards**:
     - `front`: Maximum length of 200 characters.
     - `back`: Maximum length of 500 characters.

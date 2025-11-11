@@ -50,21 +50,25 @@ W dashboardzie projektu: **Settings** → **Environment variables** → **Produc
 #### 6️⃣ Dodaj sekrety do środowiska "production" w GitHub
 
 **Sekrety aplikacji:**
+
 - [ ] `SUPABASE_URL`
 - [ ] `SUPABASE_KEY`
 - [ ] `OPENROUTER_API_KEY`
 
 **Sekrety Cloudflare:**
+
 - [ ] `CLOUDFLARE_API_TOKEN`
 - [ ] `CLOUDFLARE_ACCOUNT_ID`
 
 #### 7️⃣ Uruchom deployment
 
 **Opcja A: Automatycznie (zalecane)**
+
 - [ ] Push zmian do gałęzi `master`
 - [ ] Sprawdź status w **Actions** w GitHub
 
 **Opcja B: Manualnie**
+
 - [ ] GitHub → **Actions** → **Deploy to Cloudflare Pages**
 - [ ] **Run workflow** → wybierz `master` → **Run workflow**
 
@@ -135,11 +139,11 @@ W ustawieniach projektu Cloudflare Pages:
 1. Przejdź do **Settings** → **Environment variables**
 2. Dodaj zmienne dla środowiska **Production**:
 
-| Zmienna | Wartość | Opis |
-|---------|---------|------|
-| `SUPABASE_URL` | https://your-project.supabase.co | URL projektu Supabase |
-| `SUPABASE_KEY` | your-anon-key | Supabase anon key |
-| `OPENROUTER_API_KEY` | your-api-key | OpenRouter API key dla AI |
+| Zmienna              | Wartość                          | Opis                      |
+| -------------------- | -------------------------------- | ------------------------- |
+| `SUPABASE_URL`       | https://your-project.supabase.co | URL projektu Supabase     |
+| `SUPABASE_KEY`       | your-anon-key                    | Supabase anon key         |
+| `OPENROUTER_API_KEY` | your-api-key                     | OpenRouter API key dla AI |
 
 ### W GitHub Secrets
 
@@ -149,11 +153,13 @@ Dla automatycznego wdrażania przez GitHub Actions:
 2. Dodaj sekrety:
 
 #### Sekrety aplikacji:
+
 - `SUPABASE_URL` - URL projektu Supabase
 - `SUPABASE_KEY` - Supabase anon key
 - `OPENROUTER_API_KEY` - OpenRouter API key
 
 #### Sekrety Cloudflare:
+
 - `CLOUDFLARE_API_TOKEN` - Token API z uprawnieniami Cloudflare Pages Edit
 - `CLOUDFLARE_ACCOUNT_ID` - ID konta Cloudflare
 
@@ -169,6 +175,7 @@ Dla automatycznego wdrażania przez GitHub Actions:
 4. Dodaj jako secret `CLOUDFLARE_API_TOKEN` w GitHub
 
 **Wymagane uprawnienia:**
+
 - Cloudflare Pages - Edit
 
 ### Cloudflare Account ID
@@ -185,6 +192,7 @@ Dla automatycznego wdrażania przez GitHub Actions:
 ### Automatyczne wdrażanie (zalecane)
 
 1. Commit i push zmian do gałęzi `master`:
+
 ```bash
 git add .
 git commit -m "feat: your feature"
@@ -192,6 +200,7 @@ git push origin master
 ```
 
 2. GitHub Actions automatycznie:
+
    - Uruchomi linting
    - Wykona testy jednostkowe
    - Zbuduje projekt
@@ -202,15 +211,18 @@ git push origin master
 ### Manualne wdrażanie
 
 1. Zbuduj projekt lokalnie:
+
 ```bash
 npm run build
 ```
 
 2. Wdróż przez Cloudflare Dashboard:
+
    - Workers & Pages → Twój projekt → **Deploy** → **Direct Upload**
    - Upload folder `dist/`
 
 3. Lub użyj Wrangler CLI:
+
 ```bash
 npx wrangler pages deploy dist
 ```
@@ -236,11 +248,13 @@ dist/
 ### Po wdrożeniu sprawdź:
 
 1. **Cloudflare Dashboard**:
+
    - Workers & Pages → Twój projekt → **Deployments**
    - Status: "Success"
    - URL: https://your-project.pages.dev
 
 2. **Logi deploymentu**:
+
    - Kliknij w konkretne wdrożenie
    - Sprawdź logi budowania i wdrażania
 
@@ -257,15 +271,18 @@ dist/
 ### Problem 1: "Missing secrets" w GitHub Actions
 
 **Objawy:**
+
 - Workflow kończy się błędem "Secret not found"
 - Build nie może się rozpocząć
 
 **Możliwe przyczyny:**
+
 1. Sekrety nie zostały dodane w środowisku `production`
 2. Błędna pisownia nazw sekretów
 3. Workflow nie używa środowiska `production`
 
 **Rozwiązanie:**
+
 1. GitHub → Settings → Environments → `production`
 2. Sprawdź czy wszystkie sekrety są dodane:
    - `SUPABASE_URL`
@@ -279,15 +296,18 @@ dist/
 ### Problem 2: Build kończy się błędem
 
 **Objawy:**
+
 - GitHub Actions workflow kończy się na etapie buildu
 - Komunikaty o brakujących zależnościach lub błędach TypeScript
 
 **Możliwe przyczyny:**
+
 1. Brakujące zmienne środowiskowe podczas buildu
 2. Błędy TypeScript w kodzie
 3. Brakujące zależności
 
 **Rozwiązanie:**
+
 1. Sprawdź logi GitHub Actions dla szczegółów błędu
 2. Zweryfikuj czy wszystkie zmienne środowiskowe są ustawione jako sekrety
 3. Przetestuj build lokalnie: `npm run build`
@@ -296,14 +316,17 @@ dist/
 ### Problem 3: "Invalid API token"
 
 **Objawy:**
+
 - Build się udaje
 - Deployment kończy się błędem: "Invalid API token" lub "Authentication failed"
 
 **Przyczyna:**
+
 - Nieprawidłowy lub wygasły Cloudflare API Token
 - Token nie ma wymaganych uprawnień
 
 **Rozwiązanie:**
+
 1. Wygeneruj nowy Cloudflare API Token:
    - Dashboard → My Profile → API Tokens
    - Create Token → **Edit Cloudflare Pages** template
@@ -314,15 +337,18 @@ dist/
 ### Problem 4: "Project not found"
 
 **Objawy:**
+
 - Build się udaje
 - Deployment kończy się błędem: "Project not found" lub "404"
 
 **Możliwe przyczyny:**
+
 1. Projekt nie istnieje w Cloudflare Pages
 2. Nieprawidłowa nazwa projektu w workflow
 3. Nieprawidłowy Account ID
 
 **Rozwiązanie:**
+
 1. Sprawdź czy projekt istnieje w Cloudflare Pages:
    - Dashboard → Workers & Pages → Sprawdź listę projektów
 2. Zweryfikuj nazwę projektu w workflow (`.github/workflows/master.yml`):
@@ -333,15 +359,18 @@ dist/
 ### Problem 5: Aplikacja nie działa po wdrożeniu
 
 **Objawy:**
+
 - Build i deployment się udaje
 - Strona wyświetla błędy 500 lub nie ładuje się
 
 **Możliwe przyczyny:**
+
 1. Brakujące zmienne środowiskowe w Cloudflare Pages
 2. Niezgodność runtime Cloudflare z kodem Node.js
 3. Użycie niekompatybilnych modułów Node.js
 
 **Rozwiązanie:**
+
 1. Sprawdź zmienne środowiskowe w Cloudflare Dashboard (Settings → Environment variables)
 2. Sprawdź logi Cloudflare Functions (Dashboard → Logs)
 3. Zweryfikuj czy używasz tylko kompatybilnych z Cloudflare API:
@@ -352,9 +381,11 @@ dist/
 ### Problem 6: "Invalid binding `SESSION`"
 
 **Objawy:**
+
 - Ostrzeżenie podczas buildu o brakującym bindingu `SESSION`
 
 **Przyczyna:**
+
 - Cloudflare adapter domyślnie włącza sesje z KV
 
 **Rozwiązanie:**
@@ -363,17 +394,20 @@ Jeśli nie używasz sesji Cloudflare KV (używasz Supabase Auth), możesz zignor
 ### Problem 7: Obrazy nie działają
 
 **Objawy:**
+
 - Ostrzeżenie: "Cloudflare does not support sharp at runtime"
 
 **Przyczyna:**
+
 - Cloudflare nie wspiera biblioteki Sharp do przetwarzania obrazów
 
 **Rozwiązanie:**
 W `astro.config.mjs` dodaj:
+
 ```javascript
 export default defineConfig({
   image: {
-    service: "compile" // Optymalizacja obrazów podczas buildu
+    service: "compile", // Optymalizacja obrazów podczas buildu
   },
   // ... reszta konfiguracji
 });
@@ -386,6 +420,7 @@ export default defineConfig({
 ### Logi Produkcyjne
 
 1. **Cloudflare Dashboard**:
+
    - Workers & Pages → Twój projekt → **Logs**
    - Real-time logs z Cloudflare Workers
 
@@ -396,6 +431,7 @@ export default defineConfig({
 ### GitHub Actions
 
 1. **Actions Summary**:
+
    - Repository → Actions → wybrany workflow run
    - Podsumowanie wszystkich kroków
 
@@ -410,6 +446,7 @@ export default defineConfig({
 Jeśli wdrożenie zawiera błędy:
 
 1. **Cloudflare Dashboard**:
+
    - Workers & Pages → Twój projekt → **Deployments**
    - Znajdź poprzednie działające wdrożenie
    - Kliknij **...** → **Rollback to this deployment**
@@ -426,6 +463,7 @@ Jeśli wdrożenie zawiera błędy:
 ### Caching
 
 Cloudflare automatycznie cachuje:
+
 - Statyczne assety (CSS, JS, obrazy)
 - HTML przy użyciu Cache-Control headers
 
@@ -437,10 +475,12 @@ Cloudflare automatycznie cachuje:
 ### Best Practices
 
 1. **Minimalizuj bundle size**:
+
    - Code splitting w Astro
    - Lazy loading komponentów React
 
 2. **Optymalizuj obrazy**:
+
    - Użyj format WebP
    - Skonfiguruj `imageService: "compile"`
 

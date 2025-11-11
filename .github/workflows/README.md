@@ -42,6 +42,7 @@ Workflow składa się z 4 jobów wykonywanych w określonej kolejności:
 ### 📝 Szczegółowy opis jobów
 
 #### 1️⃣ **Lint** - Lintowanie kodu
+
 - **Uruchamia się:** Zawsze jako pierwszy
 - **Funkcje:**
   - Sprawdzenie kodu za pomocą ESLint
@@ -49,6 +50,7 @@ Workflow składa się z 4 jobów wykonywanych w określonej kolejności:
 - **Polecenie:** `npm run lint`
 
 #### 2️⃣ **Unit Tests** - Testy jednostkowe
+
 - **Uruchamia się:** Równolegle z E2E Tests, po sukcesie Lint
 - **Funkcje:**
   - Uruchomienie testów jednostkowych (Vitest)
@@ -58,6 +60,7 @@ Workflow składa się z 4 jobów wykonywanych w określonej kolejności:
 - **Artefakty:** `unit-test-coverage` (katalog `coverage/`)
 
 #### 3️⃣ **E2E Tests** - Testy end-to-end
+
 - **Uruchamia się:** Równolegle z Unit Tests, po sukcesie Lint
 - **Środowisko:** `integration`
 - **Funkcje:**
@@ -67,11 +70,12 @@ Workflow składa się z 4 jobów wykonywanych w określonej kolejności:
   - Upload artefaktów
 - **Polecenie:** `npm run test:e2e`
 - **Przeglądarka:** Chromium (zgodnie z `playwright.config.ts`)
-- **Artefakty:** 
+- **Artefakty:**
   - `playwright-report` (katalog `playwright-report/`)
   - `e2e-test-coverage` (katalog `test-results/`)
 
 #### 4️⃣ **Status Comment** - Komentarz statusu
+
 - **Uruchamia się:** Zawsze po zakończeniu wszystkich poprzednich jobów (`if: always()`)
 - **Warunek sukcesu:** Wszystkie 3 poprzednie joby muszą zakończyć się sukcesem
 - **Funkcje:**
@@ -83,15 +87,15 @@ Workflow składa się z 4 jobów wykonywanych w określonej kolejności:
 
 Workflow wymaga następujących sekretów w GitHub (Settings → Secrets and variables → Actions):
 
-| Sekret | Opis | Wymagany dla |
-|--------|------|--------------|
-| `PUBLIC_SUPABASE_URL` | URL projektu Supabase | E2E Tests |
-| `PUBLIC_SUPABASE_KEY` | Klucz API Supabase (anon key) | E2E Tests |
-| `OPENROUTER_API_KEY` | Klucz API OpenRouter dla AI | E2E Tests |
-| `E2E_USERNAME_ID` | ID użytkownika testowego | E2E Tests |
-| `E2E_USERNAME` | Email użytkownika testowego | E2E Tests |
-| `E2E_PASSWORD` | Hasło użytkownika testowego | E2E Tests |
-| `BASE_URL` | URL aplikacji do testowania | E2E Tests |
+| Sekret                | Opis                          | Wymagany dla |
+| --------------------- | ----------------------------- | ------------ |
+| `PUBLIC_SUPABASE_URL` | URL projektu Supabase         | E2E Tests    |
+| `PUBLIC_SUPABASE_KEY` | Klucz API Supabase (anon key) | E2E Tests    |
+| `OPENROUTER_API_KEY`  | Klucz API OpenRouter dla AI   | E2E Tests    |
+| `E2E_USERNAME_ID`     | ID użytkownika testowego      | E2E Tests    |
+| `E2E_USERNAME`        | Email użytkownika testowego   | E2E Tests    |
+| `E2E_PASSWORD`        | Hasło użytkownika testowego   | E2E Tests    |
+| `BASE_URL`            | URL aplikacji do testowania   | E2E Tests    |
 
 ### 🌍 Wymagane środowiska
 
@@ -103,16 +107,19 @@ Workflow używa środowiska GitHub Environment:
 ### ⚙️ Konfiguracja techniczna
 
 #### Wersje Node.js
+
 - Wersja Node.js jest pobierana z pliku `.nvmrc` w głównym katalogu projektu
 - Aktualnie: `22.14.0`
 
 #### Wersje GitHub Actions
+
 - `actions/checkout@v5` - Pobranie kodu
 - `actions/setup-node@v6` - Instalacja Node.js
 - `actions/upload-artifact@v5` - Upload artefaktów
 - `actions/github-script@v8` - Tworzenie komentarzy w PR
 
 #### Cache
+
 - Cache npm jest włączony dla szybszych buildów
 - Wykorzystuje wbudowany mechanizm `actions/setup-node`
 
@@ -125,20 +132,22 @@ pull_request:
   branches:
     - master
   types:
-    - opened      # Otwarcie nowego PR
+    - opened # Otwarcie nowego PR
     - synchronize # Push do istniejącego PR
-    - reopened    # Ponowne otwarcie PR
+    - reopened # Ponowne otwarcie PR
 ```
 
 ### 📊 Artefakty
 
 Po zakończeniu workflow, dostępne są następujące artefakty (przez 30 dni):
 
-1. **unit-test-coverage** 
+1. **unit-test-coverage**
+
    - Pokrycie kodu testami jednostkowymi
    - Format: HTML, JSON, text (konfiguracja w `vitest.config.ts`)
 
 2. **playwright-report**
+
    - Raport HTML z testów Playwright
    - Screenshoty i wideo z niepowodzeń
 
@@ -164,21 +173,25 @@ Po zakończeniu workflow, dostępne są następujące artefakty (przez 30 dni):
 ### 🐛 Rozwiązywanie problemów
 
 #### Job "Lint" się nie powiódł
+
 - Uruchom lokalnie: `npm run lint`
 - Naprawa: `npm run lint:fix`
 
 #### Job "Unit Tests" się nie powiódł
+
 - Uruchom lokalnie: `npm run test`
 - Z UI: `npm run test:ui`
 - Watch mode: `npm run test:watch`
 
 #### Job "E2E Tests" się nie powiódł
+
 - Sprawdź czy wszystkie sekrety są poprawnie skonfigurowane
 - Uruchom lokalnie: `npm run test:e2e`
 - Debug mode: `npm run test:e2e:debug`
 - Sprawdź środowisko `integration` w ustawieniach repozytorium
 
 #### Brak komentarza w PR
+
 - Sprawdź uprawnienia workflow (Settings → Actions → General → Workflow permissions)
 - Workflow musi mieć uprawnienie `write` dla `pull-requests`
 
@@ -190,4 +203,3 @@ Po zakończeniu workflow, dostępne są następujące artefakty (przez 30 dni):
 - [Playwright Documentation](https://playwright.dev/)
 - [Vitest Documentation](https://vitest.dev/)
 - [Project README](../../README.md)
-

@@ -29,6 +29,7 @@ Dowiedz się o strukturze i wzorcach projektowych aplikacji:
 
 Szczegółowa dokumentacja poszczególnych funkcji aplikacji:
 
+- **[Dark Mode](./features/dark-mode.md)** - ✅ Obsługa ciemnego i jasnego motywu
 - **[My Flashcards](./features/my-flashcards.md)** - Zarządzanie fiszkami (CRUD, wyszukiwanie, filtrowanie)
 - **[Flashcard Generation](./features/flashcard-generation.md)** - Generowanie fiszek AI przez OpenRouter (TODO)
 - **[Study Session](./features/study-session.md)** - Algorytm FSRS, sesje nauki (TODO)
@@ -101,16 +102,19 @@ Dokumentacja zakończonych refaktoringów:
 ### Według Poziomu Doświadczenia
 
 **Początkujący:**
+
 1. [README.md](../README.md) - Przegląd projektu
 2. [CLAUDE.md](../CLAUDE.md) - Szczegółowy overview
 3. [Development/Setup](./development/setup.md) - Konfiguracja środowiska
 
 **Średniozaawansowany:**
+
 1. [Architecture](./architecture/) - Wzorce architektoniczne
 2. [Features](./features/) - Implementacje funkcji
 3. [Development/Testing](./development/testing.md) - Strategia testowania
 
 **Zaawansowany:**
+
 1. [Deployment](./deployment/) - Wdrażanie i optymalizacja
 2. [API Reference](./api/) - Szczegóły API
 3. [Archive](./archive/) - Historyczne decyzje projektowe
@@ -155,14 +159,14 @@ Każdy dokument powinien zawierać:
 
 ## 📊 Status Dokumentacji
 
-| Kategoria | Plików | Status | Ostatnia aktualizacja |
-|-----------|--------|--------|----------------------|
-| Architecture | 3 | ✅ Kompletne | 2024-11 |
-| Features | 1 | ⚠️ W trakcie | 2024-11 |
-| Development | 1 | ⚠️ W trakcie | 2024-11 |
-| Deployment | 3 | ✅ Kompletne | 2024-11 |
-| API | 0 | ❌ TODO | - |
-| Archive | 6 | ✅ Zarchiwizowane | 2024-10 |
+| Kategoria    | Plików | Status            | Ostatnia aktualizacja |
+| ------------ | ------ | ----------------- | --------------------- |
+| Architecture | 3      | ✅ Kompletne      | 2024-11               |
+| Features     | 2      | ⚠️ W trakcie      | 2024-11               |
+| Development  | 1      | ⚠️ W trakcie      | 2024-11               |
+| Deployment   | 3      | ✅ Kompletne      | 2024-11               |
+| API          | 0      | ❌ TODO           | -                     |
+| Archive      | 6      | ✅ Zarchiwizowane | 2024-10               |
 
 ---
 
@@ -217,6 +221,7 @@ Każdy dokument powinien zawierać:
 
 ## 🔄 Historia Zmian
 
+- **2024-11-11**: Dokumentacja Dark Mode feature
 - **2024-11-07**: Reorganizacja dokumentacji, utworzenie struktury docs/
 - **2024-10**: Dokumentacja My Flashcards feature
 - **2024-10**: Dokumentacja deployment na Cloudflare
@@ -224,6 +229,6 @@ Każdy dokument powinien zawierać:
 
 ---
 
-**Ostatnia aktualizacja**: 2024-11-07
-**Wersja**: 2.0
+**Ostatnia aktualizacja**: 2024-11-11
+**Wersja**: 2.1
 **Status**: ✅ Aktywnie utrzymywana

@@ -119,16 +119,19 @@ Tworzy jedną lub więcej fiszek.
 ```
 
 **Szczegóły walidacji:**
+
 - **front**: string, wymagane, 1-200 znaków
 - **back**: string, wymagane, 1-500 znaków
 - **source**: enum ("ai-full", "ai-edited", "manual")
 - **generation_id**: number lub null (wymagane dla "ai-full" i "ai-edited", null dla "manual")
 
 **Odpowiedź sukcesu:**
+
 - Kod statusu: 201 (Created)
 - Zwraca tablicę utworzonych fiszek z przypisanymi ID
 
 **Kody błędów:**
+
 - 400: Nieprawidłowe dane wejściowe
 - 401: Brak autoryzacji
 - 500: Błąd serwera
@@ -150,6 +153,7 @@ Aktualizuje fiszkę.
 ```
 
 **Walidacja:**
+
 - ID fiszki musi należeć do zalogowanego użytkownika
 - Zachowywane są te same reguły walidacji co przy tworzeniu
 
@@ -166,6 +170,7 @@ Usuwa fiszkę.
 ```
 
 **Walidacja:**
+
 - ID fiszki musi należeć do zalogowanego użytkownika
 - Fiszka zostaje trwale usunięta z bazy danych
 
@@ -176,12 +181,14 @@ Usuwa fiszkę.
 Główny komponent zarządzający listą fiszek, tworzeniem, aktualizacjami i usuwaniem.
 
 **Funkcje:**
+
 - Pobiera fiszki podczas montowania
 - Obsługuje logikę wyszukiwania/filtrowania
 - Zarządza stanami ładowania i błędów
 - Integruje się z endpointami API
 
 **Wykorzystuje:**
+
 - Hook `useFlashcardManagement` do zarządzania stanem
 - Hook `useFlashcardSearch` do funkcji wyszukiwania
 
@@ -201,6 +208,7 @@ Wyświetla pojedynczą fiszkę z interaktywnymi funkcjami.
 ```
 
 **Funkcje:**
+
 - Animacja obracania po kliknięciu
 - Tryb edycji inline
 - Kopiowanie do schowka
@@ -220,6 +228,7 @@ Formularz do tworzenia nowych fiszek.
 ```
 
 **Funkcje:**
+
 - Przełączanie otwierania/zamykania formularza
 - Walidacja licznika znaków
 - Przycisk anulowania
@@ -237,6 +246,7 @@ Rozszerzono klasę `FlashcardService` o cztery metody:
 - **`delete(id: number, userId: string)`** - Usuwa fiszkę
 
 Wszystkie metody zawierają:
+
 - Prawidłową obsługę błędów z wyjątkami `DatabaseError`
 - Sprawdzanie autoryzacji użytkownika (zapewnienie dostępu tylko do własnych fiszek)
 - Bezpieczeństwo typów TypeScript
@@ -244,12 +254,14 @@ Wszystkie metody zawierają:
 ### Backend - Trasy API (`src/pages/api/flashcards.ts`)
 
 Wszystkie endpointy zawierają:
+
 - Sprawdzanie uwierzytelnienia przez middleware
 - Walidację schematu Zod
 - Kompleksową obsługę błędów
 - Odpowiedzi JSON z odpowiednimi kodami statusu HTTP
 
 **Przepływ danych dla POST /api/flashcards:**
+
 1. Klient wysyła żądanie POST z tablicą obiektów flashcards
 2. Warstwa API weryfikuje autoryzację użytkownika
 3. Dane są walidowane (długości pól, poprawność source, zgodność generation_id)
@@ -260,15 +272,18 @@ Wszystkie endpointy zawierają:
 ### Frontend - Niestandardowe hooki
 
 **Hook API (`useFlashcards`):**
+
 - Niskopoziomowa komunikacja z API
 - Zwraca: `{ fetchFlashcards, createFlashcard, updateFlashcard, deleteFlashcard, isLoading }`
 
 **Hook kompozytowy (`useFlashcardManagement`):**
+
 - Łączy `useFlashcards` z zarządzaniem stanem
 - Automatycznie ładuje fiszki podczas montowania
 - Zapewnia handlery: `{ flashcards, handleCreateFlashcard, handleUpdateFlashcard, handleDeleteFlashcard, refetch }`
 
 **Hook wyszukiwania (`useFlashcardSearch`):**
+
 - Filtrowanie po stronie klienta
 - Zwraca: `{ searchQuery, setSearchQuery, filteredFlashcards, searchStats }`
 
@@ -374,6 +389,7 @@ Użytkownik może:
 ### Lista kontrolna testowania ręcznego
 
 #### Operacja tworzenia
+
 - ✅ Tworzenie fiszki z prawidłowymi danymi
 - ✅ Walidacja limitów znaków (200 przód, 500 tył)
 - ✅ Odrzucanie pustej treści
@@ -381,6 +397,7 @@ Użytkownik może:
 - ✅ Komunikat potwierdzenia toast
 
 #### Operacja odczytu
+
 - ✅ Ładowanie fiszek podczas montowania strony
 - ✅ Wyświetlanie wszystkich fiszek użytkownika
 - ✅ Wyświetlanie szkieletowego loadera podczas pobierania
@@ -388,6 +405,7 @@ Użytkownik może:
 - ✅ Kliknięcie karty obraca między przednią a tylną stroną
 
 #### Operacja aktualizacji
+
 - ✅ Kliknięcie przycisku edycji włącza tryb edycji
 - ✅ Aktualizacja tekstu przedniej strony z walidacją
 - ✅ Aktualizacja tekstu tylnej strony z walidacją
@@ -396,12 +414,14 @@ Użytkownik może:
 - ✅ Licznik znaków wyświetlany podczas edycji
 
 #### Operacja usuwania
+
 - ✅ Kliknięcie przycisku usuwania
 - ✅ Fiszka usunięta natychmiast
 - ✅ Potwierdzenie toast
 - ✅ Brak możliwości cofnięcia (przyszłe usprawnienie)
 
 #### Wyszukiwanie/filtrowanie
+
 - ✅ Wpisywanie w pole wyszukiwania
 - ✅ Wyniki filtrowane w czasie rzeczywistym
 - ✅ Wyszukiwanie bez rozróżniania wielkości liter
@@ -409,12 +429,14 @@ Użytkownik może:
 - ✅ Wyświetlanie liczby przefiltrowanych
 
 #### Obsługa błędów
+
 - ✅ Elegancka obsługa błędów sieciowych
 - ✅ Przycisk ponawiania pojawia się przy błędzie
 - ✅ Znaczące komunikaty o błędach
 - ✅ Użytkownik pozostaje na stronie podczas błędu
 
 #### Uwierzytelnianie
+
 - ✅ Niezalogowany użytkownik przekierowany do logowania
 - ✅ Wygaśnięcie sesji obsługiwane prawidłowo
 - ✅ Dane użytkownika odpowiednio izolowane
@@ -430,25 +452,30 @@ Użytkownik może:
 ### Podstawowe operacje
 
 **Tworzenie fiszki:**
+
 1. Kliknij przycisk **"Utwórz nową fiszkę"**
 2. Wprowadź pytanie/podpowiedź w polu **Przód** (maks. 200 znaków)
 3. Wprowadź odpowiedź w polu **Tył** (maks. 500 znaków)
 4. Kliknij **"Utwórz fiszkę"**
 
 **Przeglądanie fiszek:**
+
 - Kliknij dowolną fiszkę, aby przełączać między przednią a tylną stroną
 - Najnowsze karty pojawiają się jako pierwsze
 
 **Edycja fiszki:**
+
 1. Kliknij przycisk **✏️ Edytuj**
 2. Zmodyfikuj treść
 3. Kliknij **"Zapisz"** lub **"Anuluj"**
 
 **Usuwanie fiszki:**
+
 1. Kliknij przycisk **🗑️ Usuń**
 2. Karta zostanie natychmiast usunięta
 
 **Wyszukiwanie:**
+
 1. Wpisz w polu wyszukiwania u góry
 2. Wyniki filtrowane w czasie rzeczywistym
 
@@ -515,18 +542,18 @@ Potencjalne ulepszenia dla przyszłych iteracji:
 
 ## Podsumowanie kluczowych funkcji
 
-| Funkcja                  | Status      | Uwagi                                          |
-| ------------------------ | ----------- | ---------------------------------------------- |
-| Przeglądanie fiszek      | ✅ Gotowe   | Sortowane od najnowszych                       |
-| Tworzenie fiszek         | ✅ Gotowe   | Ręczne tworzenie z walidacją                   |
-| Edycja fiszek            | ✅ Gotowe   | Edycja inline z licznikiem znaków na żywo      |
-| Usuwanie fiszek          | ✅ Gotowe   | Usuwanie jednym kliknięciem                    |
-| Wyszukiwanie/filtrowanie | ✅ Gotowe   | Wyszukiwanie w czasie rzeczywistym             |
-| Uwierzytelnianie         | ✅ Gotowe   | Wymuszane przez middleware                     |
-| Responsywny design       | ✅ Gotowe   | Mobile, tablet, desktop                        |
-| Obsługa błędów           | ✅ Gotowe   | Przyjazne dla użytkownika komunikaty           |
-| Stany ładowania          | ✅ Gotowe   | Szkieletowe loadery                            |
-| Powiadomienia toast      | ✅ Gotowe   | Wszystkie akcje potwierdzone                   |
+| Funkcja                  | Status    | Uwagi                                     |
+| ------------------------ | --------- | ----------------------------------------- |
+| Przeglądanie fiszek      | ✅ Gotowe | Sortowane od najnowszych                  |
+| Tworzenie fiszek         | ✅ Gotowe | Ręczne tworzenie z walidacją              |
+| Edycja fiszek            | ✅ Gotowe | Edycja inline z licznikiem znaków na żywo |
+| Usuwanie fiszek          | ✅ Gotowe | Usuwanie jednym kliknięciem               |
+| Wyszukiwanie/filtrowanie | ✅ Gotowe | Wyszukiwanie w czasie rzeczywistym        |
+| Uwierzytelnianie         | ✅ Gotowe | Wymuszane przez middleware                |
+| Responsywny design       | ✅ Gotowe | Mobile, tablet, desktop                   |
+| Obsługa błędów           | ✅ Gotowe | Przyjazne dla użytkownika komunikaty      |
+| Stany ładowania          | ✅ Gotowe | Szkieletowe loadery                       |
+| Powiadomienia toast      | ✅ Gotowe | Wszystkie akcje potwierdzone              |
 
 ## Status wdrożenia
 

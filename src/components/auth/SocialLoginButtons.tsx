@@ -113,7 +113,7 @@ export function SocialLoginButtons() {
               key={provider}
               type="button"
               variant="outline"
-              className="w-full"
+              className="w-full bg-background border-border hover:bg-accent"
               onClick={() => startOAuthFlow(provider)}
               disabled={disableAll}
               data-testid={config.testId}

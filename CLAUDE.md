@@ -4,16 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-10xCards is a web application for automatically generating flashcards using LLMs. Users can generate flashcards from text input via AI (OpenRouter.ai API) or create them manually. The project is in MVP stage, targeting 100 active users within the first three months.
+10xCards is a web application for automatically generating flashcards using LLMs. Users can generate flashcards from text input via AI (OpenRouter.ai API) or create them manually. The application features a complete dark/light theme system with automatic system preference detection. The project is in MVP stage, targeting 100 active users within the first three months.
 
 **Tech Stack:**
-- Astro 5 (SSR mode with Node adapter)
+
+- Astro 5 (SSR mode with Cloudflare adapter)
 - React 19 (for interactive components only)
 - TypeScript 5
 - Tailwind CSS 4 + Shadcn/ui
 - Supabase (PostgreSQL + Auth)
 - OpenRouter.ai API (for AI flashcard generation)
 - ts-fsrs (FSRS spaced repetition algorithm)
+- Custom dark/light theme system
 - Vitest + Playwright for testing
 
 **Node Version:** 22.14.0 (specified in `.nvmrc`)
@@ -21,6 +23,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ### Running the Application
+
 ```bash
 npm run dev              # Start dev server (http://localhost:3000)
 npm run dev:e2e          # Start dev server in test mode
@@ -29,6 +32,7 @@ npm run preview          # Preview production build
 ```
 
 ### Code Quality
+
 ```bash
 npm run lint             # Run ESLint
 npm run lint:fix         # Fix ESLint issues
@@ -38,6 +42,7 @@ npm run format           # Format with Prettier
 ### Testing
 
 **Unit/Integration Tests (Vitest):**
+
 ```bash
 npm run test             # Run tests in watch mode
 npm run test:run         # Run all tests once
@@ -46,6 +51,7 @@ npm run test:coverage    # Generate coverage report
 ```
 
 **E2E Tests (Playwright):**
+
 ```bash
 npm run test:e2e         # Run E2E tests (requires dev server running separately)
 npm run test:e2e:ui      # Playwright UI mode
@@ -58,6 +64,7 @@ npm run test:all         # Run both unit and E2E tests
 **Important:** E2E tests require the dev server to be running separately with `npm run dev:e2e`, and use `.env.test` for configuration.
 
 ### Database (Supabase)
+
 ```bash
 npm run supabase:link    # Link to Supabase project
 npm run supabase:push    # Push migrations
@@ -66,6 +73,7 @@ npm run supabase:status  # Check migration status
 ```
 
 ### Environment Validation
+
 ```bash
 npm run check:env        # Validate dev environment variables
 npm run check:env:test   # Validate test environment variables
@@ -105,22 +113,26 @@ src/
 ### Authentication Architecture
 
 **Security Model:**
+
 - JWT-based authentication via Supabase Auth
 - Centralized middleware-based route protection (runs on every request)
 - HTTP-only, secure cookies for session storage
 - Whitelisting approach: all routes protected by default unless in PUBLIC_PATHS
 
 **Key Files:**
+
 - `src/middleware/index.ts` - Route protection middleware with ROUTE_CONFIG
 - `src/db/supabase.client.ts` - Supabase client factory (server + client instances)
 - `src/pages/api/auth/*.ts` - Auth API endpoints (login, register, logout, reset-password)
 
 **Adding Protected Routes:**
+
 1. Create page/endpoint as normal
 2. Access user via `Astro.locals.user` (set by middleware)
 3. Middleware automatically protects unless path is in ROUTE_CONFIG.public
 
 **Cookie Configuration:**
+
 - Cookies are configured in `src/db/supabase.client.ts` with `cookieOptions`
 - Security settings automatically adjust based on environment:
   - Production (`import.meta.env.PROD`): `secure: true` (HTTPS only)
@@ -129,6 +141,7 @@ src/
 ### API Design Patterns
 
 **Astro API Routes:**
+
 - Use uppercase HTTP method exports: `export const POST`, `export const GET`
 - Add `export const prerender = false` for dynamic routes
 - Validate input with Zod schemas from `src/lib/validations/`
@@ -137,6 +150,7 @@ src/
 - Access authenticated user via `Astro.locals.user`
 
 **Services Pattern:**
+
 - Services in `src/lib/` handle business logic
 - Available services:
   - `FlashcardService` - CRUD operations for flashcards
@@ -150,11 +164,13 @@ src/
 ### Data Layer
 
 **Type System:**
+
 - `src/db/database.types.ts` - Auto-generated Supabase types (Database schema)
 - `src/types.ts` - Application DTOs and domain models
 - Type aliases map database types to domain entities (e.g., `Flashcard`, `Generation`)
 
 **Key Entities:**
+
 - `Flashcard` - User flashcards (front, back, source, generation_id)
 - `Generation` - AI generation requests
 - `GenerationErrorLog` - Error tracking for failed generations
@@ -163,12 +179,14 @@ src/
 ### Frontend Patterns
 
 **Astro Components (.astro):**
+
 - Use for static content and layouts
 - Leverage View Transitions API for smooth navigation
 - Use `Astro.cookies` for server-side cookie management
 - Access env vars via `import.meta.env`
 
 **React Components (.tsx):**
+
 - Use ONLY for interactive UI elements
 - Never use "use client" directive (Next.js-specific, not needed in Astro)
 - Extract logic to custom hooks in `src/hooks/` (NOT `src/components/hooks`)
@@ -176,12 +194,14 @@ src/
 - Use useCallback/useMemo for optimization
 
 **Styling:**
+
 - Tailwind CSS 4 with @layer directive
 - Use arbitrary values with brackets for one-offs: `w-[123px]`
 - Implement dark mode with `dark:` variant
 - Use responsive variants: `sm:`, `md:`, `lg:`
 
 **Accessibility:**
+
 - Use ARIA landmarks for page regions
 - Implement `aria-live` for dynamic content
 - Use `aria-label`/`aria-labelledby` for non-visible labels
@@ -192,6 +212,7 @@ src/
 The project follows a two-tier hook architecture:
 
 **API Hooks** (`src/hooks/api/`):
+
 - Low-level hooks for direct API communication
 - Handle HTTP requests, loading states, and error handling
 - Return raw data and status information
@@ -202,6 +223,7 @@ The project follows a two-tier hook architecture:
   - `useStudySession` - Study session management with FSRS spaced repetition
 
 **Composite Hooks** (`src/hooks/`):
+
 - High-level hooks that combine API hooks with state management
 - Provide business logic and UI-ready state
 - Handle side effects (e.g., auto-loading data on mount)
@@ -211,14 +233,16 @@ The project follows a two-tier hook architecture:
   - `useFlashcardSearch` - Client-side search and filtering of flashcards (filters by front/back content, provides search stats)
 
 **Usage Pattern:**
+
 - Use **API hooks** when you need fine-grained control over API calls and state
 - Use **composite hooks** for common UI patterns and automatic state management
 - Import hooks from `@/hooks` (barrel export from `index.ts`)
 
 **Example:**
+
 ```typescript
 // Using composite hook (recommended for most cases)
-import { useFlashcardManagement } from '@/hooks';
+import { useFlashcardManagement } from "@/hooks";
 
 function MyFlashcardsPage() {
   const { flashcards, isLoading, handleCreateFlashcard } = useFlashcardManagement();
@@ -226,7 +250,7 @@ function MyFlashcardsPage() {
 }
 
 // Using API hook (for custom control)
-import { useFlashcards } from '@/hooks/api';
+import { useFlashcards } from "@/hooks/api";
 
 function CustomFlashcardsComponent() {
   const { fetchFlashcards, isLoading } = useFlashcards();
@@ -237,6 +261,7 @@ function CustomFlashcardsComponent() {
 ## Coding Standards
 
 ### Error Handling
+
 - Handle errors and edge cases at the beginning of functions
 - Use early returns to avoid deep nesting
 - Place happy path last for readability
@@ -245,6 +270,7 @@ function CustomFlashcardsComponent() {
 - Implement proper error logging with user-friendly messages
 
 ### Path Aliasing
+
 - Use `@/*` imports for src directory: `import { foo } from '@/lib/utils'`
 - Configured in `tsconfig.json` and `vitest.config.ts`
 
@@ -253,12 +279,14 @@ function CustomFlashcardsComponent() {
 ### Unit Tests (Vitest)
 
 **Configuration:**
+
 - Test files: `**/*.{test,spec}.{ts,tsx}`
 - Setup file: `src/tests/setup.ts`
 - Use jsdom environment for React component tests
 - Test utilities: `src/tests/test-utils.tsx`
 
 **Commands:**
+
 ```bash
 npm run test             # Run in watch mode
 npm run test:run         # Run once
@@ -271,6 +299,7 @@ npm run test:coverage    # Generate coverage report
 **Prerequisites:**
 
 1. **`.env.test` file is required** with the following variables:
+
    ```env
    PUBLIC_SUPABASE_URL=https://your-project.supabase.co
    PUBLIC_SUPABASE_KEY=your-anon-key
@@ -290,9 +319,11 @@ npm run test:coverage    # Generate coverage report
 **IMPORTANT:** E2E tests require TWO separate terminals:
 
 1. **Terminal 1 - Start dev server:**
+
    ```bash
    npm run dev:e2e
    ```
+
    Wait for server to start at `http://localhost:3000`
 
 2. **Terminal 2 - Run tests:**
@@ -324,15 +355,18 @@ Tests run in dependency order:
 5. **cleanup** - Clears authentication state and database (must run last)
 
 **Timeouts:**
+
 - Project-specific timeouts configured in `playwright.config.ts` (e.g., 180s for AI generation)
 
 **Troubleshooting:**
 
 **Issue: `ERR_CONNECTION_REFUSED`**
+
 - **Cause:** Dev server not running
 - **Fix:** Run `npm run dev:e2e` in separate terminal
 
 **Issue: "Invalid login credentials"**
+
 - **Cause:** Test user doesn't exist or credentials mismatch
 - **Fix:**
   1. Verify user exists in database
@@ -340,6 +374,7 @@ Tests run in dependency order:
   3. Create test user: `npm run test:e2e:create-user`
 
 **Issue: Test timeout**
+
 - **Cause:** API delays (OpenRouter, Supabase) or slow network
 - **Fix:**
   1. Check OpenRouter API status (for generation tests)
@@ -347,6 +382,7 @@ Tests run in dependency order:
   3. Verify Supabase connection
 
 **Important Notes:**
+
 - Always run dev server before tests
 - Never commit `.env.test` with real credentials
 - Auth state saved in `.auth/user.json` is used by most tests
@@ -357,15 +393,18 @@ Tests run in dependency order:
 Required environment variables (see `.env.example`):
 
 **Supabase (accessible everywhere: client-side and server-side):**
+
 - `PUBLIC_SUPABASE_URL` - Supabase project URL
 - `PUBLIC_SUPABASE_KEY` - Supabase anon key
 
 **Other:**
+
 - `OPENROUTER_API_KEY` - OpenRouter.ai API key
 
 **Note:** We use `PUBLIC_` prefix for Supabase variables to make them accessible in both browser and server contexts. In Astro, `PUBLIC_` variables are embedded in client-side bundles, so only use anon/public keys here (never service role keys).
 
 For E2E tests (`.env.test`):
+
 - `BASE_URL` - Test server URL (default: http://localhost:3000)
 - `E2E_USERNAME_ID` - Test user UUID
 - `E2E_USERNAME` - Test user email
@@ -374,6 +413,7 @@ For E2E tests (`.env.test`):
 ## Database Migrations
 
 Supabase migrations in `supabase/migrations/`:
+
 - Migrations are timestamped SQL files
 - Use `npm run supabase:push` to apply migrations
 - Use `npm run supabase:reset` to reset and re-run all migrations
@@ -384,6 +424,7 @@ Supabase migrations in `supabase/migrations/`:
 The application is deployed to Cloudflare Pages (Workers runtime), which has specific limitations:
 
 **Runtime Restrictions:**
+
 - NO Node.js built-in modules (`crypto`, `fs`, `path`, `os`, etc.)
 - Use Web Crypto API instead of Node.js crypto
 - Use `crypto.subtle.digest()` instead of `crypto.createHash()`
@@ -391,23 +432,25 @@ The application is deployed to Cloudflare Pages (Workers runtime), which has spe
 - Access runtime environment variables via `Astro.locals.runtime.env`
 
 **Key Differences from Node.js:**
+
 - Web standard APIs only (fetch, crypto.subtle, streams, etc.)
 - No filesystem access
 - No process.env (use runtime.env instead)
 - Limited CPU time per request
 
 **Example - Hashing:**
+
 ```typescript
 // ❌ DON'T - Node.js crypto (not available in Workers)
-import crypto from 'crypto';
-const hash = crypto.createHash('md5').update(data).digest('hex');
+import crypto from "crypto";
+const hash = crypto.createHash("md5").update(data).digest("hex");
 
 // ✅ DO - Web Crypto API
 const encoder = new TextEncoder();
 const data = encoder.encode(text);
-const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+const hashBuffer = await crypto.subtle.digest("SHA-256", data);
 const hashArray = Array.from(new Uint8Array(hashBuffer));
-const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+const hash = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 ```
 
 ## Important Constraints

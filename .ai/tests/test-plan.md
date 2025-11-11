@@ -515,24 +515,28 @@ Regularne raportowanie:
 ### A.1. Testy E2E - zaimplementowane
 
 ✅ **Login tests** (`e2e/auth/login.spec.ts`):
+
 - 11 testów zaimplementowanych
 - Wszystkie przechodzą stabilnie w trybie serial
 - Page Object Model: `e2e/pages/LoginPage.ts`
 - Scenariusze: layout, form interactions, error handling, navigation
 
 ✅ **Login with helpers tests** (`e2e/auth/login-with-helpers.spec.ts`):
+
 - 4 testy zaimplementowanych
 - Demonstracja użycia test helpers i Page Object Model
 - Test users w `e2e/helpers/auth.helpers.ts`
 - Wszystkie testy przechodzą
 
 ✅ **Example tests** (`e2e/example.spec.ts`):
+
 - Podstawowe testy dla homepage i auth flow
 - Visual regression testing example
 
 ### A.2. Konfiguracja testowa
 
 ✅ **Playwright config** (`playwright.config.ts`):
+
 - Configured dla Chromium (single browser strategy)
 - Workers: 3 lokalnie, 1 w CI
 - Retry: 0 lokalnie, 2 w CI
@@ -540,11 +544,13 @@ Regularne raportowanie:
 - `.env.test` dla test credentials
 
 ✅ **Test helpers**:
+
 - `auth.helpers.ts` - funkcje pomocnicze dla autentykacji
 - `TEST_USERS` - różne scenariusze użytkowników
 - `loginAsUser()`, `clearAuthData()`, `verifyAuthRequired()`
 
 ✅ **Page Object Models**:
+
 - `LoginPage.ts` - z metodami `login()`, `fillEmail()`, `fillPassword()`
 - `AuthPage.ts` - bazowa klasa dla stron auth
 - Built-in verification i timeouty
@@ -552,35 +558,42 @@ Regularne raportowanie:
 ### A.3. Do zrobienia (TODO)
 
 ❌ **Testy dla Study Session**:
+
 - Brak testów E2E dla `/study-session` page
 - Brak testów dla `StudySessionView` komponentu
 - Brak testów API dla `/api/study-session` i `/api/study-stats`
 
 ❌ **Testy jednostkowe**:
+
 - Brak testów dla `StudySessionService`
 - Brak testów dla integracji z `ts-fsrs`
 - Brak testów dla `openrouter.service.ts`
 - Brak testów dla komponentów React
 
 ❌ **Testy dla Logout**:
+
 - Brak testów E2E dla flow wylogowania
 - Brak testów dla `/api/auth/logout` endpoint
 
 ❌ **Testy dla My Flashcards**:
+
 - Brak testów E2E dla `/my-flashcards` page
 - Brak testów dla `MyFlashcardsView` komponentu
 
 ❌ **Visual regression testing**:
+
 - Brak konfiguracji Storybook
 - Brak Chromatic integration
 
 ❌ **Testy wydajnościowe**:
+
 - Brak Lighthouse CI
 - Brak testów obciążeniowych
 
 ### A.4. Znane problemy
 
 ⚠️ **Flaky test**: "should login with valid test user credentials"
+
 - Czasami nie przechodzi przy równoległym uruchomieniu z innymi plikami testowymi
 - Przyczyna: wysokie obciążenie serwera dev przy 3+ workerach
 - Workaround: test przechodzi zawsze gdy uruchamiany sam
@@ -588,6 +601,7 @@ Regularne raportowanie:
 - Status: AKCEPTOWALNE dla lokalnego developmentu
 
 ⚠️ **React state synchronization**
+
 - Problem z race condition między Playwright fill() a React onChange
 - Rozwiązane poprzez timeouty i verification steps w Page Object Model
 - Może wymagać zwiększenia timeoutów na wolniejszych maszynach

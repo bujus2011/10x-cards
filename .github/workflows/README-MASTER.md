@@ -22,8 +22,8 @@ on:
 
 ```yaml
 permissions:
-  contents: read      # Odczyt zawartości repozytorium
-  deployments: write  # Zapis deployment status
+  contents: read # Odczyt zawartości repozytorium
+  deployments: write # Zapis deployment status
 ```
 
 ## 🔄 Jobs Pipeline
@@ -64,7 +64,7 @@ lint → unit-test → deploy (build + deploy)
   - Wykorzystanie zmiennych środowiskowych z secrets
   - Wdrożenie na Cloudflare Pages
   - Integracja z GitHub Deployments
-- **Polecenia:** 
+- **Polecenia:**
   - `npm ci` - instalacja zależności
   - `npm run build` - budowanie projektu
   - `pages deploy dist --project-name=10x-cards` - wdrożenie przez Wrangler
@@ -77,19 +77,19 @@ Workflow wymaga następujących sekretów w GitHub (Settings → Secrets and var
 
 ### Sekrety Aplikacji
 
-| Sekret | Opis | Wymagany dla |
-|--------|------|--------------|
-| `PUBLIC_SUPABASE_URL` | URL projektu Supabase | Build |
-| `PUBLIC_SUPABASE_KEY` | Klucz API Supabase (anon key) | Build |
-| `OPENROUTER_API_KEY` | Klucz API OpenRouter dla AI | Build |
+| Sekret                | Opis                          | Wymagany dla |
+| --------------------- | ----------------------------- | ------------ |
+| `PUBLIC_SUPABASE_URL` | URL projektu Supabase         | Build        |
+| `PUBLIC_SUPABASE_KEY` | Klucz API Supabase (anon key) | Build        |
+| `OPENROUTER_API_KEY`  | Klucz API OpenRouter dla AI   | Build        |
 
 ### Sekrety Cloudflare
 
-| Sekret | Opis | Wymagany dla | Jak uzyskać |
-|--------|------|--------------|-------------|
-| `CLOUDFLARE_API_TOKEN` | Token API z uprawnieniami do Cloudflare Pages | Deploy | [Instrukcje](#jak-uzyskać-cloudflare-api-token) |
-| `CLOUDFLARE_ACCOUNT_ID` | ID konta Cloudflare | Deploy | [Instrukcje](#jak-uzyskać-cloudflare-account-id) |
-| ~~`CLOUDFLARE_PROJECT_NAME`~~ | ~~Nazwa projektu~~ | ~~Deploy~~ | **Nie jest potrzebny** - hardcoded w workflow jako `10x-cards` |
+| Sekret                        | Opis                                          | Wymagany dla | Jak uzyskać                                                    |
+| ----------------------------- | --------------------------------------------- | ------------ | -------------------------------------------------------------- |
+| `CLOUDFLARE_API_TOKEN`        | Token API z uprawnieniami do Cloudflare Pages | Deploy       | [Instrukcje](#jak-uzyskać-cloudflare-api-token)                |
+| `CLOUDFLARE_ACCOUNT_ID`       | ID konta Cloudflare                           | Deploy       | [Instrukcje](#jak-uzyskać-cloudflare-account-id)               |
+| ~~`CLOUDFLARE_PROJECT_NAME`~~ | ~~Nazwa projektu~~                            | ~~Deploy~~   | **Nie jest potrzebny** - hardcoded w workflow jako `10x-cards` |
 
 ### Jak Uzyskać Cloudflare API Token
 
@@ -148,11 +148,11 @@ Workflow używa środowiska GitHub Environment:
 
 Workflow używa najnowszych wersji akcji (zweryfikowanych w listopadzie 2024):
 
-| Action | Wersja | Najnowsza dostępna | Opis |
-|--------|--------|-------------------|------|
-| `actions/checkout` | v5 | v5.0.0 | Checkout kodu z repozytorium |
-| `actions/setup-node` | v6 | v6.0.0 | Instalacja Node.js |
-| `cloudflare/wrangler-action` | v3 | v3.14.1 | Deployment na Cloudflare Pages przez Wrangler CLI |
+| Action                       | Wersja | Najnowsza dostępna | Opis                                              |
+| ---------------------------- | ------ | ------------------ | ------------------------------------------------- |
+| `actions/checkout`           | v5     | v5.0.0             | Checkout kodu z repozytorium                      |
+| `actions/setup-node`         | v6     | v6.0.0             | Instalacja Node.js                                |
+| `cloudflare/wrangler-action` | v3     | v3.14.1            | Deployment na Cloudflare Pages przez Wrangler CLI |
 
 **Uwaga:** Zgodnie z best practices, używamy tylko MAJOR version number (np. `v5`, `v6`, `v3`) aby automatycznie otrzymywać aktualizacje patch i minor.
 
@@ -195,22 +195,23 @@ Szczegółowe logi są dostępne w zakładce **Actions** → wybrany workflow ru
 
 ## 🆚 Różnice między master.yml a pull-request.yml
 
-| Aspekt | master.yml | pull-request.yml |
-|--------|------------|------------------|
-| **Trigger** | Workflow dispatch (manual) | push i PR do master |
-| **E2E Tests** | ❌ Nie wykonuje | ✅ Wykonuje |
-| **Build** | ✅ Tak (w job deploy) | ❌ Nie |
-| **Deploy** | ✅ Cloudflare Pages | ❌ Nie |
-| **Środowisko** | production | integration |
-| **Komentarze PR** | ❌ Nie | ✅ Tak |
-| **Jobs** | 3 (lint, test, deploy) | 4 (lint, test, e2e, summary) |
-| **Artefakty** | ❌ Nie | ✅ Coverage i reports |
+| Aspekt            | master.yml                 | pull-request.yml             |
+| ----------------- | -------------------------- | ---------------------------- |
+| **Trigger**       | Workflow dispatch (manual) | push i PR do master          |
+| **E2E Tests**     | ❌ Nie wykonuje            | ✅ Wykonuje                  |
+| **Build**         | ✅ Tak (w job deploy)      | ❌ Nie                       |
+| **Deploy**        | ✅ Cloudflare Pages        | ❌ Nie                       |
+| **Środowisko**    | production                 | integration                  |
+| **Komentarze PR** | ❌ Nie                     | ✅ Tak                       |
+| **Jobs**          | 3 (lint, test, deploy)     | 4 (lint, test, e2e, summary) |
+| **Artefakty**     | ❌ Nie                     | ✅ Coverage i reports        |
 
 ## 🚨 Troubleshooting
 
 ### Problem: Build kończy się błędem "Missing environment variables"
 
 **Rozwiązanie:**
+
 1. Sprawdź czy wszystkie wymagane sekrety są dodane w środowisku `production`
 2. Upewnij się, że nazwy sekretów są identyczne jak w workflow
 3. Zweryfikuj poprawność wartości sekretów
@@ -218,6 +219,7 @@ Szczegółowe logi są dostępne w zakładce **Actions** → wybrany workflow ru
 ### Problem: Deployment kończy się błędem "Invalid API token"
 
 **Rozwiązanie:**
+
 1. Wygeneruj nowy Cloudflare API Token z odpowiednimi uprawnieniami
 2. Upewnij się, że token ma uprawnienia "Cloudflare Pages - Edit"
 3. Zaktualizuj sekret `CLOUDFLARE_API_TOKEN` w GitHub
@@ -225,6 +227,7 @@ Szczegółowe logi są dostępne w zakładce **Actions** → wybrany workflow ru
 ### Problem: "Project not found" podczas deploymentu
 
 **Rozwiązanie:**
+
 1. Sprawdź czy projekt istnieje w Cloudflare Pages
 2. Zweryfikuj poprawność `CLOUDFLARE_PROJECT_NAME` (bez URL, tylko nazwa)
 3. Upewnij się, że `CLOUDFLARE_ACCOUNT_ID` jest poprawny
@@ -232,6 +235,7 @@ Szczegółowe logi są dostępne w zakładce **Actions** → wybrany workflow ru
 ### Problem: Build przechodzi, ale deployment się nie uruchamia
 
 **Rozwiązanie:**
+
 1. Sprawdź czy środowisko `production` jest poprawnie skonfigurowane
 2. Zweryfikuj czy nie ma aktywnych protection rules blokujących deployment
 3. Sprawdź logi job `build` - artefakty muszą być utworzone
@@ -242,4 +246,3 @@ Szczegółowe logi są dostępne w zakładce **Actions** → wybrany workflow ru
 - [Astro Cloudflare Adapter](https://docs.astro.build/en/guides/integrations-guide/cloudflare/)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Cloudflare Pages GitHub Action](https://github.com/marketplace/actions/deploy-to-cloudflare-pages)
-

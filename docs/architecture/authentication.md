@@ -673,27 +673,29 @@ UŻYTKOWNIK                              APLIKACJA
 ### Przepływ Logowania Społecznościowego (GitHub / Google) - ✨ NOWY
 
 ```
-UŻYTKOWNIK                              APLIKACJA
-   │                                        │
-   ├─ Klika "Continue with GitHub/Google" → │
-   │                                        │
-   │                      Supabase JS: signInWithOAuth()
-   │                         redirectTo=/auth/callback
-   │                                        │
-   │───────────── Przekierowanie do providera (OAuth) ───────▶ GITHUB/GOOGLE
-   │                                        │
-   │ ◀─────────────── Po poprawnej autoryzacji ──────────────┘
-   │                                        │
-   │            GET /auth/callback?code=...&redirectTo=/generate
-   │                                        │
-   │                                  Supabase
-   │                         exchangeCodeForSession(code)
-   │                        ↳ ustawia cookie sb-auth-token
-   │                                        │
-   │<──── Redirect 302 na /generate (lub inną trasę) ────────┤
-   │                                        │
-   │<──── Middleware waliduje sesję i ustawia locals.user ──┤
-   │                                        │
+
+UŻYTKOWNIK APLIKACJA
+│ │
+├─ Klika "Continue with GitHub/Google" → │
+│ │
+│ Supabase JS: signInWithOAuth()
+│ redirectTo=/auth/callback
+│ │
+│───────────── Przekierowanie do providera (OAuth) ───────▶ GITHUB/GOOGLE
+│ │
+│ ◀─────────────── Po poprawnej autoryzacji ──────────────┘
+│ │
+│ GET /auth/callback?code=...&redirectTo=/generate
+│ │
+│ Supabase
+│ exchangeCodeForSession(code)
+│ ↳ ustawia cookie sb-auth-token
+│ │
+│<──── Redirect 302 na /generate (lub inną trasę) ────────┤
+│ │
+│<──── Middleware waliduje sesję i ustawia locals.user ──┤
+│ │
+
 ```
 
 - W przypadku błędu (`error_description` od providera) `/auth/callback` przekierowuje użytkownika z powrotem na ekran logowania/rejestracji z czytelnym komunikatem (`authError`, `message`)
@@ -1022,10 +1024,11 @@ PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 PUBLIC_SUPABASE_KEY=your-anon-key
 ```
 
-**Dlaczego PUBLIC_?**
+**Dlaczego PUBLIC\_?**
+
 - Astro wymaga prefiksu `PUBLIC_` dla zmiennych dostępnych w przeglądarce
 - OAuth Social Login (GitHub, Google) działa po stronie klienta i wymaga tych zmiennych
-- Bez PUBLIC_ zmiennych OAuth wyrzuci błąd: "Supabase URL and Key are required"
+- Bez PUBLIC\_ zmiennych OAuth wyrzuci błąd: "Supabase URL and Key are required"
 
 ### Dokumentacja w `.env.example`
 
@@ -1089,7 +1092,8 @@ PUBLIC_SUPABASE_KEY=your_supabase_anon_key
 
 **Przyczyny i Rozwiązania:**
 
-1. **Brak zmiennych PUBLIC_ w `.env`**
+1. **Brak zmiennych PUBLIC\_ w `.env`**
+
    ```env
    # Dodaj do .env:
    PUBLIC_SUPABASE_URL=https://your-project.supabase.co
@@ -1097,24 +1101,29 @@ PUBLIC_SUPABASE_KEY=your_supabase_anon_key
    ```
 
 2. **Nieprawidłowy Redirect URL w Supabase Dashboard**
+
    - Przejdź do: Authentication → URL Configuration
    - Dodaj: `http://localhost:3000/auth/callback`
    - Dodaj: `https://your-production-domain.com/auth/callback`
 
 3. **OAuth Providers nie są włączone w Supabase**
+
    - Przejdź do: Authentication → Providers
    - Włącz GitHub i/lub Google
    - Dodaj Client ID i Client Secret
 
 4. **Callback URL nie jest skonfigurowany u providera (GitHub/Google)**
+
    - GitHub: https://github.com/settings/developers
      - Authorization callback URL: `https://YOUR_PROJECT_ID.supabase.co/auth/v1/callback`
    - Google Cloud Console:
      - Authorized redirect URIs: `https://YOUR_PROJECT_ID.supabase.co/auth/v1/callback`
 
 5. **Port aplikacji się zmienia (3000 → 3001 → 3002)**
+
    - Problem: Inne procesy zajmują port 3000
    - Rozwiązanie: Zamknij inne instancje dev servera
+
    ```bash
    # Windows
    netstat -ano | findstr :3000

@@ -90,6 +90,7 @@ uses: cloudflare/wrangler-action@v3
 - [x] Zaktualizowano `actions/download-artifact` z v5 do v6
 
 **Polecenia wykonane:**
+
 ```bash
 # actions/checkout
 curl -s https://api.github.com/repos/actions/checkout/releases/latest
@@ -108,6 +109,7 @@ curl -s https://api.github.com/repos/cloudflare/wrangler-action/releases/latest
 - [x] Zapewnia synchronizację z lockfile
 
 **Lokalizacje:**
+
 - Job `lint` - linia 27
 - Job `unit-test` - linia 49
 - Job `build` - linia 73
@@ -119,6 +121,7 @@ curl -s https://api.github.com/repos/cloudflare/wrangler-action/releases/latest
 - [x] Wersja Node: 22.14.0
 
 **Konfiguracja:**
+
 ```yaml
 - name: Setup Node.js
   uses: actions/setup-node@v6
@@ -140,6 +143,7 @@ curl -s https://api.github.com/repos/cloudflare/wrangler-action/releases/latest
 ### 1. Aktualizacja akcji Cloudflare
 
 **Przed:**
+
 ```yaml
 - name: Publish to Cloudflare Pages
   uses: cloudflare/pages-action@v1
@@ -152,6 +156,7 @@ curl -s https://api.github.com/repos/cloudflare/wrangler-action/releases/latest
 ```
 
 **Po:**
+
 ```yaml
 - name: Deploy to Cloudflare Pages
   uses: cloudflare/wrangler-action@v3
@@ -161,7 +166,8 @@ curl -s https://api.github.com/repos/cloudflare/wrangler-action/releases/latest
     command: pages deploy dist --project-name=10x-cards
 ```
 
-**Uzasadnienie:** 
+**Uzasadnienie:**
+
 - `wrangler-action@v3` (v3.14.1) jest nowszą, bardziej funkcjonalną akcją
 - Pełne wsparcie dla Wrangler CLI i wszystkich jego komend
 - Lepsza kompatybilność z nowymi funkcjami Cloudflare
@@ -172,13 +178,16 @@ curl -s https://api.github.com/repos/cloudflare/wrangler-action/releases/latest
 **Zmiana:** Połączono job `build` i `deploy` w jeden job
 
 **Przed:**
+
 - Job `build` - buduje projekt i tworzy artefakt `dist`
 - Job `deploy` - pobiera artefakt i wdraża na Cloudflare
 
 **Po:**
+
 - Job `deploy` - buduje projekt i od razu wdraża na Cloudflare (bez artefaktów)
 
 **Korzyści:**
+
 - Szybsze wykonanie (brak uploadowania/downloadowania artefaktów)
 - Prostsze zarządzanie
 - Mniej kroków = mniej potencjalnych błędów
@@ -226,6 +235,7 @@ Te ostrzeżenia znikną po skonfigurowaniu sekretów w środowisku `production` 
 ### Opcjonalne
 
 - [ ] Rozważyć dodanie automatycznego triggera na push do master:
+
   ```yaml
   on:
     push:
@@ -263,4 +273,3 @@ Te ostrzeżenia znikną po skonfigurowaniu sekretów w środowisku `production` 
 **Zweryfikował:** AI Assistant  
 **Narzędzie:** GitHub API + curl  
 **Zgodność:** `.cursor/rules/github-action.mdc` ✅
-

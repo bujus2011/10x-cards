@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { toast } from "sonner";
 
 interface NavbarProps {
@@ -58,6 +59,7 @@ export function Navbar({ user }: NavbarProps) {
         </div>
 
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <span className="text-sm text-muted-foreground">{user.email}</span>
           <Button variant="outline" onClick={handleLogout}>
             Logout
