@@ -157,8 +157,8 @@ Aplikacja jest wdrażana automatycznie na Cloudflare Pages przy każdym pushu do
 Skonfiguruj następujące sekrety w środowisku `production`:
 
 **Aplikacja:**
-- `SUPABASE_URL` - URL projektu Supabase
-- `SUPABASE_KEY` - Supabase anon key
+- `PUBLIC_SUPABASE_URL` - URL projektu Supabase
+- `PUBLIC_SUPABASE_KEY` - Supabase anon key
 - `OPENROUTER_API_KEY` - OpenRouter API key
 
 **Cloudflare:**
@@ -176,6 +176,7 @@ Projekt ma na celu uproszczenie tworzenia fiszek poprzez:
 - Automatyczne generowanie fiszek przy użyciu AI na podstawie tekstu dostarczonego przez użytkownika.
 - Umożliwienie manualnego tworzenia, edycji i zarządzania fiszkami.
 - Obsługę rejestracji konta użytkownika, logowania i bezpiecznej autentykacji przy użyciu Supabase.
+- Logowanie społecznościowe przez GitHub i Google obsługiwane przez Supabase OAuth.
 - Integrację z algorytmem powtórek rozłożonych w czasie w celu optymalizacji nauki.
 - Zbieranie statystyk użytkowania w celu oceny efektywności i jakości generowanych fiszek.
 

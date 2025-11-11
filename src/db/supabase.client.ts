@@ -1,51 +1,58 @@
 import type { AstroCookies } from "astro";
-import { createClient } from "@supabase/supabase-js";
-import { createServerClient, type CookieOptionsWithName } from "@supabase/ssr";
+import { createBrowserClient, createServerClient, type CookieOptionsWithName } from "@supabase/ssr";
 import type { Database } from "./database.types";
 
 /**
  * Get environment variables from the appropriate source
  * In Cloudflare Pages production: uses runtime.env
  * In local development: uses import.meta.env
+ *
+ * Note: Using PUBLIC_* variables for simplicity. In production, consider
+ * using separate server-side variables for enhanced security.
  */
 function getEnvVars(runtimeEnv?: Record<string, string>) {
   // In production (Cloudflare Pages), use runtime environment variables
   // In development, use import.meta.env
   if (import.meta.env.PROD && runtimeEnv) {
     return {
-      supabaseUrl: runtimeEnv.SUPABASE_URL,
-      supabaseAnonKey: runtimeEnv.SUPABASE_KEY,
+      supabaseUrl: runtimeEnv.PUBLIC_SUPABASE_URL || runtimeEnv.SUPABASE_URL,
+      supabaseAnonKey: runtimeEnv.PUBLIC_SUPABASE_KEY || runtimeEnv.SUPABASE_KEY,
     };
   }
 
   // Fallback to build-time env vars (local development)
+  // Use PUBLIC_* variables which are available everywhere
   return {
-    supabaseUrl: import.meta.env.SUPABASE_URL,
-    supabaseAnonKey: import.meta.env.SUPABASE_KEY,
+    supabaseUrl: import.meta.env.PUBLIC_SUPABASE_URL,
+    supabaseAnonKey: import.meta.env.PUBLIC_SUPABASE_KEY,
   };
 }
 
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
+// Client-side uses PUBLIC_ prefixed env vars (accessible in browser)
+// Note: Client-side should ONLY use PUBLIC_ variables, no fallback to non-PUBLIC versions
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_KEY;
 
 // Client instance (for client-side components)
 // Lazy initialization to avoid errors when env vars are missing
-let _supabaseClient: ReturnType<typeof createClient<Database>> | null = null;
+let _supabaseClient: ReturnType<typeof createBrowserClient<Database>> | null = null;
 
 export const getSupabaseClient = () => {
   if (!_supabaseClient) {
     if (!supabaseUrl || !supabaseAnonKey) {
       throw new Error("Supabase URL and Key are required. Please check your environment variables.");
     }
-    _supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
+    // Use createBrowserClient from @supabase/ssr for proper SSR support
+    // This handles PKCE flow and cookie management compatible with server-side
+    _supabaseClient = createBrowserClient<Database>(supabaseUrl, supabaseAnonKey);
   }
   return _supabaseClient;
 };
 
 // For backward compatibility and type exports
-export const supabaseClient = new Proxy({} as ReturnType<typeof createClient<Database>>, {
+export const supabaseClient = new Proxy({} as ReturnType<typeof createBrowserClient<Database>>, {
   get(_target, prop) {
-    return getSupabaseClient()[prop as keyof ReturnType<typeof createClient<Database>>];
+    return getSupabaseClient()[prop as keyof ReturnType<typeof createBrowserClient<Database>>];
   },
 });
 

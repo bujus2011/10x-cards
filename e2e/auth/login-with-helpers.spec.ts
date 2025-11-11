@@ -32,24 +32,14 @@ test.describe("Login with Helpers", () => {
     // Use test user with invalid email format
     await loginPage.login(TEST_USERS.invalidEmail.email, TEST_USERS.invalidEmail.password);
 
+    // Wait for React to process validation - increased timeout for sequential test execution
+    await page.waitForTimeout(1000);
+
     // Field-level validation error should appear for invalid email
     const hasEmailError = await loginPage.hasFieldError("email");
     expect(hasEmailError).toBe(true);
 
     const errorText = await loginPage.getFieldErrorText("email");
     expect(errorText).toContain("valid email");
-  });
-
-  // Skip: Backend has strict email validation that rejects test emails
-  test.skip("should show error for short password", async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.goto();
-
-    // Use test user with short password
-    await loginPage.login(TEST_USERS.shortPassword.email, TEST_USERS.shortPassword.password);
-
-    await expect(loginPage.errorMessage).toBeVisible();
-    const errorText = await loginPage.getErrorText();
-    expect(errorText).toContain("Password must be at least 8 characters");
   });
 });

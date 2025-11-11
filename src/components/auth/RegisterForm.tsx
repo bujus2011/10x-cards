@@ -7,6 +7,7 @@ import { Mail, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { registerSchema, type RegisterFormData } from "@/lib/validations";
 import { useAuth } from "@/hooks/api";
+import { SocialLoginButtons } from "@/components/auth/SocialLoginButtons";
 
 interface RegisterFormProps {
   isLoading?: boolean;
@@ -47,6 +48,17 @@ export function RegisterForm({ isLoading = false }: RegisterFormProps) {
       {errors.root && (
         <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">{errors.root.message}</div>
       )}
+
+      <SocialLoginButtons />
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">Or sign up with email</span>
+        </div>
+      </div>
 
       <div className="space-y-2">
         <Label htmlFor="email">Email address</Label>

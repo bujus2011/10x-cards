@@ -15,8 +15,8 @@ afterEach(() => {
 });
 
 // Mock environment variables for testing
-process.env.SUPABASE_URL = "http://localhost:54321";
-process.env.SUPABASE_KEY = "test-anon-key";
+process.env.PUBLIC_SUPABASE_URL = "http://localhost:54321";
+process.env.PUBLIC_SUPABASE_KEY = "test-anon-key";
 
 // Mock window.matchMedia for components that use media queries
 Object.defineProperty(window, "matchMedia", {

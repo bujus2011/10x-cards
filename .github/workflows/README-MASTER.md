@@ -79,8 +79,8 @@ Workflow wymaga następujących sekretów w GitHub (Settings → Secrets and var
 
 | Sekret | Opis | Wymagany dla |
 |--------|------|--------------|
-| `SUPABASE_URL` | URL projektu Supabase | Build |
-| `SUPABASE_KEY` | Klucz API Supabase (anon key) | Build |
+| `PUBLIC_SUPABASE_URL` | URL projektu Supabase | Build |
+| `PUBLIC_SUPABASE_KEY` | Klucz API Supabase (anon key) | Build |
 | `OPENROUTER_API_KEY` | Klucz API OpenRouter dla AI | Build |
 
 ### Sekrety Cloudflare

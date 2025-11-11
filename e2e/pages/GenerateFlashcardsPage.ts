@@ -88,25 +88,35 @@ export class GenerateFlashcardsPage {
   async fillSourceText(text: string) {
     // Click on textarea to focus it
     await this.sourceTextarea.click();
-
-    // Clear any existing content
-    await this.sourceTextarea.press("Control+A");
-    await this.sourceTextarea.press("Backspace");
-
-    // Wait a bit after clearing
     await this.page.waitForTimeout(100);
 
-    // For longer texts (>500 chars), use fill() for reliability
-    // For very short texts, use pressSequentially to simulate real typing
-    if (text.length > 500) {
-      await this.sourceTextarea.fill(text);
-    } else {
-      // Use pressSequentially with delay: 0 for fast but reliable typing
-      // This sends real keyboard events that React 19 recognizes
-      await this.sourceTextarea.pressSequentially(text, { delay: 0 });
+    // Clear any existing content using clear() for reliability
+    await this.sourceTextarea.clear();
+    await this.page.waitForTimeout(100);
+
+    // Fill the textarea with text
+    await this.sourceTextarea.fill(text);
+
+    // Trigger input event to ensure React processes the change
+    await this.sourceTextarea.dispatchEvent('input');
+    await this.page.waitForTimeout(300);
+
+    // Verify text value persists - retry mechanism for React 19 state updates
+    for (let i = 0; i < 3; i++) {
+      const currentValue = await this.sourceTextarea.inputValue();
+      if (currentValue === text) break;
+      if (i < 2) {
+        await this.sourceTextarea.clear();
+        await this.sourceTextarea.fill(text);
+        await this.sourceTextarea.dispatchEvent('input');
+        await this.page.waitForTimeout(300);
+      }
     }
 
-    // Wait for React to process
+    // Final verification that text was filled correctly
+    await expect(this.sourceTextarea).toHaveValue(text);
+
+    // Wait for React to process and update character counter
     await this.page.waitForTimeout(500);
 
     // Verify the character counter updated

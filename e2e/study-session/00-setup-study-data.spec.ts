@@ -23,8 +23,8 @@ test.describe("Setup - Study Session Data", () => {
       testInfo.annotations.push({ type: "log", description: message });
     };
 
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_KEY;
+    const supabaseUrl = process.env.PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.PUBLIC_SUPABASE_KEY;
     const userId = process.env.E2E_USERNAME_ID;
 
     if (!supabaseUrl || !supabaseKey || !userId) {

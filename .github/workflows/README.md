@@ -85,8 +85,8 @@ Workflow wymaga następujących sekretów w GitHub (Settings → Secrets and var
 
 | Sekret | Opis | Wymagany dla |
 |--------|------|--------------|
-| `SUPABASE_URL` | URL projektu Supabase | E2E Tests |
-| `SUPABASE_KEY` | Klucz API Supabase (anon key) | E2E Tests |
+| `PUBLIC_SUPABASE_URL` | URL projektu Supabase | E2E Tests |
+| `PUBLIC_SUPABASE_KEY` | Klucz API Supabase (anon key) | E2E Tests |
 | `OPENROUTER_API_KEY` | Klucz API OpenRouter dla AI | E2E Tests |
 | `E2E_USERNAME_ID` | ID użytkownika testowego | E2E Tests |
 | `E2E_USERNAME` | Email użytkownika testowego | E2E Tests |

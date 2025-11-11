@@ -3,6 +3,25 @@ import { Logger } from "@/lib/logger";
 import { useApiRequest } from "./useApiRequest";
 
 const authLogger = Logger.forContext("useAuth");
+const DEFAULT_REDIRECT_PATH = "/generate";
+const REDIRECT_PARAM_KEYS = ["redirect", "redirectTo"] as const;
+
+export function getPostAuthRedirect(fallback: string = DEFAULT_REDIRECT_PATH) {
+  if (typeof window === "undefined") {
+    return fallback;
+  }
+
+  const currentUrl = new URL(window.location.href);
+
+  for (const key of REDIRECT_PARAM_KEYS) {
+    const value = currentUrl.searchParams.get(key);
+    if (value && value.startsWith("/")) {
+      return value;
+    }
+  }
+
+  return fallback;
+}
 
 interface AuthResponse {
   user?: {
@@ -27,7 +46,7 @@ export function useAuth() {
 
     // Reload the page to update server-side session and go to app home
     // eslint-disable-next-line react-compiler/react-compiler -- Intentional navigation side effect after successful login
-    window.location.href = "/generate";
+    window.location.href = getPostAuthRedirect();
     return { success: true };
   };
 
@@ -47,7 +66,7 @@ export function useAuth() {
     }
 
     // Reload the page to update server-side session
-    window.location.href = "/";
+    window.location.href = getPostAuthRedirect("/");
     return { success: true };
   };
 

@@ -78,19 +78,30 @@ test.describe("Login Page", () => {
       expect(hasError).toBe(true);
     });
 
-    // Skip: Backend has strict email validation that rejects test emails
-    test.skip("should show error for short password", async () => {
-      await loginPage.login("test@example.com", "short");
+    test("should show error for short password", async () => {
+      // Fill form with short password and submit to trigger validation
+      await loginPage.fillEmail(TEST_USERS.valid.email);
+      await loginPage.fillPassword("short");
 
-      // Wait for error message - increased timeout for React 19 state propagation
-      await expect(loginPage.errorMessage).toBeVisible({ timeout: 10000 });
+      // Click submit to trigger react-hook-form validation
+      await loginPage.clickSubmit();
 
-      const errorText = await loginPage.getErrorText();
-      expect(errorText).toContain("Password must be at least 8 characters");
+      // Wait for React to process validation - increased timeout for sequential test execution
+      await loginPage.page.waitForTimeout(1000);
+
+      // Field-level validation error should appear for short password
+      const hasPasswordError = await loginPage.hasFieldError("password");
+      expect(hasPasswordError).toBe(true);
+
+      const errorText = await loginPage.getFieldErrorText("password");
+      expect(errorText).toContain("at least 8 characters");
     });
 
     test("should show error for invalid email format", async () => {
       await loginPage.login("invalid-email", "password123");
+
+      // Wait for React to process validation - increased timeout for sequential test execution
+      await loginPage.page.waitForTimeout(1000);
 
       // Field-level validation error should appear for invalid email
       const hasEmailError = await loginPage.hasFieldError("email");

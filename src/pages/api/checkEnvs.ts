@@ -21,8 +21,8 @@ export const GET: APIRoute = ({ locals }) => {
   const env = import.meta.env.PROD ? runtime : import.meta.env;
 
   const envStatus = {
-    supabase_url: env.SUPABASE_URL ? "SET" : "MISSING",
-    supabase_key: env.SUPABASE_KEY ? "SET" : "MISSING",
+    supabase_url: env.PUBLIC_SUPABASE_URL ? "SET" : "MISSING",
+    supabase_key: env.PUBLIC_SUPABASE_KEY ? "SET" : "MISSING",
     openrouter_key: env.OPENROUTER_API_KEY ? "SET" : "MISSING",
   };
 

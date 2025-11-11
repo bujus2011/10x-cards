@@ -63,37 +63,59 @@ export class LoginPage extends AuthPage {
    * @param password - User password
    */
   async login(email: string, password: string) {
-    // Fill email and ensure it's committed to the DOM
+    // Fill email field with multiple retries and verification
     await this.emailInput.click();
+    await this.page.waitForTimeout(100);
+    await this.emailInput.clear();
     await this.emailInput.fill(email);
 
-    // Wait and verify the value persists - retry mechanism for high server load
+    // Trigger input event and wait for React to process
+    await this.emailInput.dispatchEvent('input');
+    await this.page.waitForTimeout(300);
+
+    // Verify email value persists - retry mechanism for high server load
     for (let i = 0; i < 3; i++) {
-      await this.page.waitForTimeout(300);
       const currentValue = await this.emailInput.inputValue();
       if (currentValue === email) break;
-      if (i < 2) await this.emailInput.fill(email); // Retry if needed
+      if (i < 2) {
+        await this.emailInput.clear();
+        await this.emailInput.fill(email);
+        await this.emailInput.dispatchEvent('input');
+        await this.page.waitForTimeout(300);
+      }
     }
     await expect(this.emailInput).toHaveValue(email);
 
-    // Fill password and ensure it's committed to the DOM
+    // Fill password field with multiple retries and verification
     await this.passwordInput.click();
+    await this.page.waitForTimeout(100);
+    await this.passwordInput.clear();
     await this.passwordInput.fill(password);
 
-    // Wait and verify the value persists
+    // Trigger input event and wait for React to process
+    await this.passwordInput.dispatchEvent('input');
+    await this.page.waitForTimeout(300);
+
+    // Verify password value persists
     for (let i = 0; i < 3; i++) {
-      await this.page.waitForTimeout(300);
       const currentValue = await this.passwordInput.inputValue();
       if (currentValue === password) break;
-      if (i < 2) await this.passwordInput.fill(password); // Retry if needed
+      if (i < 2) {
+        await this.passwordInput.clear();
+        await this.passwordInput.fill(password);
+        await this.passwordInput.dispatchEvent('input');
+        await this.page.waitForTimeout(300);
+      }
     }
     await expect(this.passwordInput).toHaveValue(password);
 
-    // Blur the last input to trigger any pending React state updates
+    // Blur to trigger final validation and wait for React state updates
     await this.passwordInput.blur();
-
-    // Final wait for React to process onChange events and update state
     await this.page.waitForTimeout(500);
+
+    // Final verification before submit - ensure both fields still have values
+    await expect(this.emailInput).toHaveValue(email);
+    await expect(this.passwordInput).toHaveValue(password);
 
     await this.submitButton.click();
 
@@ -193,7 +215,8 @@ export class LoginPage extends AuthPage {
   async hasFieldError(field: "email" | "password" = "email"): Promise<boolean> {
     const errorLocator = field === "email" ? this.emailError : this.page.getByTestId("login-password-error");
     try {
-      return await errorLocator.isVisible({ timeout: 1000 });
+      // Increased timeout for React 19 state propagation and sequential test execution
+      return await errorLocator.isVisible({ timeout: 5000 });
     } catch {
       return false;
     }

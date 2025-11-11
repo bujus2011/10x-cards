@@ -1,15 +1,25 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock } from "lucide-react";
-import { loginSchema, type LoginFormData } from "@/lib/validations";
 import { useAuth } from "@/hooks/api";
+import { SocialLoginButtons } from "@/components/auth/SocialLoginButtons";
+import { loginSchema, type LoginFormData } from "@/lib/validations";
 
 interface LoginFormProps {
   isLoading?: boolean;
 }
+
+const OAUTH_ERROR_MESSAGES: Record<string, string> = {
+  access_denied: "The provider denied access to your account. Please try again or use another method.",
+  missing_code: "The authentication response was missing required information. Please try again.",
+  session_exchange_failed: "We couldn't verify your session with the provider. Please try again.",
+  server_configuration_error:
+    "The social login configuration is incomplete. Please contact support and use email login for now.",
+};
 
 export function LoginForm({ isLoading = false }: LoginFormProps) {
   const { login, isLoading: isAuthLoading } = useAuth();
@@ -40,6 +50,38 @@ export function LoginForm({ isLoading = false }: LoginFormProps) {
 
   const isFormLoading = isSubmitting || isAuthLoading || isLoading;
 
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const currentUrl = new URL(window.location.href);
+    const authError = currentUrl.searchParams.get("authError");
+    if (!authError) {
+      return;
+    }
+
+    const providerParam = currentUrl.searchParams.get("provider");
+    const providerLabel =
+      providerParam === "github" ? "GitHub" : providerParam === "google" ? "Google" : "the provider";
+    const providerMessage = currentUrl.searchParams.get("message");
+
+    const message =
+      providerMessage ??
+      OAUTH_ERROR_MESSAGES[authError] ??
+      `We couldn't sign you in with ${providerLabel}. Please try again.`;
+
+    setError("root", {
+      type: "manual",
+      message,
+    });
+
+    currentUrl.searchParams.delete("authError");
+    currentUrl.searchParams.delete("provider");
+    currentUrl.searchParams.delete("message");
+    window.history.replaceState({}, "", `${currentUrl.pathname}${currentUrl.search}${currentUrl.hash}`);
+  }, [setError]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" data-testid="login-form" noValidate>
       {errors.root && (
@@ -47,6 +89,17 @@ export function LoginForm({ isLoading = false }: LoginFormProps) {
           {errors.root.message}
         </div>
       )}
+
+      <SocialLoginButtons />
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">Or continue with email</span>
+        </div>
+      </div>
 
       <div className="space-y-2">
         <Label htmlFor="email">Email address</Label>

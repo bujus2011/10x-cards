@@ -272,8 +272,8 @@ npm run test:coverage    # Generate coverage report
 
 1. **`.env.test` file is required** with the following variables:
    ```env
-   SUPABASE_URL=https://your-project.supabase.co
-   SUPABASE_KEY=your-anon-key
+   PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+   PUBLIC_SUPABASE_KEY=your-anon-key
    OPENROUTER_API_KEY=your-openrouter-key
    E2E_USERNAME=test-user@example.com
    E2E_PASSWORD=test-password
@@ -355,9 +355,15 @@ Tests run in dependency order:
 ## Environment Variables
 
 Required environment variables (see `.env.example`):
-- `SUPABASE_URL` - Supabase project URL
-- `SUPABASE_KEY` - Supabase anon key
+
+**Supabase (accessible everywhere: client-side and server-side):**
+- `PUBLIC_SUPABASE_URL` - Supabase project URL
+- `PUBLIC_SUPABASE_KEY` - Supabase anon key
+
+**Other:**
 - `OPENROUTER_API_KEY` - OpenRouter.ai API key
+
+**Note:** We use `PUBLIC_` prefix for Supabase variables to make them accessible in both browser and server contexts. In Astro, `PUBLIC_` variables are embedded in client-side bundles, so only use anon/public keys here (never service role keys).
 
 For E2E tests (`.env.test`):
 - `BASE_URL` - Test server URL (default: http://localhost:3000)

@@ -21,8 +21,8 @@ try {
   console.error(err instanceof Error ? err.message : String(err));
   console.error("\n📝 Please create a .env.test file with the following content:");
   console.error(`
-SUPABASE_URL=your-supabase-url
-SUPABASE_KEY=your-supabase-anon-key
+PUBLIC_SUPABASE_URL=your-supabase-url
+PUBLIC_SUPABASE_KEY=your-supabase-anon-key
 E2E_USERNAME=test@example.com
 E2E_PASSWORD=TestPassword123!
 BASE_URL=http://localhost:4321
@@ -107,7 +107,7 @@ async function createTestUser() {
     console.error("❌ Error creating test user:");
     console.error("  ", err instanceof Error ? err.message : String(err));
     console.error("\n💡 Troubleshooting:");
-    console.error("   1. Verify SUPABASE_URL and SUPABASE_KEY are correct");
+    console.error("   1. Verify PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_KEY are correct");
     console.error("   2. Check your internet connection");
     console.error("   3. Verify Supabase project is accessible");
     console.error("   4. Check Supabase Dashboard for any issues\n");

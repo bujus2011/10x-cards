@@ -5,8 +5,8 @@
  * required for E2E tests from .env.test file.
  *
  * Required Environment Variables:
- * - SUPABASE_URL: Supabase project URL
- * - SUPABASE_KEY: Supabase anonymous key
+ * - PUBLIC_SUPABASE_URL: Supabase project URL
+ * - PUBLIC_SUPABASE_KEY: Supabase anonymous key
  * - E2E_USERNAME: Test user email (default: test@example.com)
  * - E2E_PASSWORD: Test user password (default: Test123456!)
  * - E2E_USERNAME_ID: Test user ID (extracted from auth state)
@@ -43,8 +43,8 @@ export interface E2EEnvironment {
  * const supabase = createClient(env.supabaseUrl, env.supabaseKey);
  */
 export function loadE2EEnvironment(): E2EEnvironment {
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_KEY;
+  const supabaseUrl = process.env.PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.PUBLIC_SUPABASE_KEY;
   const e2eUsername = process.env.E2E_USERNAME || "test@example.com";
   const e2ePassword = process.env.E2E_PASSWORD || "Test123456!";
   const e2eUserId = process.env.E2E_USERNAME_ID;
@@ -73,8 +73,8 @@ export function loadE2EEnvironment(): E2EEnvironment {
 export function validateE2EEnvironment(env: E2EEnvironment): void {
   const missing: string[] = [];
 
-  if (!env.supabaseUrl) missing.push("SUPABASE_URL");
-  if (!env.supabaseKey) missing.push("SUPABASE_KEY");
+  if (!env.supabaseUrl) missing.push("PUBLIC_SUPABASE_URL");
+  if (!env.supabaseKey) missing.push("PUBLIC_SUPABASE_KEY");
   if (!env.e2eUsername) missing.push("E2E_USERNAME");
   if (!env.e2ePassword) missing.push("E2E_PASSWORD");
 

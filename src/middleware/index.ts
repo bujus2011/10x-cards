@@ -67,6 +67,7 @@ const ROUTE_CONFIG = {
     "/auth/register",
     "/auth/reset-password",
     "/auth/reset-password-confirm",
+    "/auth/callback",
     // Auth API endpoints
     "/api/auth/login",
     "/api/auth/register",
