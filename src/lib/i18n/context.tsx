@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import type { SupportedLanguage } from "./config";
-import { DEFAULT_LANGUAGE, LANGUAGE_COOKIE_NAME, getLanguageFromCookie, getLanguageFromBrowser } from "./config";
+import { LANGUAGE_COOKIE_NAME, getLanguageFromCookie, getLanguageFromBrowser } from "./config";
 import { getTranslations, type Translations } from "./utils";
 
 interface I18nContextValue {
@@ -29,7 +29,7 @@ function getCookie(name: string): string | undefined {
   return undefined;
 }
 
-function setCookie(name: string, value: string, days: number = 365) {
+function setCookie(name: string, value: string, days = 365) {
   if (typeof document === "undefined") {
     return;
   }

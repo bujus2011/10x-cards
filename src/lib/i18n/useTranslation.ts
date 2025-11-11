@@ -1,5 +1,5 @@
 import { useI18n } from "./context";
-import { interpolate, getNestedTranslation, type Translations } from "./utils";
+import { interpolate, getNestedTranslation } from "./utils";
 
 export function useTranslation() {
   const { t: translations, language } = useI18n();
