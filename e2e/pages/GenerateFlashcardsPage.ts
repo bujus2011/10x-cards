@@ -98,7 +98,7 @@ export class GenerateFlashcardsPage {
     await this.sourceTextarea.fill(text);
 
     // Trigger input event to ensure React processes the change
-    await this.sourceTextarea.dispatchEvent('input');
+    await this.sourceTextarea.dispatchEvent("input");
     await this.page.waitForTimeout(300);
 
     // Verify text value persists - retry mechanism for React 19 state updates
@@ -108,7 +108,7 @@ export class GenerateFlashcardsPage {
       if (i < 2) {
         await this.sourceTextarea.clear();
         await this.sourceTextarea.fill(text);
-        await this.sourceTextarea.dispatchEvent('input');
+        await this.sourceTextarea.dispatchEvent("input");
         await this.page.waitForTimeout(300);
       }
     }

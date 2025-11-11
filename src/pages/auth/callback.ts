@@ -109,4 +109,3 @@ export const GET: APIRoute = async ({ request, cookies, locals }) => {
   return buildRedirectResponse(finalRedirectUrl.toString());
 };
 
-

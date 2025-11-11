@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { Github, Loader2, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getSupabaseClient } from "@/db/supabase.client";
-import { getPostAuthRedirect } from "@/hooks/api";
 import { Logger } from "@/lib/logger";
 
 type OAuthProvider = "github" | "google";
@@ -31,7 +30,7 @@ const PROVIDER_CONFIG: Record<
 
 const isBrowser = () => typeof window !== "undefined";
 
-function buildCallbackUrl(_provider: OAuthProvider) {
+function buildCallbackUrl() {
   if (!isBrowser()) {
     return undefined;
   }
@@ -62,7 +61,7 @@ export function SocialLoginButtons() {
     try {
       setActiveProvider(provider);
       const supabase = getSupabaseClient();
-      const redirectTo = buildCallbackUrl(provider);
+      const redirectTo = buildCallbackUrl();
 
       logger.info("Starting OAuth flow", { provider, redirectTo });
 
@@ -128,5 +127,4 @@ export function SocialLoginButtons() {
     </div>
   );
 }
-
 

@@ -70,7 +70,7 @@ export class LoginPage extends AuthPage {
     await this.emailInput.fill(email);
 
     // Trigger input event and wait for React to process
-    await this.emailInput.dispatchEvent('input');
+    await this.emailInput.dispatchEvent("input");
     await this.page.waitForTimeout(300);
 
     // Verify email value persists - retry mechanism for high server load
@@ -80,7 +80,7 @@ export class LoginPage extends AuthPage {
       if (i < 2) {
         await this.emailInput.clear();
         await this.emailInput.fill(email);
-        await this.emailInput.dispatchEvent('input');
+        await this.emailInput.dispatchEvent("input");
         await this.page.waitForTimeout(300);
       }
     }
@@ -93,7 +93,7 @@ export class LoginPage extends AuthPage {
     await this.passwordInput.fill(password);
 
     // Trigger input event and wait for React to process
-    await this.passwordInput.dispatchEvent('input');
+    await this.passwordInput.dispatchEvent("input");
     await this.page.waitForTimeout(300);
 
     // Verify password value persists
@@ -103,7 +103,7 @@ export class LoginPage extends AuthPage {
       if (i < 2) {
         await this.passwordInput.clear();
         await this.passwordInput.fill(password);
-        await this.passwordInput.dispatchEvent('input');
+        await this.passwordInput.dispatchEvent("input");
         await this.page.waitForTimeout(300);
       }
     }
