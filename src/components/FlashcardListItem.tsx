@@ -124,7 +124,7 @@ export function FlashcardListItem({ flashcard, onAccept, onReject, onEdit, itemT
         </div>
       </div>
 
-      {flashcard.edited && <div className="text-sm text-muted-foreground">{t("components.flashcardList.edit")}</div>}
+      {flashcard.edited && <div className="text-sm text-muted-foreground">{t("components.flashcardList.edited")}</div>}
     </div>
   );
 }

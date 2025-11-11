@@ -185,6 +185,7 @@
       "accept": "Accept",
       "reject": "Reject",
       "edit": "Edit",
+      "edited": "Edited",
       "accepted": "Accepted",
       "rejected": "Rejected",
       "pending": "Pending"

@@ -12,7 +12,7 @@ import path from "path";
 async function globalSetup() {
   process.stdout.write("🚀 Setting up E2E test environment...\n");
 
-  const authDir = path.resolve(process.cwd(), "10x-cards", ".auth");
+  const authDir = path.resolve(process.cwd(), ".auth");
   const authFile = path.join(authDir, "user.json");
 
   try {
