@@ -13,7 +13,7 @@ import { test, expect } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "../../src/db/database.types";
 
-const MIN_FLASHCARDS = 80;
+const MIN_FLASHCARDS = 120;
 
 test.describe("Setup - Study Session Data", () => {
   test("ensure minimum flashcards exist", async ({ page }, testInfo) => {

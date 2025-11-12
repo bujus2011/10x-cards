@@ -273,7 +273,7 @@ npm run preview
 2. Zweryfikuj nazwę projektu w Cloudflare Pages
 3. Sprawdź logi GitHub Actions i Cloudflare
 4. Przetestuj build lokalnie
-5. Zobacz [DEPLOYMENT-CLOUDFLARE.md](../DEPLOYMENT-CLOUDFLARE.md) - pełny przewodnik
+5. Zobacz [Cloudflare Deployment](./cloudflare.md) - pełny przewodnik
 
 ---
 

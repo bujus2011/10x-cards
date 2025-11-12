@@ -10,8 +10,8 @@ Witamy w centrum dokumentacji projektu 10xCards. Ten dokument zawiera kompletny 
 
 1. **[CLAUDE.md](../CLAUDE.md)** - Przeczytaj najpierw - instrukcje dla AI i przegląd projektu
 2. **[README.md](../README.md)** - Główny przewodnik projektu
-3. **[Development Setup](./development/setup.md)** - Konfiguracja środowiska lokalnego (TODO)
-4. **[Coding Standards](./development/coding-standards.md)** - Standardy kodowania (TODO)
+3. **[Development Setup](./development/setup.md)** - ✅ Konfiguracja środowiska lokalnego
+4. **[Coding Standards](./development/coding-standards.md)** - ✅ Standardy kodowania
 
 ---
 
@@ -33,8 +33,8 @@ Szczegółowa dokumentacja poszczególnych funkcji aplikacji:
 - **[i18n Implementation Summary](./features/i18n-implementation-summary.md)** - ✅ Kompletne podsumowanie implementacji i18n
 - **[Dark Mode](./features/dark-mode.md)** - ✅ Obsługa ciemnego i jasnego motywu
 - **[My Flashcards](./features/my-flashcards.md)** - ✅ Zarządzanie fiszkami (CRUD, wyszukiwanie, filtrowanie)
-- **[Flashcard Generation](./features/flashcard-generation.md)** - Generowanie fiszek AI przez OpenRouter (TODO)
-- **[Study Session](./features/study-session.md)** - Algorytm FSRS, sesje nauki (TODO)
+- **[Flashcard Generation](./features/flashcard-generation.md)** - ✅ Generowanie fiszek AI przez OpenRouter
+- **[Study Session](./features/study-session.md)** - ✅ Algorytm FSRS, sesje nauki
 
 ---
 
@@ -42,10 +42,10 @@ Szczegółowa dokumentacja poszczególnych funkcji aplikacji:
 
 Przewodniki dla deweloperów:
 
-- **[Setup](./development/setup.md)** - Konfiguracja środowiska lokalnego (TODO)
-- **[Coding Standards](./development/coding-standards.md)** - Standardy kodowania, linting, formatting (TODO)
+- **[Setup](./development/setup.md)** - ✅ Konfiguracja środowiska lokalnego
+- **[Coding Standards](./development/coding-standards.md)** - ✅ Standardy kodowania, linting, formatting
 - **[Testing](./development/testing.md)** - ✅ Testy jednostkowe (Vitest) i E2E (Playwright)
-- **[Contributing](./development/contributing.md)** - Jak kontrybuować do projektu (TODO)
+- **[Contributing](./development/contributing.md)** - ✅ Jak kontrybuować do projektu
 
 ---
 
@@ -63,9 +63,9 @@ Przewodniki wdrażania i CI/CD:
 
 Dokumentacja API (w przygotowaniu):
 
-- **[Endpoints](./api/endpoints.md)** - Lista wszystkich endpointów API (TODO)
-- **[Schemas](./api/schemas.md)** - Zod validation schemas (TODO)
-- **[Examples](./api/examples.md)** - Przykłady użycia API (TODO)
+- **[Endpoints](./api/endpoints.md)** - ✅ Lista wszystkich endpointów API
+- **[Schemas](./api/schemas.md)** - ✅ Zod validation schemas
+- **[Examples](./api/examples.md)** - ✅ Przykłady użycia API
 
 ---
 
@@ -165,10 +165,10 @@ Każdy dokument powinien zawierać:
 | Kategoria    | Plików | Status            | Ostatnia aktualizacja |
 | ------------ | ------ | ----------------- | --------------------- |
 | Architecture | 3      | ✅ Kompletne      | 2024-11               |
-| Features     | 4      | ✅ Kompletne      | 2024-11               |
-| Development  | 1      | ⚠️ W trakcie      | 2024-11               |
+| Features     | 6      | ✅ Kompletne      | 2024-11               |
+| Development  | 4      | ✅ Kompletne      | 2024-11               |
 | Deployment   | 3      | ✅ Kompletne      | 2024-11               |
-| API          | 0      | ❌ TODO           | -                     |
+| API          | 3      | ✅ Kompletne      | 2024-11               |
 | Archive      | 6      | ✅ Zarchiwizowane | 2024-10               |
 
 ---
@@ -224,6 +224,9 @@ Każdy dokument powinien zawierać:
 
 ## 🔄 Historia Zmian
 
+- **2024-11-13**: Kompletna dokumentacja API (endpoints, schemas, examples)
+- **2024-11-13**: Dokumentacja Development (setup, coding standards, contributing)
+- **2024-11-13**: Dokumentacja Features (flashcard generation, study session)
 - **2024-11-11**: Dokumentacja Internationalization (i18n) - kompletna implementacja wielojęzyczności
 - **2024-11-11**: Dokumentacja Dark Mode feature
 - **2024-11-07**: Reorganizacja dokumentacji, utworzenie struktury docs/
@@ -233,6 +236,6 @@ Każdy dokument powinien zawierać:
 
 ---
 
-**Ostatnia aktualizacja**: 2024-11-11
-**Wersja**: 2.2
+**Ostatnia aktualizacja**: 2024-11-13
+**Wersja**: 2.3
 **Status**: ✅ Aktywnie utrzymywana
