@@ -10,9 +10,10 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CreateFlashcardForm } from "../CreateFlashcardForm";
+import { customRender } from "../../tests/setup";
 
 // Mock sonner toast
 vi.mock("sonner", () => ({
@@ -32,7 +33,7 @@ describe("CreateFlashcardForm", () => {
   describe("Initial State", () => {
     it("should show button to create new flashcard", () => {
       // Act
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
 
       // Assert
       expect(screen.getByTestId("create-flashcard-button")).toBeInTheDocument();
@@ -41,7 +42,7 @@ describe("CreateFlashcardForm", () => {
 
     it("should not show form initially", () => {
       // Act
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
 
       // Assert
       expect(screen.queryByText(/Front \(Question\/Prompt\)/i)).not.toBeInTheDocument();
@@ -52,7 +53,7 @@ describe("CreateFlashcardForm", () => {
     it("should open form when button is clicked", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
 
       // Act
       const button = screen.getByTestId("create-flashcard-button");
@@ -67,7 +68,7 @@ describe("CreateFlashcardForm", () => {
     it("should hide button when form is open", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
 
       // Act
       await user.click(screen.getByTestId("create-flashcard-button"));
@@ -81,7 +82,7 @@ describe("CreateFlashcardForm", () => {
     it("should render front and back textareas", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Assert
@@ -92,7 +93,7 @@ describe("CreateFlashcardForm", () => {
     it("should show character count for front input", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Assert
@@ -102,7 +103,7 @@ describe("CreateFlashcardForm", () => {
     it("should show character count for back input", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Assert
@@ -112,7 +113,7 @@ describe("CreateFlashcardForm", () => {
     it("should update character count when typing", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Act
@@ -126,7 +127,7 @@ describe("CreateFlashcardForm", () => {
     it("should have proper labels associated with inputs", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Assert
@@ -141,7 +142,7 @@ describe("CreateFlashcardForm", () => {
     it("should disable submit button when both fields are empty", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Assert
@@ -152,7 +153,7 @@ describe("CreateFlashcardForm", () => {
     it("should disable submit button when front is empty", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Act
@@ -167,7 +168,7 @@ describe("CreateFlashcardForm", () => {
     it("should disable submit button when back is empty", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Act
@@ -182,7 +183,7 @@ describe("CreateFlashcardForm", () => {
     it("should enable submit button when both fields have content", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Act
@@ -200,7 +201,7 @@ describe("CreateFlashcardForm", () => {
       // Arrange
       const user = userEvent.setup();
       await import("sonner");
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Act - try to submit without entering data (button should be disabled but test the validation)
@@ -218,7 +219,7 @@ describe("CreateFlashcardForm", () => {
       // Arrange
       const user = userEvent.setup();
       mockOnSubmit.mockResolvedValue(undefined);
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Act
@@ -240,7 +241,7 @@ describe("CreateFlashcardForm", () => {
       // Arrange
       const user = userEvent.setup();
       mockOnSubmit.mockResolvedValue(undefined);
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Act
@@ -263,7 +264,7 @@ describe("CreateFlashcardForm", () => {
       const user = userEvent.setup();
       const { toast } = await import("sonner");
       mockOnSubmit.mockResolvedValue(undefined);
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Act
@@ -286,7 +287,7 @@ describe("CreateFlashcardForm", () => {
       const user = userEvent.setup();
       const { toast } = await import("sonner");
       mockOnSubmit.mockRejectedValue(new Error("Submission failed"));
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Act
@@ -308,7 +309,7 @@ describe("CreateFlashcardForm", () => {
       // Arrange
       const user = userEvent.setup();
       mockOnSubmit.mockRejectedValue(new Error("Submission failed"));
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Act
@@ -331,7 +332,7 @@ describe("CreateFlashcardForm", () => {
     it("should close form when cancel button is clicked", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Act
@@ -346,7 +347,7 @@ describe("CreateFlashcardForm", () => {
     it("should clear form data when canceling", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Act - type some data
@@ -369,7 +370,7 @@ describe("CreateFlashcardForm", () => {
   describe("Loading States", () => {
     it("should disable button when isLoading prop is true", () => {
       // Act
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} isLoading={true} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} isLoading={true} />);
 
       // Assert
       const button = screen.getByTestId("create-flashcard-button");
@@ -380,7 +381,7 @@ describe("CreateFlashcardForm", () => {
       // Arrange
       const user = userEvent.setup();
       mockOnSubmit.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Act
@@ -400,7 +401,7 @@ describe("CreateFlashcardForm", () => {
       // Arrange
       const user = userEvent.setup();
       mockOnSubmit.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Act
@@ -422,7 +423,7 @@ describe("CreateFlashcardForm", () => {
     it("should enforce 200 character limit on front input", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Assert
@@ -433,7 +434,7 @@ describe("CreateFlashcardForm", () => {
     it("should enforce 500 character limit on back input", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Assert
@@ -445,7 +446,7 @@ describe("CreateFlashcardForm", () => {
       // Arrange
       const user = userEvent.setup();
       await import("sonner");
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Act - The maxLength attribute prevents typing more than 200 chars
@@ -460,7 +461,7 @@ describe("CreateFlashcardForm", () => {
     it("should have proper ARIA labels", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
 
       // Assert - button has aria-label
       expect(screen.getByLabelText(/Open create flashcard form/i)).toBeInTheDocument();
@@ -476,7 +477,7 @@ describe("CreateFlashcardForm", () => {
     it("should associate labels with inputs", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Assert
@@ -489,7 +490,7 @@ describe("CreateFlashcardForm", () => {
     it("should have aria-describedby for character counts", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
+      customRender(<CreateFlashcardForm onSubmit={mockOnSubmit} />);
       await user.click(screen.getByTestId("create-flashcard-button"));
 
       // Assert

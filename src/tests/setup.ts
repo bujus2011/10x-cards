@@ -8,11 +8,22 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
+import { render } from "@testing-library/react";
+import { I18nProvider } from "@/lib/i18n";
+import type { ReactElement } from "react";
+import React from "react";
 
 // Cleanup after each test case
 afterEach(() => {
   cleanup();
 });
+
+// Custom render function that wraps components with I18nProvider
+export const customRender = (ui: ReactElement, options = {}) =>
+  render(ui, {
+    wrapper: ({ children }: { children: React.ReactNode }) => React.createElement(I18nProvider, null, children),
+    ...options,
+  });
 
 // Mock environment variables for testing
 process.env.PUBLIC_SUPABASE_URL = "http://localhost:54321";

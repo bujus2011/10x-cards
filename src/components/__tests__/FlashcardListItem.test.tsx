@@ -9,10 +9,11 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FlashcardListItem } from "../FlashcardListItem";
 import type { FlashcardProposalViewModel } from "@/hooks/useFlashcardGeneration";
+import { customRender } from "../../tests/setup";
 
 describe("FlashcardListItem", () => {
   const mockFlashcard: FlashcardProposalViewModel = {
@@ -34,7 +35,7 @@ describe("FlashcardListItem", () => {
   describe("Display Mode", () => {
     it("should render flashcard content", () => {
       // Act
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -50,7 +51,7 @@ describe("FlashcardListItem", () => {
 
     it("should show accept, edit, and reject buttons", () => {
       // Act
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -70,7 +71,7 @@ describe("FlashcardListItem", () => {
       const acceptedFlashcard = { ...mockFlashcard, accepted: true };
 
       // Act
-      const { container } = render(
+      const { container } = customRender(
         <FlashcardListItem
           flashcard={acceptedFlashcard}
           onAccept={mockOnAccept}
@@ -89,7 +90,7 @@ describe("FlashcardListItem", () => {
       const editedFlashcard = { ...mockFlashcard, edited: true };
 
       // Act
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={editedFlashcard}
           onAccept={mockOnAccept}
@@ -104,7 +105,7 @@ describe("FlashcardListItem", () => {
 
     it("should not show 'Edited' badge when flashcard is not edited", () => {
       // Act
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -122,7 +123,7 @@ describe("FlashcardListItem", () => {
     it("should call onAccept when accept button is clicked", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -144,7 +145,7 @@ describe("FlashcardListItem", () => {
       const acceptedFlashcard = { ...mockFlashcard, accepted: true };
 
       // Act
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={acceptedFlashcard}
           onAccept={mockOnAccept}
@@ -163,7 +164,7 @@ describe("FlashcardListItem", () => {
     it("should call onReject when reject button is clicked", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -185,7 +186,7 @@ describe("FlashcardListItem", () => {
     it("should enter edit mode when edit button is clicked", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -206,7 +207,7 @@ describe("FlashcardListItem", () => {
     it("should show textareas in edit mode", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -226,7 +227,7 @@ describe("FlashcardListItem", () => {
     it("should show character count in edit mode", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -246,7 +247,7 @@ describe("FlashcardListItem", () => {
     it("should show save button in edit mode", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -266,7 +267,7 @@ describe("FlashcardListItem", () => {
     it("should hide accept/reject buttons in edit mode", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -288,7 +289,7 @@ describe("FlashcardListItem", () => {
     it("should call onEdit when save button is clicked", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -313,7 +314,7 @@ describe("FlashcardListItem", () => {
     it("should exit edit mode after saving", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -336,7 +337,7 @@ describe("FlashcardListItem", () => {
     it("should update both front and back when edited", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -367,7 +368,7 @@ describe("FlashcardListItem", () => {
     it("should disable save button when front exceeds 200 characters", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -393,7 +394,7 @@ describe("FlashcardListItem", () => {
     it("should enforce character limit on back textarea", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -412,7 +413,7 @@ describe("FlashcardListItem", () => {
     it("should disable save button when front is empty", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -440,7 +441,7 @@ describe("FlashcardListItem", () => {
     it("should disable save button when back is empty", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -468,7 +469,7 @@ describe("FlashcardListItem", () => {
     it("should allow saving when both fields are within limits", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -488,7 +489,7 @@ describe("FlashcardListItem", () => {
     it("should enforce 200 character limit on front textarea", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -508,7 +509,7 @@ describe("FlashcardListItem", () => {
     it("should enforce 500 character limit on back textarea", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -529,7 +530,7 @@ describe("FlashcardListItem", () => {
   describe("Visual States", () => {
     it("should apply reduced opacity when flashcard is not accepted", () => {
       // Act
-      const { container } = render(
+      const { container } = customRender(
         <FlashcardListItem
           flashcard={mockFlashcard}
           onAccept={mockOnAccept}
@@ -548,7 +549,7 @@ describe("FlashcardListItem", () => {
       const acceptedFlashcard = { ...mockFlashcard, accepted: true };
 
       // Act
-      render(
+      customRender(
         <FlashcardListItem
           flashcard={acceptedFlashcard}
           onAccept={mockOnAccept}

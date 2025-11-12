@@ -12,9 +12,10 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FlashcardCard } from "../FlashcardCard";
+import { customRender } from "../../tests/setup";
 import type { FlashcardDto } from "@/types";
 
 // Mock sonner toast
@@ -55,7 +56,7 @@ describe("FlashcardCard", () => {
   describe("Display Mode", () => {
     it("should render flashcard with front content", () => {
       // Act
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Assert
       const card = screen.getByRole("button", { name: /Flashcard:/ });
@@ -64,7 +65,7 @@ describe("FlashcardCard", () => {
 
     it("should render created date", () => {
       // Act
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Assert
       expect(screen.getByText(/Jan 1, 2024/i)).toBeInTheDocument();
@@ -72,7 +73,7 @@ describe("FlashcardCard", () => {
 
     it("should show flip instruction", () => {
       // Act
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Assert
       expect(screen.getByText(/Click to see back/i)).toBeInTheDocument();
@@ -80,7 +81,7 @@ describe("FlashcardCard", () => {
 
     it("should have action buttons (copy, edit, delete)", () => {
       // Act
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Assert
       expect(screen.getByLabelText(/Copy flashcard/i)).toBeInTheDocument();
@@ -93,7 +94,7 @@ describe("FlashcardCard", () => {
     it("should flip to show back content when clicked", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Act
       const card = screen.getByRole("button", { name: /Flashcard:/ });
@@ -108,7 +109,7 @@ describe("FlashcardCard", () => {
     it("should flip back to front when clicked again", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
       const card = screen.getByRole("button", { name: /Flashcard:/ });
 
       // Act - flip to back
@@ -125,7 +126,7 @@ describe("FlashcardCard", () => {
     it("should flip card with Enter key", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
       const card = screen.getByRole("button", { name: /Flashcard:/ });
 
       // Act
@@ -141,7 +142,7 @@ describe("FlashcardCard", () => {
     it("should flip card with Space key", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
       const card = screen.getByRole("button", { name: /Flashcard:/ });
 
       // Act
@@ -159,7 +160,7 @@ describe("FlashcardCard", () => {
     it("should enter edit mode when edit button is clicked", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Act
       const editButton = screen.getByLabelText(/Edit flashcard/i);
@@ -174,7 +175,7 @@ describe("FlashcardCard", () => {
     it("should show textareas with current values in edit mode", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Act
       const editButton = screen.getByLabelText(/Edit flashcard/i);
@@ -190,7 +191,7 @@ describe("FlashcardCard", () => {
     it("should show character count in edit mode", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Act
       await user.click(screen.getByLabelText(/Edit flashcard/i));
@@ -203,7 +204,7 @@ describe("FlashcardCard", () => {
     it("should cancel edit mode when cancel button is clicked", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
       await user.click(screen.getByLabelText(/Edit flashcard/i));
 
       // Act
@@ -219,7 +220,7 @@ describe("FlashcardCard", () => {
     it("should reset changes when canceling edit", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
       await user.click(screen.getByLabelText(/Edit flashcard/i));
 
       // Act - modify text
@@ -241,7 +242,7 @@ describe("FlashcardCard", () => {
       // Arrange
       const user = userEvent.setup();
       mockOnUpdate.mockResolvedValue(undefined);
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
       await user.click(screen.getByLabelText(/Edit flashcard/i));
 
       // Act - edit and save
@@ -267,7 +268,7 @@ describe("FlashcardCard", () => {
       // Arrange
       const user = userEvent.setup();
       mockOnUpdate.mockResolvedValue(undefined);
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
       await user.click(screen.getByLabelText(/Edit flashcard/i));
 
       // Act
@@ -283,7 +284,7 @@ describe("FlashcardCard", () => {
     it("should disable save button when fields are empty", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
       await user.click(screen.getByLabelText(/Edit flashcard/i));
 
       // Act - clear front field
@@ -300,7 +301,7 @@ describe("FlashcardCard", () => {
       const user = userEvent.setup();
       const { toast } = await import("sonner");
       mockOnUpdate.mockRejectedValue(new Error("Update failed"));
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
       await user.click(screen.getByLabelText(/Edit flashcard/i));
 
       // Act
@@ -316,7 +317,7 @@ describe("FlashcardCard", () => {
     it("should not allow saving when front exceeds 200 characters", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
       await user.click(screen.getByLabelText(/Edit flashcard/i));
 
       // Act
@@ -334,7 +335,7 @@ describe("FlashcardCard", () => {
     it("should enforce character limit on back textarea", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
       await user.click(screen.getByLabelText(/Edit flashcard/i));
 
       // Assert
@@ -349,7 +350,7 @@ describe("FlashcardCard", () => {
       // Arrange
       const user = userEvent.setup();
       mockOnDelete.mockResolvedValue(undefined);
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Act
       const deleteButton = screen.getByLabelText(/Delete flashcard/i);
@@ -366,7 +367,7 @@ describe("FlashcardCard", () => {
       const user = userEvent.setup();
       const { toast } = await import("sonner");
       mockOnDelete.mockRejectedValue(new Error("Delete failed"));
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Act
       const deleteButton = screen.getByLabelText(/Delete flashcard/i);
@@ -382,7 +383,7 @@ describe("FlashcardCard", () => {
       // Arrange
       const user = userEvent.setup();
       mockOnDelete.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Act
       const deleteButton = screen.getByLabelText(/Delete flashcard/i);
@@ -398,7 +399,7 @@ describe("FlashcardCard", () => {
       // Arrange
       const user = userEvent.setup();
       const { toast } = await import("sonner");
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Act
       const copyButton = screen.getByLabelText(/Copy flashcard/i);
@@ -412,18 +413,18 @@ describe("FlashcardCard", () => {
 
     it("should have copy button with proper accessibility", () => {
       // Act
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Assert
       const copyButton = screen.getByLabelText(/Copy flashcard/i);
-      expect(copyButton).toHaveAttribute("title", "Copy flashcard content");
+      expect(copyButton).toHaveAttribute("title", "Copy flashcard");
     });
   });
 
   describe("Loading States", () => {
     it("should disable buttons when isLoading is true", () => {
       // Act
-      render(
+      customRender(
         <FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} isLoading={true} />
       );
 
@@ -437,7 +438,7 @@ describe("FlashcardCard", () => {
       // Arrange
       const user = userEvent.setup();
       mockOnUpdate.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
       await user.click(screen.getByLabelText(/Edit flashcard/i));
 
       // Act
@@ -452,7 +453,7 @@ describe("FlashcardCard", () => {
   describe("Accessibility", () => {
     it("should have accessible labels for all buttons", () => {
       // Act
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Assert
       expect(screen.getByLabelText(/Copy flashcard/i)).toBeInTheDocument();
@@ -462,7 +463,7 @@ describe("FlashcardCard", () => {
 
     it("should have role='button' for clickable card", () => {
       // Act
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Assert
       const card = screen.getByRole("button", { name: /Flashcard:/ });
@@ -471,7 +472,7 @@ describe("FlashcardCard", () => {
 
     it("should have tabIndex for keyboard navigation", () => {
       // Act
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Assert
       const card = screen.getByRole("button", { name: /Flashcard:/ });
@@ -481,7 +482,7 @@ describe("FlashcardCard", () => {
     it("should have form labels with htmlFor in edit mode", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Act
       await user.click(screen.getByLabelText(/Edit flashcard/i));
@@ -498,7 +499,7 @@ describe("FlashcardCard", () => {
     it("should not flip card when action buttons are clicked", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Act - click copy button
       const copyButton = screen.getByLabelText(/Copy flashcard/i);
@@ -511,7 +512,7 @@ describe("FlashcardCard", () => {
     it("should not flip card when edit button is clicked", async () => {
       // Arrange
       const user = userEvent.setup();
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Act
       const editButton = screen.getByLabelText(/Edit flashcard/i);
@@ -525,7 +526,7 @@ describe("FlashcardCard", () => {
       // Arrange
       const user = userEvent.setup();
       mockOnDelete.mockResolvedValue(undefined);
-      render(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
+      customRender(<FlashcardCard flashcard={mockFlashcard} onUpdate={mockOnUpdate} onDelete={mockOnDelete} />);
 
       // Act
       const deleteButton = screen.getByLabelText(/Delete flashcard/i);
