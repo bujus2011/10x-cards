@@ -119,7 +119,7 @@ jobs:
     name: Post Status Comment
     runs-on: ubuntu-latest
     needs: [lint, unit-test, e2e-test]
-    if: always()
+    if: always() && github.event_name == 'pull_request'
 
     steps:
       - name: Comment PR - Success
