@@ -1,134 +1,134 @@
-# 🚀 Quick Start: My Flashcards Feature
+# 🚀 Szybki Start: Funkcja Moje Fiszki
 
-## What's New?
+## Co nowego?
 
-A fully functional flashcard management system allowing users to create, read, update, and delete their personal flashcards through a beautiful, intuitive interface.
+W pełni funkcjonalny system zarządzania fiszkami pozwalający użytkownikom tworzyć, czytać, aktualizować i usuwać swoje osobiste fiszki poprzez intuicyjny interfejs.
 
-## 🌐 How to Access
+## 🌐 Jak uzyskać dostęp
 
-1. **Login** to your 10xCards account
-2. Click **"My Flashcards"** in the navigation bar
-3. Or navigate directly to `/my-flashcards`
+1. **Zaloguj się** do swojego konta 10xCards
+2. Kliknij **"Moje Fiszk"** na pasku nawigacji
+3. Lub przejdź bezpośrednio do `/my-flashcards`
 
-## ✨ What You Can Do
+## ✨ Co możesz zrobić
 
-### Create a Flashcard
+### Utwórz fiszkę
 
-1. Click the **"Create New Flashcard"** button
-2. Enter the question/prompt in the **Front** field (max 200 chars)
-3. Enter the answer in the **Back** field (max 500 chars)
-4. Click **"Create Flashcard"**
-5. Your new flashcard appears at the top of the list
+1. Kliknij przycisk **"Utwórz nową fiszkę"**
+2. Wpisz pytanie/wskazówkę w polu **Przód** (maksymalnie 200 znaków)
+3. Wpisz odpowiedź w polu **Tył** (maksymalnie 500 znaków)
+4. Kliknij **"Utwórz fiszkę"**
+5. Twoja nowa fiszka pojawi się na górze listy
 
-### View Flashcards
+### Przeglądaj fiszki
 
-- **Click any flashcard** to toggle between front and back
-- Cards are displayed in a beautiful grid layout
-- Most recent cards appear first
+- **Kliknij dowolną fiszkę**, aby przełączać między przodem a tyłem
+- Fiszk są wyświetlane w pięknym układzie siatki
+- Najnowsze fiszki pojawiają się pierwsze
 
-### Edit a Flashcard
+### Edytuj fiszkę
 
-1. Click the **✏️ Edit** button on a flashcard
-2. Modify the content
-3. Click **"Save"** to confirm or **"Cancel"** to discard
-4. Changes update instantly
+1. Kliknij przycisk **✏️ Edytuj** na fiszce
+2. Zmodyfikuj zawartość
+3. Kliknij **"Zapisz"**, aby potwierdzić lub **"Anuluj"**, aby odrzucić
+4. Zmiany aktualizują się natychmiast
 
-### Delete a Flashcard
+### Usuń fiszkę
 
-1. Click the **🗑️ Delete** button
-2. Card is removed immediately
-3. You'll see a confirmation message
+1. Kliknij przycisk **🗑️ Usuń**
+2. Fiszk zostaje usunięta natychmiast
+3. Zobaczysz komunikat potwierdzający
 
-### Search Your Flashcards
+### Przeszukuj swoje fiszki
 
-1. Type in the **search box** at the top
-2. Results filter in real-time
-3. Searches both front and back text
-4. Case-insensitive matching
+1. Wpisz w **polu wyszukiwania** na górze
+2. Wyniki filtrują się w czasie rzeczywistym
+3. Przeszukuje zarówno przód, jak i tył tekstu
+4. Wielkość liter nie ma znaczenia
 
-## 📱 Device Support
+## 📱 Wsparcie urządzeń
 
-- ✅ **Desktop**: 3-column grid layout
-- ✅ **Tablet**: 2-column grid layout
-- ✅ **Mobile**: 1-column responsive layout
+- ✅ **Komputer**: Układ siatki 3-kolumnowej
+- ✅ **Tablet**: Układ siatki 2-kolumnowej
+- ✅ **Telefon**: Responsywny układ 1-kolumnowy
 
-## 🎯 Features at a Glance
+## 🎯 Funkcje w skrócie
 
-| Feature    | How to Use                          |
-| ---------- | ----------------------------------- |
-| **Create** | Click "Create New Flashcard" button |
-| **Read**   | View cards in grid, click to flip   |
-| **Update** | Click edit icon, modify, save       |
-| **Delete** | Click trash icon                    |
-| **Search** | Type in search box                  |
-| **Copy**   | Click copy icon on flashcard        |
+| Funkcja          | Jak używać                                       |
+| ---------------- | ------------------------------------------------ |
+| **Tworzenie**    | Kliknij przycisk "Utwórz nową fiszkę"            |
+| **Czytanie**     | Przeglądaj fiszki w siatce, kliknij aby odwrócić |
+| **Aktualizacja** | Kliknij ikonę edycji, zmodyfikuj, zapisz         |
+| **Usuwanie**     | Kliknij ikonę kosza                              |
+| **Wyszukiwanie** | Wpisz w polu wyszukiwania                        |
+| **Kopiowanie**   | Kliknij ikonę kopiowania na fiszce               |
 
-## 💡 Tips & Tricks
+## 💡 Wskazówki i triki
 
-- **Character Limits**: Front max 200 chars, Back max 500 chars
-- **Quick Copy**: Use the 📋 copy button to copy card content
-- **Flip Cards**: Click anywhere on the card to toggle front/back
-- **Keyboard**: Use Tab to navigate, Enter to activate buttons
-- **Search**: Searches both front and back of cards
+- **Limity znaków**: Przód maks. 200 znaków, Tył maks. 500 znaków
+- **Szybkie kopiowanie**: Użyj przycisku 📋 kopiowania, aby skopiować zawartość fiszki
+- **Odwracanie fiszek**: Kliknij gdziekolwiek na fiszce, aby przełączać przód/tył
+- **Klawiatura**: Użyj Tab do nawigacji, Enter do aktywacji przycisków
+- **Wyszukiwanie**: Przeszukuje zarówno przód, jak i tył fiszek
 
-## ⚠️ Important Notes
+## ⚠️ Ważne uwagi
 
-- Cards are tied to your account - only you can see them
-- You can create as many flashcards as you need
-- Deleting a card is permanent
-- All changes are automatically saved to the database
+- Fiszk są powiązane z Twoim kontem - tylko Ty możesz je zobaczyć
+- Możesz utworzyć tyle fiszek, ile potrzebujesz
+- Usunięcie fiszki jest nieodwracalne
+- Wszystkie zmiany są automatycznie zapisywane w bazie danych
 
-## 🆘 Troubleshooting
+## 🆘 Rozwiązywanie problemów
 
-### "No flashcards yet" message?
+### Komunikat "Nie masz jeszcze fiszek"?
 
-→ Create your first flashcard using the button at the top
+→ Utwórz swoją pierwszą fiszkę używając przycisku na górze
 
-### Search not working?
+### Wyszukiwanie nie działa?
 
-→ Make sure you're typing in the search box
+→ Upewnij się, że wpisujesz w polu wyszukiwania
 
-### Changes not saving?
+### Zmiany się nie zapisują?
 
-→ Check your internet connection
-→ Verify you're still logged in
-→ Try the action again
+→ Sprawdź połączenie internetowe
+→ Upewnij się, że jesteś nadal zalogowany
+→ Spróbuj wykonać akcję ponownie
 
-### Can't access the page?
+### Nie możesz uzyskać dostępu do strony?
 
-→ Log in first
-→ You must be authenticated to use this feature
+→ Najpierw się zaloguj
+→ Musisz być uwierzytelniony, aby korzystać z tej funkcji
 
-## 📊 What Counts Toward Your Limits
+## 📊 Co liczy się do Twoich limitów
 
-- **Front**: All characters including spaces
-- **Back**: All characters including spaces and line breaks
-- **Search**: Searches the full content of both fields
+- **Przód**: Wszystkie znaki włącznie ze spacjami
+- **Tył**: Wszystkie znaki włącznie ze spacjami i łamaniem linii
+- **Wyszukiwanie**: Przeszukuje pełną zawartość obu pól
 
-## 🎨 User Interface
+## 🎨 Interfejs użytkownika
 
-The interface features:
+Interfejs oferuje:
 
-- **Clean Design**: Modern card-based layout
-- **Dark/Light Mode**: Follows your system preferences
-- **Responsive**: Works on all device sizes
-- **Accessible**: Keyboard navigation support
-- **Toast Notifications**: Confirms all actions
+- **Czysty design**: Nowoczesny układ oparty na kartach
+- **Tryb ciemny/jasny**: Dostosowuje się do preferencji systemu
+- **Responsywność**: Działa na wszystkich rozmiarach urządzeń
+- **Dostępność**: Obsługa nawigacji klawiszowej
+- **Powiadomienia toast**: Potwierdzają wszystkie akcje
 
-## 🔐 Privacy & Security
+## 🔐 Prywatność i bezpieczeństwo
 
-- Your flashcards are **private**
-- Only you can access them
-- Passwords are **never** stored
-- Connections are **encrypted** (HTTPS)
-- Supabase handles all data security
+- Twoje fiszki są **prywatne**
+- Tylko Ty możesz uzyskać do nich dostęp
+- Hasła są **nigdy** przechowywane
+- Połączenia są **szyfrowane** (HTTPS)
+- Supabase obsługuje wszystkie zabezpieczenia danych
 
-## 📞 Need Help?
+## 📞 Potrzebujesz pomocy?
 
-Check the documentation file:
+Sprawdź plik dokumentacji:
 
-- `../docs/features/my-flashcards.md` - Complete feature documentation (user guide + technical details)
+- `../docs/features/my-flashcards.md` - Kompletna dokumentacja funkcji (przewodnik użytkownika + szczegóły techniczne)
 
-## 🎉 Enjoy!
+## 🎉 Miłego używania!
 
-Your personal flashcard management system is ready to use. Happy studying!
+Twój osobisty system zarządzania fiszkami jest gotowy do użycia. Miłego studiowania!

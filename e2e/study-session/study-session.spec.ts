@@ -19,6 +19,8 @@
 
 import { test, expect } from "@playwright/test";
 import { StudySessionPage } from "../pages/StudySessionPage";
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "../../src/db/database.types";
 
 // Use authenticated user storage state
 test.use({ storageState: ".auth/user.json" });
@@ -30,14 +32,88 @@ test.describe("Study Session", () => {
     // Auth state is already loaded from .auth/user.json
     // No need to login explicitly
     studyPage = new StudySessionPage(page);
+
+    // Ensure we have enough cards for tests by adding more if needed
+    await ensureMinimumCardsForTest();
   });
 
   /**
-   * Helper to skip test if no cards are available
+   * Helper to ensure minimum cards are available for tests
    */
-  async function skipIfNoCards() {
+  async function ensureMinimumCardsForTest() {
+    const supabaseUrl = process.env.PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.PUBLIC_SUPABASE_KEY;
+    const userId = process.env.E2E_USERNAME_ID;
+
+    if (!supabaseUrl || !supabaseKey || !userId) {
+      return; // Skip if no credentials
+    }
+
+    const supabase = createClient<Database>(supabaseUrl, supabaseKey);
+
+    // Check current available cards (cards that can be studied)
+    const { count: availableCount, error: countError } = await supabase
+      .from("flashcards")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId);
+
+    if (countError || !availableCount) {
+      return;
+    }
+
+    const MIN_CARDS_FOR_TEST = 20; // Ensure at least 20 cards available per test
+
+    if (availableCount >= MIN_CARDS_FOR_TEST) {
+      return; // Enough cards available
+    }
+
+    const cardsToAdd = MIN_CARDS_FOR_TEST - availableCount + 10; // Add extra buffer
+    const timestamp = new Date().toISOString();
+
+    const newFlashcards = Array.from({ length: cardsToAdd }, (_, index) => {
+      const sequence = availableCount + index + 1;
+      return {
+        user_id: userId,
+        front: `Test Session Seed ${sequence}`,
+        back: `Auto-generated test flashcard #${sequence}`,
+        source: "manual" as const,
+        generation_id: null,
+        created_at: timestamp,
+        updated_at: timestamp,
+      };
+    });
+
+    await supabase.from("flashcards").insert(newFlashcards);
+  }
+
+  /**
+   * Helper to ensure session is active - restart if complete/empty but cards available
+   */
+  async function ensureActiveSession() {
     const state = await studyPage.getSessionState();
     if (state === "complete" || state === "empty") {
+      // Check if we have cards in database that we can restart with
+      const supabaseUrl = process.env.PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.PUBLIC_SUPABASE_KEY;
+      const userId = process.env.E2E_USERNAME_ID;
+
+      if (supabaseUrl && supabaseKey && userId) {
+        const supabase = createClient<Database>(supabaseUrl, supabaseKey);
+        const { count: cardCount, error } = await supabase
+          .from("flashcards")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", userId);
+
+        if (!error && cardCount && cardCount > 0) {
+          // We have cards, try to restart session
+          await studyPage.startNewSession();
+          // Wait a bit for session to restart
+          await studyPage.page.waitForTimeout(1000);
+          return;
+        }
+      }
+
+      // No cards available, skip the test
       test.skip();
     }
   }
@@ -110,7 +186,7 @@ test.describe("Study Session", () => {
 
     test("should reveal answer when clicking Show Answer", async () => {
       await studyPage.goto();
-      await skipIfNoCards();
+      await ensureActiveSession();
       await studyPage.waitForActiveSession();
 
       // Show answer
@@ -123,7 +199,7 @@ test.describe("Study Session", () => {
 
     test("should display all rating buttons after showing answer", async () => {
       await studyPage.goto();
-      await skipIfNoCards();
+      await ensureActiveSession();
       await studyPage.waitForActiveSession();
 
       await studyPage.showAnswer();
@@ -138,7 +214,7 @@ test.describe("Study Session", () => {
 
     test("should complete one flashcard successfully", async () => {
       await studyPage.goto();
-      await skipIfNoCards();
+      await ensureActiveSession();
       await studyPage.waitForActiveSession();
 
       // Complete one flashcard with 'good' rating
@@ -151,7 +227,7 @@ test.describe("Study Session", () => {
 
     test("should study multiple flashcards in sequence", async () => {
       await studyPage.goto();
-      await skipIfNoCards();
+      await ensureActiveSession();
       await studyPage.waitForActiveSession();
 
       // Study 3 flashcards with 'good' rating
@@ -164,11 +240,11 @@ test.describe("Study Session", () => {
 
     test("should handle different ratings correctly", async () => {
       await studyPage.goto();
-      await skipIfNoCards();
+      await ensureActiveSession();
       await studyPage.waitForActiveSession();
 
       // Study flashcards with different ratings
-      const ratings = ["good", "easy", "hard", "again"] as const;
+      const ratings: ("good" | "easy" | "hard" | "again")[] = ["good", "easy", "hard", "again"];
       await studyPage.studyFlashcardsWithRatings(ratings);
 
       // Verify we progressed through cards
@@ -180,7 +256,7 @@ test.describe("Study Session", () => {
   test.describe("Progress Tracking", () => {
     test("should show initial progress correctly", async () => {
       await studyPage.goto();
-      await skipIfNoCards();
+      await ensureActiveSession();
       await studyPage.waitForActiveSession();
 
       // Verify initial progress shows card 1
@@ -190,7 +266,7 @@ test.describe("Study Session", () => {
 
     test("should update progress after completing flashcards", async () => {
       await studyPage.goto();
-      await skipIfNoCards();
+      await ensureActiveSession();
       await studyPage.waitForActiveSession();
 
       // Get initial progress text
@@ -220,7 +296,7 @@ test.describe("Study Session", () => {
 
     test("should show percentage progress", async () => {
       await studyPage.goto();
-      await skipIfNoCards();
+      await ensureActiveSession();
       await studyPage.waitForActiveSession();
 
       // Verify percentage is displayed
@@ -233,7 +309,7 @@ test.describe("Study Session", () => {
   test.describe("Session Completion", () => {
     test("should show completion message when all cards are done", async () => {
       await studyPage.goto();
-      await skipIfNoCards();
+      await ensureActiveSession();
       await studyPage.waitForActiveSession();
 
       // Study all available cards (max 20 to avoid infinite loop)
@@ -326,7 +402,7 @@ test.describe("Study Session", () => {
   test.describe("Metadata Display", () => {
     test("should display flashcard state", async () => {
       await studyPage.goto();
-      await skipIfNoCards();
+      await ensureActiveSession();
       await studyPage.waitForActiveSession();
 
       // Check if metadata is visible
@@ -338,7 +414,7 @@ test.describe("Study Session", () => {
 
     test("should show review count for reviewed cards", async () => {
       await studyPage.goto();
-      await skipIfNoCards();
+      await ensureActiveSession();
       await studyPage.waitForActiveSession();
 
       // Check if review count is displayed
@@ -400,7 +476,7 @@ test.describe("Study Session", () => {
   test.describe("Content Verification", () => {
     test("should display question and answer text", async () => {
       await studyPage.goto();
-      await skipIfNoCards();
+      await ensureActiveSession();
       await studyPage.waitForActiveSession();
 
       // Get question text
@@ -418,7 +494,7 @@ test.describe("Study Session", () => {
 
     test("should show both question and answer on back side", async () => {
       await studyPage.goto();
-      await skipIfNoCards();
+      await ensureActiveSession();
       await studyPage.waitForActiveSession();
 
       const questionText = await studyPage.getQuestionText();
